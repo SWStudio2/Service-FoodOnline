@@ -27,7 +27,7 @@ public class HomeController {
 	public ResponseEntity<Response<User>> updateID(@RequestBody User oldUser){
 
 		User user = new User();
-		user.setCusid(1);
+		user.setId(1);
 		user.setName("Test1");
 
 
