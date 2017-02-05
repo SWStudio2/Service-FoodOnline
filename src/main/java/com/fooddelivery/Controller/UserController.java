@@ -1,6 +1,9 @@
 package com.fooddelivery.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,12 +31,11 @@ public class UserController {
 	   * @param name User's name
 	   * @return A string describing if the user is succesfully created or not.
 	   */
-	  @RequestMapping("/create")
+	  @RequestMapping(value="/create"  , method=RequestMethod.POST)
 	  @ResponseBody
-	  public String create(String email,String name ,String password) {
-	    User user = null;
+	  public String create(@RequestBody User user) {
+	
 	    try {
-	      user = new User(email,name, password);
 	      userDao.save(user);
 	    }
 	    catch (Exception ex) {
@@ -70,15 +72,35 @@ public class UserController {
 	  @RequestMapping(value="/check" , method=RequestMethod.GET)
 	  @ResponseBody
 	  public String getByEmail(String email) {
-	    String userId;
 	    try {
-	      User user = userDao.findByEmail(email);
-	      userId = String.valueOf(user.getId());
+	      List<User> user = userDao.findByEmail(email);
+	      if(user.size() > 0){
+	    	  return "found"; 
+	      }else{
+	    	  return "User Not found";
+	      }
 	    }
 	    catch (Exception ex) {
-	      return "User not found";
+	      return ex.toString();
 	    }
-	    return "The user id is: " + userId;
+	 
+	  }
+	  
+	  @RequestMapping(value="/checkName" , method=RequestMethod.GET)
+	  @ResponseBody
+	  public String getNameByEmail(String email) {
+	    try {
+	      String name = userDao.findNameByEmail(email);
+	      if(name == null){
+	    	  return "not found";
+	      }else{
+	    	  return "found " + name;
+	      }
+	    }
+	    catch (Exception ex) {
+	      return ex.toString();
+	    }
+	 
 	  }
 	  
 	  /**
