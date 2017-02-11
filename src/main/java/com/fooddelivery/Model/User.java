@@ -2,25 +2,54 @@ package com.fooddelivery.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User implements Serializable {
+@Entity
+@Table(name = "users")
+public class User {
 
-
-	private static final long serialVersionUID = -1592075648833546858L;
-	private int cusid;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private long id;
+	
+	@NotNull
 	private String email;
+	
+	@NotNull
 	private String name;
+	
+	@NotNull
 	private String password;
+	
+	public User() { }
 
-	public int getCusid() {
-		return cusid;
+	public User(long id) { 
+	   this.id = id;
+	}
+	  
+	public User(String email, String name , String password) {
+	  this.email = email;
+	  this.name = name;
+	  this.password = password;
+	}
+	
+	  
+
+	public long getId() {
+		return id;
 	}
 
-	public void setCusid(int cusid) {
-		this.cusid = cusid;
+	public void setId(long id) {
+		this.id = id;
 	}
+
 	public String getEmail() {
 		return email;
 	}

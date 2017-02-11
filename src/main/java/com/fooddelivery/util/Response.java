@@ -1,7 +1,6 @@
 package com.fooddelivery.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Response<T> {
