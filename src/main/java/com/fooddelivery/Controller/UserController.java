@@ -3,6 +3,7 @@ package com.fooddelivery.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,10 +32,10 @@ public class UserController {
 	   * @param name User's name
 	   * @return A string describing if the user is succesfully created or not.
 	   */
-	  @RequestMapping(value="/create"  , method=RequestMethod.POST)
+//	  @RequestMapping(value="/create"  , method=RequestMethod.POST)
+	  @PostMapping("/create")
 	  @ResponseBody
 	  public String create(@RequestBody User user) {
-	
 	    try {
 	      userDao.save(user);
 	    }
