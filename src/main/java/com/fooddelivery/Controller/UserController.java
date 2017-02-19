@@ -127,7 +127,5 @@ public class UserController {
 	    }
 	    return "User succesfully updated!";
 	  }
-
-
 	  
 }	
