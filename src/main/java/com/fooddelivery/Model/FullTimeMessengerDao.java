@@ -16,9 +16,7 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 	   * 
 	   * @param 
 	   */
-	  @Query("select ft.full_name from fulltime_messenger ft where ft.full_email = :full_email")
-	  public String findNameByEmail(@Param("full_email") String fullEmail);
 	  
-	  @Query("from fulltime_messenger ft where ft.full_email = :full_email")
-	  public List<User> findByCusEmail(@Param("full_email") String fullEmail);
+	  @Query("select * from fulltime_messenger f where f.Full_status = 'ว่าง'")
+	  public List<FullTimeMessenger> findEmptyFullTimeMessenger();
 }
