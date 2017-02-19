@@ -31,7 +31,7 @@ import java.net.URI;
 import java.util.List;
 
 //@Category(MediumTests.class)
-public class DistanceMatrixApiTest {
+public class DistanceMatrixApiTest2 {
 
   private GeoApiContext context = new GeoApiContext().setApiKey("AIzaFakeKey");
 

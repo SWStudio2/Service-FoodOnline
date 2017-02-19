@@ -62,7 +62,7 @@
     	<artifactId>joda-time</artifactId>
     </dependency>
     <dependency>
-    	<groupId>com.google.appengine</groupId>
+    	<groupId>com.google.appengine</groupId> 
     	<artifactId>appengine-maven-plugin</artifactId>
     	<version>1.9.49</version>
     </dependency>
