@@ -1,8 +1,11 @@
 package com.fooddelivery.Controller;
 
 import com.fooddelivery.Model.User;
+import com.fooddelivery.json.model.Directions;
 import com.fooddelivery.util.Response;
+import com.google.api.client.json.Json;
 import com.google.appengine.repackaged.com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
@@ -68,8 +71,9 @@ public class HomeController {
 //			        .destinations(new LatLng(13.7266196, 100.5281344)).mode(TravelMode.DRIVING)
 //			        .awaitIgnoreError();
 			
-			String url = "https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyCQQmDCGFkJ4bR3sslC1f9OXFIcXNveStU&mode=driving&destinations="+desLat+"%2C"+desLng+"&origins="+oriLat+"%2C"+oriLng;
-
+			//String url = "https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyCQQmDCGFkJ4bR3sslC1f9OXFIcXNveStU&mode=driving&destinations="+desLat+"%2C"+desLng+"&origins="+oriLat+"%2C"+oriLng;
+			String url = "https://maps.googleapis.com/maps/api/directions/json?destination="+desLat+"%2C"+desLng+"&origin="+oriLat+"%2C"+oriLng+"&units=imperial&alternatives=true";
+			System.out.println(">>" + url);
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -92,13 +96,28 @@ public class HomeController {
 			in.close();
 
 			//print result
-//			System.out.println(response.toString());
+			System.out.println(response.toString());
+			
+			Gson gson = new Gson();  
+			Directions directionArray = gson.fromJson(response.toString(), Directions.class);
+			
+			System.out.println("FIN!!!!!!!");
 			
 			JSONObject objJson = new JSONObject(response.toString());
 			//JSONObject json = (JSONObject) JSONSerializer.toJSON(response.toString()); 
 			List<String> list = new ArrayList<String>();
 			
-			String duration = objJson.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+			String duration = objJson.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
+			//System.out.println("duration: " + duration);
+			
+			//=====================
+			JSONArray jsonMainArr = objJson.getJSONArray("routes");
+			System.out.println(">>" + jsonMainArr.length());
+			for (int i=0; i<jsonMainArr.length(); i++) {
+				//System.out.println("--" + jsonMainArr.get(i));
+			}
+			
+			
 			int durationNum = 0; 
 			if(duration.length() > 7){
 				//hour
@@ -126,10 +145,10 @@ public class HomeController {
 	    
 	}
 	
-//	public static void main(String[] args){
-//		HomeController home = new HomeController();
-////		home.getDistanceMatrix("13.7325473","100.5295583","13.7266196","100.5281344");
-//		home.getDistanceMatrix("13.73254730","100.52955830","13.1959121","99.6216668");
-//	}
+	public static void main(String[] args){
+		HomeController home = new HomeController();
+		home.getDistanceMatrix("13.7325473","100.5295583","13.7266196","100.5281344");
+		home.getDistanceMatrix("13.73254730","100.52955830","13.1959121","99.6216668");
+	}
 	
 }
