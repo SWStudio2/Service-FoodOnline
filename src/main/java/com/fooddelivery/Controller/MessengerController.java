@@ -94,7 +94,8 @@ public class MessengerController {
 		    	{
 		    		int tmpTime = 0;
 		    		FullTimeMessenger tmpFullTime = fullTimeMessList.get(i);
-		    		tmpTime = (Integer)home.getDistanceMatrix(tmpFullTime.getFullLatestLattitude(), tmpFullTime.getFullLatestLongtitude(), tmpMer.getMerLatitude(), tmpMer.getMerLongtitude());
+		    		String[] arrDetail = (String[])home.getDistanceDuration(tmpFullTime.getFullLatestLattitude(), tmpFullTime.getFullLatestLongtitude(), tmpMer.getMerLatitude(), tmpMer.getMerLongtitude());
+		    		tmpTime = Integer.parseInt(arrDetail[1]);
 		    		System.out.println("full : " + tmpFullTime.getFullName() + " "  +  tmpTime);
 		    		//time = getTimeFromGoogleAPI
 		    		if(bestTime > tmpTime)
@@ -107,7 +108,8 @@ public class MessengerController {
 		    	System.out.println(bestFullTime.getFullName());
 		    	
 		    	int timeMerToCustomer = 0;
-		    	timeMerToCustomer = (Integer)home.getDistanceMatrix(tmpMer.getMerLatitude(), tmpMer.getMerLongtitude(),latitudeCus,longtitudeCus );
+		    	String[] arrDetail = (String[])home.getDistanceDuration(tmpMer.getMerLatitude(), tmpMer.getMerLongtitude(),latitudeCus,longtitudeCus );
+		    	timeMerToCustomer = Integer.parseInt(arrDetail[1]);
 		    	System.out.println("timeMerToCustomer : " + timeMerToCustomer);
 		    	int sumTime = (int) (bestTime + timeMerToCustomer);	
 		    	System.out.println("Time : " + sumTime);

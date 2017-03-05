@@ -53,7 +53,8 @@ public class NodeDetail {
 			sumAll = 0;
 			tmpNode = (NodeDetail)arrNode.get(i);
 			Merchants firstMerchant = tmpNode.merList.get(0);
-			firstNodeTime = home.getDistanceMatrix(tmpNode.fullMess.getFullLatestLattitude(), tmpNode.fullMess.getFullLatestLongtitude(), firstMerchant.getMerLatitude(), firstMerchant.getMerLongtitude());
+			String[] arrDetail = (String[])home.getDistanceDuration(tmpNode.fullMess.getFullLatestLattitude(), tmpNode.fullMess.getFullLatestLongtitude(), firstMerchant.getMerLatitude(), firstMerchant.getMerLongtitude());
+			firstNodeTime = Integer.parseInt(arrDetail[1]);
 			
 			int sumMerChantTime = 0;
 			if(tmpNode.merList.size() > 1)
@@ -62,12 +63,15 @@ public class NodeDetail {
 				{
 					Merchants merStart = tmpNode.merList.get(j-1);
 					Merchants merEnd = tmpNode.merList.get(j);
-					sumMerChantTime = home.getDistanceMatrix(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude())+ sumMerChantTime;
+					arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
+					
+					sumMerChantTime = Integer.parseInt(arrDetail[1]) + sumMerChantTime;
 				}								
 			}
 			Merchants endMerchant = tmpNode.merList.get(tmpNode.merList.size()-1);
 			int merchantToCusTime = 0;
-			merchantToCusTime = home.getDistanceMatrix(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
+			arrDetail = (String[])home.getDistanceDuration(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
+			merchantToCusTime = Integer.parseInt(arrDetail[1]);
 			
 
 			sumAll = firstNodeTime + sumMerChantTime + merchantToCusTime;
