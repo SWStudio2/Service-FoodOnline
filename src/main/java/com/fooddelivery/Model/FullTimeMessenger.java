@@ -37,16 +37,16 @@ public class FullTimeMessenger {
 	private String full_status;
 	
 	@NotNull
-	private double full_lastest_lattitude;
+	private String full_lastest_lattitude;
 	
 	@NotNull
-	private double full_lastest_longtitude;
+	private String full_lastest_longtitude;
 	
 	@NotNull
-	private double full_recommend_lattitude;
+	private String full_recommend_lattitude;
 	
 	@NotNull
-	private double full_recommend_longtitude;
+	private String full_recommend_longtitude;
 	
 	public FullTimeMessenger() { }
 
@@ -61,10 +61,10 @@ public class FullTimeMessenger {
 			String fullEmail, 
 			String fullPassword,
 			String fullStatus,
-			double fullLastestLattitude,
-			double fullLastestLongtitude,
-			double fullRecommendLattitude,
-			double fullRecommendLongtitude
+			String fullLastestLattitude,
+			String fullLastestLongtitude,
+			String fullRecommendLattitude,
+			String fullRecommendLongtitude
 	) {
 	  this.full_name = fullName;
 	  this.full_contact_number = fullContactNumber;
@@ -126,35 +126,35 @@ public class FullTimeMessenger {
 		this.full_status = fullStatus;
 	} 
 
-	public Double getFullLatestLattitude() {
+	public String getFullLatestLattitude() {
 		return full_lastest_lattitude;
 	}
 	
-	public void setFullLastestLattitude(Double fullLastestLongtitude) {
+	public void setFullLastestLattitude(String fullLastestLongtitude) {
 		this.full_lastest_lattitude = fullLastestLongtitude;
 	}
 	
-	public Double getFullLatestLongtitude() {
+	public String getFullLatestLongtitude() {
 		return full_lastest_longtitude;
 	}
 	
-	public void setFullLastestLongtitude(Double fullLastestLongtitude) {
+	public void setFullLastestLongtitude(String fullLastestLongtitude) {
 		this.full_lastest_longtitude = fullLastestLongtitude;
 	}
 	
-	public Double getFullRecommendLattitude() {
+	public String getFullRecommendLattitude() {
 		return full_recommend_lattitude;
 	}
 	
-	public void setFullRecommendLattitude(Double fullRecommendLongtitude) {
+	public void setFullRecommendLattitude(String fullRecommendLongtitude) {
 		this.full_recommend_lattitude = fullRecommendLongtitude;
 	}
 	
-	public Double getFullRecommendLongtitude() {
+	public String getFullRecommendLongtitude() {
 		return full_recommend_longtitude;
 	}
 	
-	public void setFullRecommendLongtitude(Double fullRecommendLongtitude) {
+	public void setFullRecommendLongtitude(String fullRecommendLongtitude) {
 		this.full_recommend_longtitude = fullRecommendLongtitude;
 	}
 }
