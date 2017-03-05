@@ -59,7 +59,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="service/distanceMatrix/{oriLat}/{oriLng}/{desLat}/{desLng}" , method=RequestMethod.GET)
-	public String[] getDistance(@PathVariable(value="oriLat") String oriLat,
+	public String[] getDistanceDuration(@PathVariable(value="oriLat") String oriLat,
 							@PathVariable(value="oriLng") String oriLng,
 							@PathVariable(value="desLat") String desLat,
 							@PathVariable(value="desLng") String desLng){
