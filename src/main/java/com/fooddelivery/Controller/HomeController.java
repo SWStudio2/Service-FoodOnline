@@ -17,6 +17,8 @@ import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -68,7 +70,7 @@ public class HomeController {
 			
 //			String url = "https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyCQQmDCGFkJ4bR3sslC1f9OXFIcXNveStU&mode=driving&destinations="+desLat+"%2C"+desLng+"&origins="+oriLat+"%2C"+oriLng;
 			String url = "https://maps.googleapis.com/maps/api/directions/json?destination="+desLat+"%2C"+desLng+"&origin="+oriLat+"%2C"+oriLng+"&units=imperial&alternatives=true";
-			System.out.println(">>" + url);
+//			System.out.println(">>" + url);
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -103,7 +105,7 @@ public class HomeController {
 			
 			List<Double> distanceList = new ArrayList<Double>();
 			List<Integer> durationList = new ArrayList<Integer>();
-			
+		
 			for (int i=0; i<jsonMainArr.length(); i++) {
 //					System.out.println("--" + jsonMainArr.get(i));
 
@@ -111,8 +113,7 @@ public class HomeController {
 //					System.out.println(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text"));
 					
 					String dist = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text") ;
-					String dura = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");
-					
+					String dura = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");					
 					double distF = Double.valueOf(dist.substring(0, dist.indexOf(" mi"))) * 1.609; // change mi to km
 					distanceList.add(distF);
 					int duraF = Integer.valueOf(dura.substring(0, dura.indexOf(" ")));	
@@ -154,7 +155,7 @@ public class HomeController {
 					distMin = distanceList.get(i);
 				}
 			}
-			
+
 			int duraMin = 0;
 			for(int i=0;i<durationList.size();i++){
 				if(i == 0){
@@ -164,10 +165,15 @@ public class HomeController {
 				}
 			}
 			
-			//set 1 digit decimal of distance
-			DecimalFormat df2 = new DecimalFormat(".#");
-			String distDecm = df2.format(distMin);
-			String duraStr = String.valueOf(duraMin);
+			BigDecimal bigDistMin = new BigDecimal(distMin);
+			bigDistMin = bigDistMin.setScale(1, RoundingMode.HALF_UP);
+			
+			BigDecimal bigDuraMin = new BigDecimal(duraMin);
+			bigDuraMin = bigDuraMin.setScale(1, RoundingMode.HALF_UP);
+
+
+			String distDecm = bigDistMin.toString();
+			String duraStr = bigDuraMin.toString();
 
 			String[] resultArry = new String[2];
 			resultArry[0] = distDecm;
