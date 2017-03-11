@@ -1,13 +1,33 @@
 package com.fooddelivery.Controller;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.Merchants;
 
 public class mainProg2 {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
+
+		String landtitude = "13.733510";
+		String longtitude = "100.531236";
+		
 		Merchants[] merList = new Merchants[14];
+		for(int i = 0;i<merList.length;i++)
+		{
+			merList[i] = new Merchants();
+		}
 
 		merList[0].setMerName("มนต์นมสด เสาชิงช้า");
 		merList[0].setMerLatitude("13.754198");
@@ -63,8 +83,58 @@ public class mainProg2 {
 		
 		merList[13].setMerName("ร้านลุงใหญ่");
 		merList[13].setMerLatitude("13.763263");
-		merList[13].setMerLongtitude("100.546167");			
+		merList[13].setMerLongtitude("100.546167");
+		
+		HomeController home = new HomeController();
+		
+		ArrayList<String> disList = new ArrayList<String>();
+		ArrayList<String> durationList = new ArrayList<String>();
+		for(int i = 0;i<merList.length;i++)
+		{
+			Thread.sleep(1000);
+			Merchants tmpMer = merList[i];
+			String[] arrDetail = (String[])home.getDistanceDuration(landtitude, longtitude, tmpMer.getMerLatitude(), tmpMer.getMerLongtitude());
+			System.out.println(tmpMer.getMerName());
+
+			System.out.println("Distance : " + arrDetail[0]);
+			System.out.println("Duration : " + arrDetail[1]);
+			disList.add(arrDetail[0]);
+			durationList.add(arrDetail[1]);
+		}
+		
+		//addExcel(disList, durationList);
 	
+	}
+	
+	public static void addExcel(ArrayList<String> disList,ArrayList<String> durationList) throws EncryptedDocumentException, InvalidFormatException
+	{
+        String excelFilePath = "E:\\Template2.xls";
+        
+        try {
+            FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+            Workbook workbook = WorkbookFactory.create(inputStream);
+ 
+            Sheet sheet = workbook.getSheetAt(0);
+ 
+            int columnCount = 0;
+                   
+            for(int i = 0;i<durationList.size();i++)
+            {
+                Cell cell2Update = sheet.getRow(i+2).getCell(15);
+                cell2Update.setCellValue(durationList.get(i));               
+            }
+ 
+            inputStream.close();
+ 
+            FileOutputStream outputStream = new FileOutputStream("E:\\Template2.xls");
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+             
+        } catch (IOException  ex) {
+            ex.printStackTrace();
+        }
+        return;
 	}
 
 }
