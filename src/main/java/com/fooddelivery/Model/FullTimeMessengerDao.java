@@ -17,6 +17,6 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 	   * @param 
 	   */
 	  
-	  @Query("select * from fulltime_messenger f where f.Full_status = 'ว่าง'")
-	  public List<FullTimeMessenger> findEmptyFullTimeMessenger();
+//	  @Query("select full_id , full_name , full_contact_number , full_email , full_password , full_status , full_lastest_lattitude , full_lastest_longtitude , full_recommend_lattitude , full_recommend_longtitude from fulltime_messenger f where f.Full_status = 'ว่าง'")
+//	  public List<FullTimeMessenger> findEmptyFullTimeMessenger();
 }
