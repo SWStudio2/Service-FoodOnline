@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.FullTimeMessenger;
@@ -17,7 +20,7 @@ import com.fooddelivery.util.NodeDetail;
 import com.fooddelivery.util.Utils;
 import com.google.api.client.json.Json;
 
-
+@RestController
 public class MessengerController {
 
 	private FullTimeMessengerDao fullMessDao;
@@ -178,7 +181,17 @@ public class MessengerController {
 	  }
 
 	}
-
+	
+	
+	//@RequestMapping(value="/getFullTimeMess"  , method=RequestMethod.POST)
+	//@PostMapping("/getFullTimeMess")
+	//@ResponseBody
+	//@RequestParam String latCust ,@RequestParam String lngCust ,@RequestParam String[] merID
+//	public String getFullTimeMess(){
+//		
+//		return "test";
+//	}
+	
 }
 
 

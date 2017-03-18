@@ -16,6 +16,6 @@ public interface MenuDao extends CrudRepository<Menu, Long> {
 	   * 
 	   * @param 
 	   */
-	  @Query("select m.menu_name from Menu m where m.menu_mer_id = :menuMerId")
-	  public String findNameByMerchantId(@Param("menu_mer_id") String menuMerId);
+//	  @Query("select m.menu_name from Menu m where m.menu_mer_id = :menuMerId")
+//	  public String findNameByMerchantId(@Param("menu_mer_id") String menuMerId);
 }

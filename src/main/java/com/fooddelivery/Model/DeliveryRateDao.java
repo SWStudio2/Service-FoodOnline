@@ -16,6 +16,6 @@ public interface DeliveryRateDao extends CrudRepository<DeliveryRate, Long> {
 	   * 
 	   * @param 
 	   */
-	  @Query("select dr.delivery_rate from delivery_rate dr")
-	  public String findNameByEmail(@Param("delivery_rate") String deliveryRate);
+//	  @Query("select dr.delivery_rate from delivery_rate dr")
+//	  public String findNameByEmail(@Param("delivery_rate") String deliveryRate);
 }
