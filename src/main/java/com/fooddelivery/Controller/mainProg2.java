@@ -36,10 +36,10 @@ public class mainProg2 {
 		merList[1].setMerName("โกปี๊เฮี้ยะไถ่กี่ ณ เสาชิงช้า");
 		merList[1].setMerLatitude("13.753173");
 		merList[1].setMerLongtitude("100.504395");		
-		
-		merList[2].setMerName("โต ก๋วยจั๊บ");
-		merList[2].setMerLatitude("13.751225");
-		merList[2].setMerLongtitude("100.504395");
+
+		merList[2].setMerName("รองเมือง เกาเหลา");
+		merList[2].setMerLatitude("13.745967");
+		merList[2].setMerLongtitude("100.518322");
 		
 		merList[3].setMerName("ทิพย์สมัย (ผัดไทยประตูผี)");
 		merList[3].setMerLatitude("13.752774");

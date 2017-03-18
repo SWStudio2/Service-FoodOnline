@@ -18,4 +18,5 @@ public interface MerchantsDao extends CrudRepository<Menu, Long> {
 	   */
 	  @Query("select m.mer_name from Merchants m where m.mer_id = :merId")
 	  public String findNameByMerchantId(@Param("mer_id") String merId);
+
 }
