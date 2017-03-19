@@ -1,11 +1,11 @@
 package com.fooddelivery.Controller;
 
-import com.fooddelivery.Model.TimeAndDistanceDetail;
-import com.fooddelivery.Model.TimeAndDistanceDetailDao;
+//import com.fooddelivery.Model.TimeAndDistanceDetail;
+//import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 
 public class mainProg {
 
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 //		HomeController home = new HomeController();
 //
@@ -69,23 +69,23 @@ public class mainProg {
 //		System.out.println("S&P สยามพาราก้อน : " + home.getDistanceMatrix(mer3_la, mer3_long, mer2_la, mer2_long));
 //		System.out.println("ลูกค้า : " + home.getDistanceMatrix(mer3_la, mer3_long, cus_la, cus_long));
 //		System.out.println("");
-		String[] merList = new String[3];
-		merList[0] = "4";
-		merList[1] = "5";
-		merList[2] = "6";
-		TimeAndDistanceDetail[] value = TimeAndDistanceDetailDao.getTimeAndDistanceDetail(merList);
-		for(int i = 0;i<value.length;i++)
-		{
-			System.out.println("getSourceId " + value[i].getSourceId());
-			System.out.println("getDestinationId " + value[i].getDestinationId());
-			System.out.println("getDistance " + value[i].getDistance());
-			System.out.println("getDuration " + value[i].getDuration());
-			System.out.println("getPathType " + value[i].getPathType());
-			System.out.println("---------------------- ");
-		}
+//		String[] merList = new String[3];
+//		merList[0] = "4";
+//		merList[1] = "5";
+//		merList[2] = "6";
+//		TimeAndDistanceDetail[] value = TimeAndDistanceDetailDao.getTimeAndDistanceDetail(merList);
+//		for(int i = 0;i<value.length;i++)
+//		{
+//			System.out.println("getSourceId " + value[i].getSourceId());
+//			System.out.println("getDestinationId " + value[i].getDestinationId());
+//			System.out.println("getDistance " + value[i].getDistance());
+//			System.out.println("getDuration " + value[i].getDuration());
+//			System.out.println("getPathType " + value[i].getPathType());
+//			System.out.println("---------------------- ");
+//		}
 			
 	}
 	
 	
 
-}
+//}

@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.data.annotation.Transient;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -19,25 +22,29 @@ public class Customer {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "cus_id")
 	private long cus_id;
 	
 	@NotNull
-	private String cus_email;
-	
-	@NotNull
+	@Column(name = "cus_name")
 	private String cus_name;
 	
 	@NotNull
+	@Column(name = "cus_username")
 	private String cus_username;
 	
 	@NotNull
+	@Column(name = "cus_password")
 	private String cus_password;
 	
 	@NotNull
+	@Column(name = "cus_contact_number")
 	private String cus_contact_number;
 	
 	@NotNull
+	@Column(name = "cus_created_date")
 	private Date cus_created_date;
+	
 	
 	public Customer() { }
 
@@ -54,7 +61,6 @@ public class Customer {
 			String cusContactNumber,
 			Date cusCreatedDate
 	) {
-	  this.cus_email = cusEmail;
 	  this.cus_name = cusName;
 	  this.cus_username = cusUserName;
 	  this.cus_password = cusPassword;
@@ -68,14 +74,6 @@ public class Customer {
 
 	public void setCusId(long cusId) {
 		this.cus_id = cusId;
-	}
-
-	public String getCusEmail() {
-		return cus_email;
-	}
-
-	public void setCusEmail(String cusEmail) {
-		this.cus_email = cusEmail;
 	}
 
 	public String getCusName() { 
@@ -117,4 +115,8 @@ public class Customer {
 	public void setCusCreatedDate(Date cusCreatedDate) {
 		this.cus_created_date = cusCreatedDate;
 	}
+	
+	
+	
+	
 }

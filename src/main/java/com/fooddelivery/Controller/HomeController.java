@@ -1,42 +1,45 @@
 package com.fooddelivery.Controller;
 
-import com.fooddelivery.Model.User;
-import com.fooddelivery.json.model.Directions;
-import com.fooddelivery.util.Response;
-import com.google.api.client.json.Json;
-import com.google.appengine.repackaged.com.google.gson.JsonObject;
-import com.google.gson.Gson;
-import com.google.maps.DirectionsApi;
-import com.google.maps.DistanceMatrixApi;
-import com.google.maps.GeoApiContext;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.LatLng;
-import com.google.maps.model.TravelMode;
-
-import org.json.JSONArray;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fooddelivery.Model.Customer;
+import com.fooddelivery.Model.CustomerDao;
+import com.fooddelivery.Model.DeliveryRate;
+import com.fooddelivery.Model.DeliveryRateDao;
+import com.fooddelivery.json.model.Directions;
+import com.fooddelivery.util.Response;
+import com.google.gson.Gson;
 
 @RestController
 public class HomeController {
+	
+	// Wire the UserDao used inside this controller.
+	@Autowired
+	private CustomerDao customerDao;
+	@Autowired
+	private DeliveryRateDao delvDao;
 
 //	@RequestMapping("/")
 //	public String index(){
@@ -49,14 +52,59 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value={"/service/auth"} ,method=RequestMethod.POST)
-	public ResponseEntity<Response<User>> updateID(@RequestBody User oldUser){
+	public ResponseEntity<Response<HashMap>> authen(@RequestParam("username") String username ,@RequestParam("pass") String pass){
 
-		User user = new User();
-		user.setId(1);
-		user.setName("Test1");
-
-		return ResponseEntity.ok(new Response<User>(HttpStatus.OK.value(),
-				"Login successfully", user));
+//		User user = new User();
+//		user.setId(1);
+//		user.setName("Test1");
+//
+//		return ResponseEntity.ok(new Response<User>(HttpStatus.OK.value(),
+//				"Login successfully", user));
+		
+		List<DeliveryRate> delvRate = null;
+		List<Customer> customer = null;
+		HashMap<String,String> resultList = new HashMap<String, String>();
+		
+		try {
+			System.out.println("Check point 0");
+			delvRate = 	delvDao.findAllDeliveryRate();
+			System.out.println("Check point 0.1");
+			customer = customerDao.findByCusEmail(username, pass);
+			System.out.println(customer);
+			System.out.println(delvRate);
+			
+			if(customer.size() != 0){
+				Customer cust = customer.get(0);
+				resultList.put("cus_id", String.valueOf(cust.getCusId()));
+				resultList.put("cus_name", cust.getCusName());
+				resultList.put("cus_username", cust.getCusUserName());
+				resultList.put("cus_password", cust.getCusPassword());
+				resultList.put("cus_contact_number", cust.getCusContactNumber());
+				
+				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+				Date createdDate = cust.getCusCreatedDate();  
+				resultList.put("cus_created_date", df.format(createdDate));
+				
+				resultList.put("delivery_rate", String.valueOf(delvRate.get(0).getDeliveryRate()));
+				
+				System.out.println(resultList);
+			}else{
+				System.out.println("Check point 1");
+				return null;
+			}
+			
+			
+			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
+					"Login successfully", resultList));
+			
+	    }
+	    catch (Exception ex) {
+	    	ex.printStackTrace();
+	    	System.out.println(ex.getMessage());
+	    	System.out.println("Check point 2");
+	    	return null;
+	    }
+		
 
 	}
 	

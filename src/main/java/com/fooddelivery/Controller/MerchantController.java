@@ -21,19 +21,19 @@ public class MerchantController {
 	
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
-	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername){
+	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername ,@RequestParam(value = "date") String date ,@RequestParam(value = "time") String time){
 		
-		System.out.println(mername);
+//		System.out.println(mername);
 		
 		try {
 			
 			List<Merchants> merchants = null;
 			if(mername.isPresent()){
-				merchants = merchantsDao.findMerchantsByMerName(mername.get());
-				System.out.println(mername.get());
-				System.out.println(merchants);
+				merchants = merchantsDao.findMerchantsByMerName(mername.get(),date,time);
+//				System.out.println(mername.get());
+//				System.out.println(merchants);
 			}else{
-				merchants = merchantsDao.findMerchantsByStatus();
+				merchants = merchantsDao.findMerchantsByStatus(date,time);
 			}
 			
 			
