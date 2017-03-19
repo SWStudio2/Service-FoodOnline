@@ -76,7 +76,7 @@ public class UserController {
 	    try {
 	      List<User> user = userDao.findByEmail(email);
 	      if(user.size() > 0){
-	    	  return "found"; 
+	    	  return user.get(0).getName(); 
 	      }else{
 	    	  return "User Not found";
 	      }

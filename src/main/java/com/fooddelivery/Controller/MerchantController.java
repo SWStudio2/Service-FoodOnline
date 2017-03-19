@@ -1,18 +1,49 @@
 package com.fooddelivery.Controller;
 
-import org.springframework.web.bind.annotation.RequestBody;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.fooddelivery.Model.Merchants;
+import com.fooddelivery.Model.MerchantsDao;
 
 @RestController
 public class MerchantController {
 	
-	@RequestMapping(value="/service/merchant/getall"  , method=RequestMethod.POST)
+	// Wire the UserDao used inside this controller.
+	@Autowired
+	private MerchantsDao merchantsDao;
+	
+	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
-	public String getMerchants(@RequestParam("merID") String merIDArr){
-		return "test";
+	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername){
+		
+		System.out.println(mername);
+		
+		try {
+			
+			List<Merchants> merchants = null;
+			if(mername.isPresent()){
+				merchants = merchantsDao.findMerchantsByMerName(mername.get());
+				System.out.println(mername.get());
+				System.out.println(merchants);
+			}else{
+				merchants = merchantsDao.findMerchantsByStatus();
+			}
+			
+			
+			return merchants;
+			
+	    }
+	    catch (Exception ex) {
+	    	return null;
+	    }
+		
 	}
+	
 }
