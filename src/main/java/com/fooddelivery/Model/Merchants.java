@@ -16,33 +16,48 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Merchants {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long merID;
+	@Column(name = "MER_ID")
+	private Integer merID;
 	
+	@Column(name = "MER_NAME")
 	private String merName;
 	
+	@Column(name = "MER_ADDRESS")
 	private String merAddress;
 	
+	@Column(name = "MER_LATITUDE")
 	private String merLatitude;
 	
+	@Column(name = "MER_LONGTITUDE")
 	private String merLongtitude;
 	
-	private String merContractNumber;
+	@Column(name = "MER_CONTACT_NUMBER")
+	private String merContactNumber;
 	
-	private int merPercentShare;
+	@Column(name = "MER_PERCENT_SHARE")
+	private Float merPercentShare;
 	
+	@Column(name = "MER_OPEN_STATUS")
 	private String merOpenStatus;
 	
+	@Column(name = "MER_USERNAME")
 	private String merUserName;
 	
+	@Column(name = "MER_PASSWORD")
 	private String merPassword;
 	
-	private boolean merRegisFlag;
+	@Column(name = "MER_REGIS_FLAG")
+	private Integer merRegisFlag;
+	
+	@Column(name = "MER_PIC_NAME")
+	private String merPicName;
 
-	public long getMerID() {
+
+	public Integer getMerID() {
 		return merID;
 	}
 
-	public void setMerID(long merID) {
+	public void setMerID(Integer merID) {
 		this.merID = merID;
 	}
 
@@ -78,19 +93,19 @@ public class Merchants {
 		this.merLongtitude = merLongtitude;
 	}
 
-	public String getMerContractNumber() {
-		return merContractNumber;
+	public String getMerContactNumber() {
+		return merContactNumber;
 	}
 
-	public void setMerContractNumber(String merContractNumber) {
-		this.merContractNumber = merContractNumber;
+	public void setMerContactNumber(String merContactNumber) {
+		this.merContactNumber = merContactNumber;
 	}
 
-	public int getMerPercentShare() {
+	public Float getMerPercentShare() {
 		return merPercentShare;
 	}
 
-	public void setMerPercentShare(int merPercentShare) {
+	public void setMerPercentShare(Float merPercentShare) {
 		this.merPercentShare = merPercentShare;
 	}
 
@@ -118,12 +133,20 @@ public class Merchants {
 		this.merPassword = merPassword;
 	}
 
-	public boolean isMerRegisFlag() {
+	public Integer getMerRegisFlag() {
 		return merRegisFlag;
 	}
 
-	public void setMerRegisFlag(boolean merRegisFlag) {
+	public void setMerRegisFlag(Integer merRegisFlag) {
 		this.merRegisFlag = merRegisFlag;
+	}
+
+	public String getMerPicName() {
+		return merPicName;
+	}
+
+	public void setMerPicName(String merPicName) {
+		this.merPicName = merPicName;
 	}
 	
 	
