@@ -37,6 +37,16 @@ public class Merchants {
 	private String merPassword;
 	
 	private boolean merRegisFlag;
+	
+	private int cookingTime;
+
+	public int getCookingTime() {
+		return cookingTime;
+	}
+
+	public void setCookingTime(int cookingTime) {
+		this.cookingTime = cookingTime;
+	}
 
 	public long getMerID() {
 		return merID;

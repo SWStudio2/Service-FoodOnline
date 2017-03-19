@@ -94,30 +94,30 @@ public class TimeAndDistanceDetailDao {
 			
 			sql = sqlBuffer.toString();	
 			
-			//ResultSet rec = s.executeQuery(sql);
-			s.executeUpdate("INSERT INTO menu (`MENU_MER_ID`,`MENU_NAME`,`MENU_PRICE`,`MENU_STATUS`)  VALUES ( '11','สเต็กหมู','100','1');");
-//			if(rec == null)
-//			{
-//				System.out.print(" record not found ");
-//			}
-////			System.out.println("" + sql);
-//			ArrayList<TimeAndDistanceDetail> arrTimeDetail = new ArrayList<TimeAndDistanceDetail>();
-//			while((rec!=null) && (rec.next()))
-//            {
-//                TimeAndDistanceDetail tmpDetail = new TimeAndDistanceDetail();
-//                tmpDetail.setSourceId(rec.getString("bike_path_source_id"));
-//                tmpDetail.setDestinationId(rec.getString("bike_path_destination_id"));
-//                tmpDetail.setDistance(rec.getString("bike_path_distance"));
-//                tmpDetail.setDuration(rec.getString("bike_path_duration"));
-//                tmpDetail.setPathType(rec.getString("bike_path_type"));
-//                arrTimeDetail.add(tmpDetail);
-//            }
-//			
-//			detailListReturn = new TimeAndDistanceDetail[arrTimeDetail.size()];
-//			for(int i = 0;i<arrTimeDetail.size();i++)
-//			{
-//				detailListReturn[i] = (TimeAndDistanceDetail)arrTimeDetail.get(i);
-//			}
+			ResultSet rec = s.executeQuery(sql);
+			
+			if(rec == null)
+			{
+				System.out.print(" record not found ");
+			}
+//			System.out.println("" + sql);
+			ArrayList<TimeAndDistanceDetail> arrTimeDetail = new ArrayList<TimeAndDistanceDetail>();
+			while((rec!=null) && (rec.next()))
+            {
+                TimeAndDistanceDetail tmpDetail = new TimeAndDistanceDetail();
+                tmpDetail.setSourceId(rec.getString("bike_path_source_id"));
+                tmpDetail.setDestinationId(rec.getString("bike_path_destination_id"));
+                tmpDetail.setDistance(rec.getString("bike_path_distance"));
+                tmpDetail.setDuration(rec.getString("bike_path_duration"));
+                tmpDetail.setPathType(rec.getString("bike_path_type"));
+                arrTimeDetail.add(tmpDetail);
+            }
+			
+			detailListReturn = new TimeAndDistanceDetail[arrTimeDetail.size()];
+			for(int i = 0;i<arrTimeDetail.size();i++)
+			{
+				detailListReturn[i] = (TimeAndDistanceDetail)arrTimeDetail.get(i);
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

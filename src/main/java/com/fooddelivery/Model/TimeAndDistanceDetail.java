@@ -38,5 +38,17 @@ public class TimeAndDistanceDetail {
 		this.pathType = pathType;
 	}
 	
-	
+	public static String[] getTimeAndDuration(TimeAndDistanceDetail[] tmpDetail,String source,String destination,String pathType)
+	{
+		String[] valueList = new String[2];
+		for(int i = 0;i<tmpDetail.length;i++)
+		{
+			if(tmpDetail[i].getSourceId().equals(source) && tmpDetail[i].getDestinationId().equals(destination) && tmpDetail[i].getPathType().equals(pathType))
+			{
+				valueList[0] = tmpDetail[i].getDuration();
+				valueList[1] = tmpDetail[i].getDistance();
+			}
+		}
+		return valueList;
+	}
 }

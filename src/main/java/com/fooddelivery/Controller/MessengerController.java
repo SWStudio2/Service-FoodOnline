@@ -15,8 +15,12 @@ import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
+import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.TimeAndDistanceDetail;
+import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
 import com.fooddelivery.util.NodeDetail;
+import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.Utils;
 import com.google.api.client.json.Json;
 
@@ -182,15 +186,88 @@ public class MessengerController {
 
 	}
 	
+	public String searchFuncOneMessenger(String[] merId,String cus_Latitude,String cus_Longtitude) {
+		
+		//Define id Merchant from interface
+
+		TimeAndDistanceDetailDao timeDisDao = new TimeAndDistanceDetailDao();
+		TimeAndDistanceDetail[] tmpTimeDisDetail = timeDisDao.getTimeAndDistanceDetail(merId);
+		for(int i = 0;i<tmpTimeDisDetail.length;i++)
+		{
+			System.out.println(tmpTimeDisDetail[i].getSourceId());
+			System.out.println(tmpTimeDisDetail[i].getDestinationId());
+			System.out.println(tmpTimeDisDetail[i].getDistance());
+			System.out.println(tmpTimeDisDetail[i].getDuration());
+			System.out.println(tmpTimeDisDetail[i].getPathType());
+			System.out.println();
+		}
+		
+		MerchantsDao merDao = new MerchantsDao();
+		Merchants[] merList = merDao.queryMerChantByID(merId);
+		ArrayList<Integer> indexPos = new ArrayList<Integer>();
+		for(int i = 0;i<merId.length;i++)
+		{
+			indexPos.add(i);
+		}
+		Object[] resultSet = (Object[])Utils.listPermutations(indexPos).toArray();
+		
+		ArrayList<String> arrResult = new ArrayList<String>();
+		for(int i = 0;i<resultSet.length;i++)
+		{
+			String tmpValue = resultSet[i].toString();
+			tmpValue = tmpValue.replace("[", "");
+			tmpValue = tmpValue.replace("]", "");
+			arrResult.add(tmpValue);
+		}
+		
+		String[] idListStationFullTime = getFullTimeIdAvailable(tmpTimeDisDetail);
+		
+		ArrayList<NodeDetailVer2> arrNode = new ArrayList<NodeDetailVer2>();
+		for(int i = 0;i<idListStationFullTime.length;i++)
+		{
+
+			for(int j = 0;j<arrResult.size();j++)
+			{
+				NodeDetailVer2 tmpNodeDetail = new NodeDetailVer2();
+				tmpNodeDetail.setStation(idListStationFullTime[i]);
+				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
+				String[] postList = arrResult.get(j).split("\\,");
+				for(int k = 0;k<postList.length;k++)
+				{
+					int pos = Integer.parseInt(postList[k].trim());
+					arrMerchant.add(merList[pos]);
+				}
+				
+				tmpNodeDetail.setMerList(arrMerchant);
+				tmpNodeDetail.setLatitudeDelivery(cus_Latitude);
+				tmpNodeDetail.setLatitudeDelivery(cus_Longtitude);
+				
+				arrNode.add(tmpNodeDetail);
+			}
+		}
+		
+		
+		return "";
+	}
 	
-	//@RequestMapping(value="/getFullTimeMess"  , method=RequestMethod.POST)
-	//@PostMapping("/getFullTimeMess")
-	//@ResponseBody
-	//@RequestParam String latCust ,@RequestParam String lngCust ,@RequestParam String[] merID
-//	public String getFullTimeMess(){
-//		
-//		return "test";
-//	}
+	public static String[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)
+	{
+		ArrayList<String> arrMessId = new ArrayList<String>();
+		for(int i = 0;i<tmp.length;i++)
+		{
+			if(tmp[i].getPathType().equals("bike") && !arrMessId.contains(tmp[i].getSourceId()))
+			{
+				arrMessId.add(tmp[i].getSourceId());
+			}
+		}
+		
+		String[] idList = new String[arrMessId.size()];
+		for(int i = 0;i<arrMessId.size();i++)
+		{
+			idList[i] = arrMessId.get(i);
+		}
+		return idList;
+	}
 	
 }
 
