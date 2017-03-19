@@ -54,7 +54,7 @@ public class NodeDetailVer2 {
 		this.longtitudeDelivery = longtitudeDelivery;
 	}
 	
-	public static NodeDetailVer2 getBestNodeDetail(ArrayList<NodeDetailVer2> arrNode,TimeAndDistanceDetail[] tmpTimeDisDetail)
+	/*public static NodeDetailVer2 getBestNodeDetail(ArrayList<NodeDetailVer2> arrNode,TimeAndDistanceDetail[] tmpTimeDisDetail)
 	{
 		NodeDetailVer2 tmpNode;
 		HomeController home = new HomeController();
@@ -98,5 +98,5 @@ public class NodeDetailVer2 {
 		System.out.println("bestTime " + bestTime);
 
 		return bestNode;
-	}
+	}*/
 }
