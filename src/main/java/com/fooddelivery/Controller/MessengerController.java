@@ -234,7 +234,7 @@ public class MessengerController {
 			for(int j = 0;j<arrResult.size();j++)
 			{
 				NodeDetailVer2 tmpNodeDetail = new NodeDetailVer2();
-				tmpNodeDetail.setStation(idListStationFullTime[i]);
+				tmpNodeDetail.setStation(Integer.valueOf(idListStationFullTime[i]));
 				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
 				String[] postList = arrResult.get(j).split("\\,");
 				for(int k = 0;k<postList.length;k++)
@@ -335,7 +335,7 @@ public class MessengerController {
 				while((rec!=null) && (rec.next()))
 	            {
 					Merchants tmpMerchant = new Merchants();
-					tmpMerchant.setMerID(Long.parseLong(rec.getString("MER_ID")));
+					tmpMerchant.setMerID(Integer.parseInt(rec.getString("MER_ID")));
 					tmpMerchant.setMerLatitude(rec.getString("MER_LATITUDE"));
 					tmpMerchant.setMerLongtitude(rec.getString("MER_LONGTITUDE"));
 					tmpMerchant.setCookingTime(rec.getInt("MER_COOKTIME"));

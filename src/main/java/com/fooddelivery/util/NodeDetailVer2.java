@@ -9,7 +9,7 @@ import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 
 public class NodeDetailVer2 {
-	private String station;
+	private int station;
 	private ArrayList<Merchants> merList;
 	private String latitudeDelivery;
 	private String longtitudeDelivery;
@@ -29,10 +29,10 @@ public class NodeDetailVer2 {
 	public void setDistance(String distance) {
 		this.distance = distance;
 	}
-	public String getStation() {
+	public int getStation() {
 		return station;
 	}
-	public void setStation(String station) {
+	public void setStation(int station) {
 		this.station = station;
 	}
 	public ArrayList<Merchants> getMerList() {
