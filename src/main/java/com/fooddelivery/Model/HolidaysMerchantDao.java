@@ -16,6 +16,6 @@ public interface HolidaysMerchantDao extends CrudRepository<HolidaysMerchant, Lo
 	   * 
 	   * @param 
 	   */
-	  @Query("select hm.hol_date from holidays_merchant hm where hm.hol_mer_id = :holidaysMerchantId")
-	  public String findHolidaysDateByMerchantId(@Param("hol_mer_id") String holidaysMerchantId);
+//	  @Query("select hm.hol_date from holidays_merchant hm where hm.hol_mer_id = :holidaysMerchantId")
+//	  public String findHolidaysDateByMerchantId(@Param("hol_mer_id") String holidaysMerchantId);
 }

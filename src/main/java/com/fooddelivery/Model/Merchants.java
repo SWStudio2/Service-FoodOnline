@@ -26,9 +26,9 @@ public class Merchants {
 	
 	private String merLongtitude;
 	
-	private String merContractNumber;
+	private String merContactNumber;
 	
-	private int merPercentShare;
+	private Double merPercentShare;
 	
 	private String merOpenStatus;
 	
@@ -88,19 +88,19 @@ public class Merchants {
 		this.merLongtitude = merLongtitude;
 	}
 
-	public String getMerContractNumber() {
-		return merContractNumber;
+	public String getMerContactNumber() {
+		return merContactNumber;
 	}
 
-	public void setMerContractNumber(String merContractNumber) {
-		this.merContractNumber = merContractNumber;
+	public void setMerContactNumber(String merContactNumber) {
+		this.merContactNumber = merContactNumber;
 	}
 
-	public int getMerPercentShare() {
+	public Double getMerPercentShare() {
 		return merPercentShare;
 	}
 
-	public void setMerPercentShare(int merPercentShare) {
+	public void setMerPercentShare(Double merPercentShare) {
 		this.merPercentShare = merPercentShare;
 	}
 

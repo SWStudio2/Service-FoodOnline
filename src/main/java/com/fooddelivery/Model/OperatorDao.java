@@ -16,6 +16,6 @@ public interface OperatorDao extends CrudRepository<Operator, Long> {
 	   * 
 	   * @param 
 	   */
-	  @Query("select op.oper_name from Operator op where op.oper_id = :operId")
-	  public String findNameById(@Param("oper_id") String operId);
+//	  @Query("select op.oper_name from Operator op where op.oper_id = :operId")
+//	  public String findNameById(@Param("oper_id") String operId);
 }
