@@ -18,7 +18,7 @@ import org.springframework.data.repository.query.Param;
 public class MerchantsQuery {
 
 	  
-	  public static Merchants[] queryMerChantByID(String[] merId)
+	  public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
 		  Connection connect = null;
 			Statement s = null;
@@ -29,17 +29,17 @@ public class MerchantsQuery {
 			
 			String merchantIdForQuery = "";
 			Merchants[] merList = null;
-			for(int i = 0;i<merId.length;i++)
-			{
-				if(i == 0)
-				{
-					merchantIdForQuery += merId[i];
-				}
-				else
-				{
-					merchantIdForQuery += "," + merId[i];
-				}
-			}
+//			for(int i = 0;i<mersIdString.length;i++)
+//			{
+//				if(i == 0)
+//				{
+//					merchantIdForQuery += mersIdString[i];
+//				}
+//				else
+//				{
+//					merchantIdForQuery += "," + mersIdString[i];
+//				}
+//			}
 			
 
 
@@ -63,7 +63,7 @@ public class MerchantsQuery {
 
 				sqlBuffer.append("SELECT MER_ID,MER_LATITUDE,MER_LONGTITUDE,MER_COOKTIME \n ");
 				sqlBuffer.append("FROM merchants  \n ");
-				sqlBuffer.append("Where mer_id in (" + merchantIdForQuery +") \n ");
+				sqlBuffer.append("Where mer_id in (" + mersIdString +") \n ");
 
 				
 				sql = sqlBuffer.toString();	

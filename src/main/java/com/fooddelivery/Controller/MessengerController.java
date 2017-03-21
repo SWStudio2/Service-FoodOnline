@@ -201,9 +201,16 @@ public class MessengerController {
 			System.out.println("getPathType " + tmpTimeDisDetail[i].getPathType());
 			System.out.println();
 		}
-		
+		String merIdAdjust = "";
+		for(int i = 0;i<merId.length;i++)
+		{
+			if (i != 0) {
+				merIdAdjust += ",";
+			}
+			merIdAdjust += merId[i];
+		}
 		MerchantsQuery merDao = new MerchantsQuery();
-		Merchants[] merList = merDao.queryMerChantByID(merId);
+		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
 		ArrayList<Integer> indexPos = new ArrayList<Integer>();
 		for(int i = 0;i<merId.length;i++)
 		{
