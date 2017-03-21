@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fooddelivery.Model.Merchants;
-import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.MerchantsQuery;
 import com.fooddelivery.util.NodeDetailVer2;
 
 public class OneMessOneMerchant {
@@ -16,7 +16,7 @@ public class OneMessOneMerchant {
 	String longtitudeCustomer;
 	
 	@Autowired
-	private MerchantsDao merchantsDao;
+	private MerchantsQuery merchantsQuery;
 	
 	public OneMessOneMerchant
 	(
@@ -40,7 +40,7 @@ public class OneMessOneMerchant {
 			mersIdString += merchantsId[i];
 		}
 		System.out.println(mersIdString);
-		List<Merchants> merchantsList = merchantsDao.findMerchantsInfoByMerId(mersIdString);
+		Merchants[] merchantsList = merchantsQuery.queryMerChantByID(mersIdString);
 		
 		System.out.println(merchantsList);
 		

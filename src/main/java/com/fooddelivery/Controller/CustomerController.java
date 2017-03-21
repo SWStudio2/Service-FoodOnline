@@ -18,7 +18,7 @@ import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.Merchants;
-import com.fooddelivery.Model.MerchantsDao;
+
 
 public class CustomerController {
 	// Wire the UserDao used inside this controller.
