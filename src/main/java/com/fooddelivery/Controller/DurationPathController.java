@@ -1,24 +1,17 @@
 package com.fooddelivery.Controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.fooddelivery.Model.Customer;
-import com.fooddelivery.Model.CustomerDao;
-import com.fooddelivery.Model.DeliveryRate;
-import com.fooddelivery.Model.DeliveryRateDao;
-import com.fooddelivery.util.Response;
+import com.fooddelivery.DurationPath.OneMessOneMerchant;
+import com.fooddelivery.util.NodeDetailVer2;
 
+@RestController
 public class DurationPathController {
 	
 	/*@Autowired
@@ -26,8 +19,10 @@ public class DurationPathController {
 	@Autowired
 	private DeliveryRateDao delvDao;*/
 	
-	@RequestMapping(value={"/service/durationPathAndDeliveryFeeResult"} ,method=RequestMethod.POST)
-	public /*ResponseEntity<Response<HashMap>>*/void durationPathAndDeliveryFeeResult(@RequestParam("merchants") String merchants){
+	@RequestMapping(value={"/servicetest/durationPathAndDeliveryFeeResult"} ,method=RequestMethod.POST)
+	@ResponseBody
+	public void durationPathAndDeliveryFeeResult(@RequestParam("merchants") String merchants){ 
+		/*ResponseEntity<Response<HashMap>>*/
 		
 		/*
 		 * method that calculate TimeAndDistanceAllPath
@@ -35,8 +30,13 @@ public class DurationPathController {
 		 * 2 mess
 		 * 3 mess ...
 		 */
+		String latCustomer = "13.7033152";
+		String longCustomer = "100.5023999";
+		int[] merchantId = {6,8,9};
+		OneMessOneMerchant oneMessOneMerchant = new OneMessOneMerchant(merchantId, latCustomer, longCustomer);
+		List<NodeDetailVer2> resultOneMessOneMerchant = oneMessOneMerchant.getResult();
 		
-
+		//return merchants;
 	}
 
 }

@@ -66,5 +66,9 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 		  		, nativeQuery = true)
 	  public List<Merchants> findMerchantsByMerName(@Param("mername") String mername , @Param("date") String date, @Param("time") String time);
 	  
+	  @Query(value = "SELECT * FROM merchants "
+			  + "WHERE mer_id in (:mersid)"
+			  , nativeQuery = true)
+	  public List<Merchants> findMerchantsInfoByMerId(@Param("mersid") String mersid);
 
 }
