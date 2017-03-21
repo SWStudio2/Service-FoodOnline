@@ -100,13 +100,13 @@ public class TimeAndDistanceDetailDao {
 			{
 				System.out.print(" record not found ");
 			}
-//			System.out.println("" + sql);
+			System.out.println("" + sql);
 			ArrayList<TimeAndDistanceDetail> arrTimeDetail = new ArrayList<TimeAndDistanceDetail>();
 			while((rec!=null) && (rec.next()))
             {
                 TimeAndDistanceDetail tmpDetail = new TimeAndDistanceDetail();
-                tmpDetail.setSourceId(rec.getString("bike_path_source_id"));
-                tmpDetail.setDestinationId(rec.getString("bike_path_destination_id"));
+                tmpDetail.setSourceId(rec.getInt("bike_path_source_id"));
+                tmpDetail.setDestinationId(rec.getInt("bike_path_destination_id"));
                 tmpDetail.setDistance(rec.getString("bike_path_distance"));
                 tmpDetail.setDuration(rec.getString("bike_path_duration"));
                 tmpDetail.setPathType(rec.getString("bike_path_type"));

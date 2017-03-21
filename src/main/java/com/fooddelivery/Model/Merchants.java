@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Merchants {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long merID;
+	private int merID;
 	
 	private String merName;
 	
@@ -36,7 +36,7 @@ public class Merchants {
 	
 	private String merPassword;
 	
-	private boolean merRegisFlag;
+	private Boolean merRegisFlag;
 	
 	private int cookingTime;
 
@@ -48,11 +48,11 @@ public class Merchants {
 		this.cookingTime = cookingTime;
 	}
 
-	public long getMerID() {
+	public int getMerID() {
 		return merID;
 	}
 
-	public void setMerID(long merID) {
+	public void setMerID(int merID) {
 		this.merID = merID;
 	}
 

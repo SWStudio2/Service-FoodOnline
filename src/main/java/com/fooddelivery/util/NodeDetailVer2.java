@@ -1,6 +1,10 @@
 package com.fooddelivery.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.fooddelivery.Controller.HomeController;
 import com.fooddelivery.Model.Customer;
@@ -8,9 +12,9 @@ import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 
-public class NodeDetailVer2 {
-	private String station;
-	private ArrayList<Merchants> merList;
+public class NodeDetailVer2 implements Comparator<NodeDetailVer2>{
+	private int station;
+	ArrayList<Merchants> merList;
 	private String latitudeDelivery;
 	private String longtitudeDelivery;
 	private String duration;
@@ -29,10 +33,10 @@ public class NodeDetailVer2 {
 	public void setDistance(String distance) {
 		this.distance = distance;
 	}
-	public String getStation() {
+	public int getStation() {
 		return station;
 	}
-	public void setStation(String station) {
+	public void setStation(int station) {
 		this.station = station;
 	}
 	public ArrayList<Merchants> getMerList() {
@@ -58,45 +62,86 @@ public class NodeDetailVer2 {
 	{
 		NodeDetailVer2 tmpNode;
 		HomeController home = new HomeController();
+		TimeAndDistanceDetail tmpTimeAndDistance = new TimeAndDistanceDetail();
 		int bestTime = 9999;
 		NodeDetailVer2 bestNode = null;
 		int sumAll = 0;
 		for(int i = 0;i<arrNode.size();i++)
 		{
-			int firstNodeTime = 0;
-			sumAll = 0;
+			double sumDistance = 0;
+			double sumDuration = 0;
 			tmpNode = (NodeDetailVer2)arrNode.get(i);
 			Merchants firstMerchant = tmpNode.merList.get(0);
-			String[] timeAndDistance = tmpNode.
-			firstNodeTime = Integer.parseInt(arrDetail[1]);
-			
-			int sumMerChantTime = 0;
+			String[] arrDetail = tmpTimeAndDistance.getTimeAndDuration(tmpTimeDisDetail,tmpNode.station , firstMerchant.getMerID(), "bike");
+			BigDecimal tmpDuration = new BigDecimal(arrDetail[0]);
+			BigDecimal tmpDistance = new BigDecimal(arrDetail[1]);
+			if(firstMerchant.getCookingTime() < tmpDuration.doubleValue())
+			{
+				sumDuration = tmpDuration.doubleValue() + sumDuration;
+			}
+			else
+			{
+				sumDuration = firstMerchant.getCookingTime() + sumDuration;
+			}
+			sumDistance = tmpDistance.doubleValue() + sumDistance;
 			if(tmpNode.merList.size() > 1)
 			{
 				for(int j = 1;j<tmpNode.merList.size();j++)
 				{
 					Merchants merStart = tmpNode.merList.get(j-1);
 					Merchants merEnd = tmpNode.merList.get(j);
-					arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
+					arrDetail = (String[])tmpTimeAndDistance.getTimeAndDuration(tmpTimeDisDetail, merStart.getMerID(), merEnd.getMerID(), "merchant");
+					tmpDuration = new BigDecimal(arrDetail[0]);
+					tmpDistance = new BigDecimal(arrDetail[1]);
 					
-					sumMerChantTime = Integer.parseInt(arrDetail[1]) + sumMerChantTime;
+					sumDuration = tmpDuration.doubleValue() + sumDuration;
+					if(sumDuration < merEnd.getCookingTime())
+					{
+						sumDuration = merEnd.getCookingTime();
+					}
+					sumDistance = tmpDistance.doubleValue() + sumDistance;
 				}								
 			}
 			Merchants endMerchant = tmpNode.merList.get(tmpNode.merList.size()-1);
-			int merchantToCusTime = 0;
-			arrDetail = (String[])home.getDistanceDuration(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
-			merchantToCusTime = Integer.parseInt(arrDetail[1]);
 			
+			arrDetail = (String[])home.getDistanceDuration(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
+			sumDuration = sumDuration + Double.parseDouble(arrDetail[1]);
+			sumDistance = tmpDistance.doubleValue() + sumDistance;
+			
+			tmpNode.distance = ""+sumDistance;
+			tmpNode.duration = ""+sumDuration;
 
-			sumAll = firstNodeTime + sumMerChantTime + merchantToCusTime;
-			if(bestTime > sumAll)
+		}
+		
+		Collections.sort(arrNode, new NodeDetailVer2());
+		ArrayList<NodeDetailVer2> arrTopByDuration = new ArrayList<NodeDetailVer2>();
+		for(int i = 0;i<5;i++)
+		{
+			NodeDetailVer2 tmpNodeTop = (NodeDetailVer2)arrNode.get(i);
+			arrTopByDuration.add(tmpNodeTop);
+		}
+		bestNode = (NodeDetailVer2)arrTopByDuration.get(0);
+		for(int i = 1;i<arrTopByDuration.size();i++)
+		{
+			NodeDetailVer2 tmpNodeTop = (NodeDetailVer2)arrTopByDuration.get(i);
+			if(Double.parseDouble(bestNode.distance) > Double.parseDouble(tmpNodeTop.distance))
 			{
-				bestNode = tmpNode;
-				bestTime = sumAll;
+				bestNode = tmpNodeTop;
 			}
 		}
-		System.out.println("bestTime " + bestTime);
-
 		return bestNode;
+	}
+	@Override
+	public int compare(NodeDetailVer2 o1, NodeDetailVer2 o2) {
+		// TODO Auto-generated method stub
+		if(Double.parseDouble(o1.duration) < Double.parseDouble(o2.duration))
+		{
+			return -1;
+		}
+		else if(Double.parseDouble(o1.duration) > Double.parseDouble(o2.duration))
+		{
+			return 1;
+		}
+		return 0;
 	}
 }

@@ -15,7 +15,7 @@ import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
-import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.MerchantsQuery;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
@@ -39,26 +39,26 @@ public class MessengerController {
 		 ArrayList<Merchants> merChantList = new ArrayList<Merchants>();
 	
 	
-		 Merchants mer1 = new Merchants();
-		 mer1.setMerID(0);
-		 mer1.setMerName("สีลม คอมเพล็กซ์");
-		 mer1.setMerLatitude("13.728330");
-		 mer1.setMerLongtitude("100.535066");
-		 merChantList.add(mer1);
-
-		 Merchants mer2 = new Merchants();
-		 mer2.setMerID(1);
-		 mer2.setMerName("S&P สยามพาราก้อน");
-		 mer2.setMerLatitude("13.74670");
-		 mer2.setMerLongtitude("100.534934");
-		 merChantList.add(mer2);
-
-		 Merchants mer3 = new Merchants();
-		 mer3.setMerID(2);
-		 mer3.setMerName("ข้าวมันไก่ ประตูน้ำ");
-		 mer3.setMerLatitude("13.749648");
-		 mer3.setMerLongtitude("100.542095");
-		 merChantList.add(mer3);		 
+//		 Merchants mer1 = new Merchants();
+//		 mer1.setMerID(0);
+//		 mer1.setMerName("สีลม คอมเพล็กซ์");
+//		 mer1.setMerLatitude("13.728330");
+//		 mer1.setMerLongtitude("100.535066");
+//		 merChantList.add(mer1);
+//
+//		 Merchants mer2 = new Merchants();
+//		 mer2.setMerID(1);
+//		 mer2.setMerName("S&P สยามพาราก้อน");
+//		 mer2.setMerLatitude("13.74670");
+//		 mer2.setMerLongtitude("100.534934");
+//		 merChantList.add(mer2);
+//
+//		 Merchants mer3 = new Merchants();
+//		 mer3.setMerID(2);
+//		 mer3.setMerName("ข้าวมันไก่ ประตูน้ำ");
+//		 mer3.setMerLatitude("13.749648");
+//		 mer3.setMerLongtitude("100.542095");
+//		 merChantList.add(mer3);		 
 					
 			
 		 FullTimeMessenger messenger1 = new FullTimeMessenger();
@@ -194,15 +194,15 @@ public class MessengerController {
 		TimeAndDistanceDetail[] tmpTimeDisDetail = timeDisDao.getTimeAndDistanceDetail(merId);
 		for(int i = 0;i<tmpTimeDisDetail.length;i++)
 		{
-			System.out.println(tmpTimeDisDetail[i].getSourceId());
-			System.out.println(tmpTimeDisDetail[i].getDestinationId());
-			System.out.println(tmpTimeDisDetail[i].getDistance());
-			System.out.println(tmpTimeDisDetail[i].getDuration());
-			System.out.println(tmpTimeDisDetail[i].getPathType());
+			System.out.println("getSourceId " + tmpTimeDisDetail[i].getSourceId());
+			System.out.println("getDestinationId " + tmpTimeDisDetail[i].getDestinationId());
+			System.out.println("getDistance " + tmpTimeDisDetail[i].getDistance());
+			System.out.println("getDuration " + tmpTimeDisDetail[i].getDuration());
+			System.out.println("getPathType " + tmpTimeDisDetail[i].getPathType());
 			System.out.println();
 		}
 		
-		MerchantsDao merDao = new MerchantsDao();
+		MerchantsQuery merDao = new MerchantsQuery();
 		Merchants[] merList = merDao.queryMerChantByID(merId);
 		ArrayList<Integer> indexPos = new ArrayList<Integer>();
 		for(int i = 0;i<merId.length;i++)
@@ -220,7 +220,7 @@ public class MessengerController {
 			arrResult.add(tmpValue);
 		}
 		
-		String[] idListStationFullTime = getFullTimeIdAvailable(tmpTimeDisDetail);
+		int[] idListStationFullTime = getFullTimeIdAvailable(tmpTimeDisDetail);
 		
 		ArrayList<NodeDetailVer2> arrNode = new ArrayList<NodeDetailVer2>();
 		for(int i = 0;i<idListStationFullTime.length;i++)
@@ -246,13 +246,14 @@ public class MessengerController {
 			}
 		}
 		
-		
+		NodeDetailVer2 a = new NodeDetailVer2();
+		a = a.getBestNodeDetail(arrNode, tmpTimeDisDetail);
 		return "";
 	}
 	
-	public static String[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)
+	public static int[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)
 	{
-		ArrayList<String> arrMessId = new ArrayList<String>();
+		ArrayList<Integer> arrMessId = new ArrayList<Integer>();
 		for(int i = 0;i<tmp.length;i++)
 		{
 			if(tmp[i].getPathType().equals("bike") && !arrMessId.contains(tmp[i].getSourceId()))
@@ -261,7 +262,7 @@ public class MessengerController {
 			}
 		}
 		
-		String[] idList = new String[arrMessId.size()];
+		int[] idList = new int[arrMessId.size()];
 		for(int i = 0;i<arrMessId.size();i++)
 		{
 			idList[i] = arrMessId.get(i);

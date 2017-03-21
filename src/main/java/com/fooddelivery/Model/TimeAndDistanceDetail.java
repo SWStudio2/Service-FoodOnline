@@ -2,21 +2,21 @@ package com.fooddelivery.Model;
 
 public class TimeAndDistanceDetail {
 	
-	private String sourceId;
-	private String destinationId;
+	private int sourceId;
+	private int destinationId;
 	private String distance;
 	private String duration;
 	private String pathType;
-	public String getSourceId() {
+	public int getSourceId() {
 		return sourceId;
 	}
-	public void setSourceId(String sourceId) {
+	public void setSourceId(int sourceId) {
 		this.sourceId = sourceId;
 	}
-	public String getDestinationId() {
+	public int getDestinationId() {
 		return destinationId;
 	}
-	public void setDestinationId(String destinationId) {
+	public void setDestinationId(int destinationId) {
 		this.destinationId = destinationId;
 	}
 	public String getDistance() {
@@ -38,12 +38,12 @@ public class TimeAndDistanceDetail {
 		this.pathType = pathType;
 	}
 	
-	public static String[] getTimeAndDuration(TimeAndDistanceDetail[] tmpDetail,String source,String destination,String pathType)
+	public static String[] getTimeAndDuration(TimeAndDistanceDetail[] tmpDetail,int source,int destination,String pathType)
 	{
 		String[] valueList = new String[2];
 		for(int i = 0;i<tmpDetail.length;i++)
 		{
-			if(tmpDetail[i].getSourceId().equals(source) && tmpDetail[i].getDestinationId().equals(destination) && tmpDetail[i].getPathType().equals(pathType))
+			if(tmpDetail[i].getSourceId() == source && tmpDetail[i].getDestinationId() == destination && tmpDetail[i].getPathType().equals(pathType))
 			{
 				valueList[0] = tmpDetail[i].getDuration();
 				valueList[1] = tmpDetail[i].getDistance();
