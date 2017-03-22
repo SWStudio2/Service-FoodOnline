@@ -16,29 +16,44 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Merchants {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "MER_ID")
 	private int merID;
 	
+	@Column(name = "MER_NAME")
 	private String merName;
 	
+	@Column(name = "MER_ADDRESS")
 	private String merAddress;
 	
+	@Column(name = "MER_LATITUDE")
 	private String merLatitude;
 	
+	@Column(name = "MER_LONGTITUDE") 
 	private String merLongtitude;
 	
+	@Column(name = "MER_CONTACT_NUMBER")
 	private String merContactNumber;
 	
+	@Column(name = "MER_PERCENT_SHARE")
 	private Double merPercentShare;
 	
+	@Column(name = "MER_OPEN_STATUS")
 	private String merOpenStatus;
 	
+	@Column(name = "MER_USERNAME")
 	private String merUserName;
 	
+	@Column(name = "MER_PASSWORD")
 	private String merPassword;
 	
-	private Boolean merRegisFlag;
+	@Column(name = "MER_REGIS_FLAG")
+	private Integer merRegisFlag;
 	
-	private int cookingTime;
+	@Column(name = "MER_PIC_NAME")
+	private String merPicName;
+	
+	@Column(name = "MER_COOKTIME")
+	private Integer cookingTime;
 
 	public int getCookingTime() {
 		return cookingTime;
@@ -128,13 +143,27 @@ public class Merchants {
 		this.merPassword = merPassword;
 	}
 
-	public boolean isMerRegisFlag() {
+	public Integer getMerRegisFlag() {
 		return merRegisFlag;
 	}
 
-	public void setMerRegisFlag(boolean merRegisFlag) {
+	public void setMerRegisFlag(Integer merRegisFlag) {
 		this.merRegisFlag = merRegisFlag;
 	}
+
+	public String getMerPicName() {
+		return merPicName;
+	}
+
+	public void setMerPicName(String merPicName) {
+		this.merPicName = merPicName;
+	}
+
+	public void setCookingTime(Integer cookingTime) {
+		this.cookingTime = cookingTime;
+	}
+
+	
 	
 	
 }
