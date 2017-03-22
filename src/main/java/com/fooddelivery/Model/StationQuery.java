@@ -6,27 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.transaction.Transactional;
+public class StationQuery {
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-
-@Transactional
-public class MerchantsQuery {
-
-	  
-	  public static Merchants[] queryMerChantByID(String mersIdString)
-	  {
+	public static Station[] getStationAvailable()
+	{
 		  Connection connect = null;
 			Statement s = null;
 			String URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc";
 			URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc?useUnicode=true&amp;characterEncoding=UTF-8";
 			String USER = "ba8167e655c97d";
 			String PASSWORD = "fcc5664d";
-			Merchants[] merList = null;
+			Station[] stationList = null;
 			
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -42,11 +33,11 @@ public class MerchantsQuery {
 				String sql = "";
 				
 				StringBuffer sqlBuffer = new StringBuffer();
-
-				sqlBuffer.append("SELECT MER_ID,MER_LATITUDE,MER_LONGTITUDE,MER_COOKTIME \n ");
-				sqlBuffer.append("FROM merchants  \n ");
-				sqlBuffer.append("Where mer_id in (" + mersIdString +") \n ");
-
+							  
+				sqlBuffer.append("SELECT bike_station_id,bike_station_latitude,bike_station_longitude  \n ");
+				sqlBuffer.append("FROM bike_station WHERE  bike_station_id IN (SELECT DISTINCT full_biKe_station_now  \n ");
+				sqlBuffer.append("FROM fulltime_messenger  \n ");
+				sqlBuffer.append("WHERE full_status IN ('stand by','back to station'))  \n ");
 				
 				sql = sqlBuffer.toString();	
 				
@@ -57,21 +48,20 @@ public class MerchantsQuery {
 					System.out.print(" record not found ");
 				}
 //				System.out.println("" + sql);
-				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
+				ArrayList<Station> arrStation = new ArrayList<Station>();
 				while((rec!=null) && (rec.next()))
 	            {
-					Merchants tmpMerchant = new Merchants();
-					tmpMerchant.setMerID(rec.getInt("MER_ID"));
-					tmpMerchant.setMerLatitude(rec.getString("MER_LATITUDE"));
-					tmpMerchant.setMerLongtitude(rec.getString("MER_LONGTITUDE"));
-					tmpMerchant.setCookingTime(rec.getInt("MER_COOKTIME"));
-					arrMerchant.add(tmpMerchant);
+					Station tmpStation = new Station();
+					tmpStation.setStationId(rec.getInt("bike_station_id"));
+					tmpStation.setStationLantitude(rec.getString("bike_station_latitude"));
+					tmpStation.setStationLongtitude(rec.getString("bike_station_longitude"));
+					arrStation.add(tmpStation);
 	            }
 				
-				merList = new Merchants[arrMerchant.size()];
-				for(int i = 0;i<arrMerchant.size();i++)
+				stationList = new Station[arrStation.size()];
+				for(int i = 0;i<arrStation.size();i++)
 				{
-					merList[i] = (Merchants)arrMerchant.get(i);
+					stationList[i] = (Station)arrStation.get(i);
 				}
 				
 			} catch (Exception e) {
@@ -88,6 +78,6 @@ public class MerchantsQuery {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}				  
-		  return merList;
-	  }
+		  return stationList;
+	}
 }

@@ -16,6 +16,8 @@ import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsQuery;
+import com.fooddelivery.Model.Station;
+import com.fooddelivery.Model.StationQuery;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
@@ -226,17 +228,18 @@ public class MessengerController {
 			tmpValue = tmpValue.replace("]", "");
 			arrResult.add(tmpValue);
 		}
-		
+		StationQuery stationQue = new StationQuery();
 		int[] idListStationFullTime = getFullTimeIdAvailable(tmpTimeDisDetail);
+		Station[] staList = stationQue.getStationAvailable();
 		
 		ArrayList<NodeDetailVer2> arrNode = new ArrayList<NodeDetailVer2>();
-		for(int i = 0;i<idListStationFullTime.length;i++)
+		for(int i = 0;i<staList.length;i++)
 		{
 
 			for(int j = 0;j<arrResult.size();j++)
 			{
 				NodeDetailVer2 tmpNodeDetail = new NodeDetailVer2();
-				tmpNodeDetail.setStation(idListStationFullTime[i]);
+				tmpNodeDetail.setStation(staList[i].getStationId());
 				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
 				String[] postList = arrResult.get(j).split("\\,");
 				for(int k = 0;k<postList.length;k++)
@@ -255,7 +258,7 @@ public class MessengerController {
 		
 		NodeDetailVer2 a = new NodeDetailVer2();
 		a = a.getBestNodeDetail(arrNode, tmpTimeDisDetail);
-		return "";
+		return a.getDuration();
 	}
 	
 	public static int[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)

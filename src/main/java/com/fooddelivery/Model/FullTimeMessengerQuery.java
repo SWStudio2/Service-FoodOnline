@@ -6,19 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.transaction.Transactional;
+public class FullTimeMessengerQuery {
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-
-@Transactional
-public class MerchantsQuery {
-
-	  
-	  public static Merchants[] queryMerChantByID(String mersIdString)
+	public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
 		  Connection connect = null;
 			Statement s = null;
