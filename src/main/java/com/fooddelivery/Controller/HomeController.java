@@ -1,4 +1,4 @@
-package com.fooddelivery.Controller;
+package com.fooddelivery.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
