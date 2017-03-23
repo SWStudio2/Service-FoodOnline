@@ -1,8 +1,5 @@
 package com.google.maps.mainProgram;
 
-import com.fooddelivery.Controller.MessengerController;
-import com.fooddelivery.Controller.UserController;
-
 public class MainProg {
 
 //	public static void main(String[] args) {
