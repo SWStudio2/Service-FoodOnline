@@ -2,10 +2,9 @@ package com.fooddelivery.util;
 
 import java.util.ArrayList;
 
-import com.fooddelivery.Controller.HomeController;
-import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.Merchants;
+import com.fooddelivery.controller.HomeController;
 
 public class NodeDetail {
 	private FullTimeMessenger fullMess;

@@ -2,16 +2,12 @@ package com.fooddelivery.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
-import com.fooddelivery.Controller.HomeController;
-import com.fooddelivery.Model.Customer;
-import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
+import com.fooddelivery.controller.HomeController;
 
 public class NodeDetailVer2 implements Comparator<NodeDetailVer2>{
 	private int station;
