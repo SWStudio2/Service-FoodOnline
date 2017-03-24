@@ -23,6 +23,7 @@ import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
 import com.fooddelivery.util.NodeDetail;
 import com.fooddelivery.util.NodeDetailVer2;
+import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.Utils;
 import com.google.api.client.json.Json;
 
@@ -92,8 +93,7 @@ public class MessengerController {
 		 String latitudeCus = "13.734116";//คณะพาณิชยศาสตร์และการบัญชี
 		 String longtitudeCus = "100.530050";
 	    if(fullTimeMessList.size() > 0)
-	    {
-	    	
+	    {   	
 	    	if(merChantList.size() == 1)
 	    	{
 	    		Merchants tmpMer = merChantList.get(0);
@@ -188,21 +188,11 @@ public class MessengerController {
 
 	}
 	
-	public String searchFuncOneMessenger(String[] merId,String cus_Latitude,String cus_Longtitude) {
+	public String searchFuncOneMessenger(String[] merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
 		
 		//Define id Merchant from interface
 
 		TimeAndDistanceDetailDao timeDisDao = new TimeAndDistanceDetailDao();
-		TimeAndDistanceDetail[] tmpTimeDisDetail = timeDisDao.getTimeAndDistanceDetail(merId);
-		for(int i = 0;i<tmpTimeDisDetail.length;i++)
-		{
-			System.out.println("getSourceId " + tmpTimeDisDetail[i].getSourceId());
-			System.out.println("getDestinationId " + tmpTimeDisDetail[i].getDestinationId());
-			System.out.println("getDistance " + tmpTimeDisDetail[i].getDistance());
-			System.out.println("getDuration " + tmpTimeDisDetail[i].getDuration());
-			System.out.println("getPathType " + tmpTimeDisDetail[i].getPathType());
-			System.out.println();
-		}
 		String merIdAdjust = "";
 		for(int i = 0;i<merId.length;i++)
 		{
@@ -229,17 +219,16 @@ public class MessengerController {
 			arrResult.add(tmpValue);
 		}
 		StationQuery stationQue = new StationQuery();
-		int[] idListStationFullTime = getFullTimeIdAvailable(tmpTimeDisDetail);
 		Station[] staList = stationQue.getStationAvailable();
 		
-		ArrayList<NodeDetailVer2> arrNode = new ArrayList<NodeDetailVer2>();
+		ArrayList<RoutePathDetail> arrNode = new ArrayList<RoutePathDetail>();
 		for(int i = 0;i<staList.length;i++)
 		{
 
 			for(int j = 0;j<arrResult.size();j++)
 			{
-				NodeDetailVer2 tmpNodeDetail = new NodeDetailVer2();
-				tmpNodeDetail.setStation(staList[i].getStationId());
+				RoutePathDetail tmpNodeDetail = new RoutePathDetail();
+				tmpNodeDetail.setStation(staList[i]);
 				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
 				String[] postList = arrResult.get(j).split("\\,");
 				for(int k = 0;k<postList.length;k++)
@@ -256,9 +245,13 @@ public class MessengerController {
 			}
 		}
 		
-		NodeDetailVer2 a = new NodeDetailVer2();
-		a = a.getBestNodeDetail(arrNode, tmpTimeDisDetail);
-		return a.getDuration();
+		RoutePathDetail bestNode = new RoutePathDetail();
+		bestNode = bestNode.getBestNodeDetail(arrNode);
+		for(int i = 0;i<bestNode.getMerList().size();i++)
+		{
+			Merchants mer = bestNode.getMerList().get(i);
+		}
+		return bestNode.getDuration();
 	}
 	
 	public static int[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)

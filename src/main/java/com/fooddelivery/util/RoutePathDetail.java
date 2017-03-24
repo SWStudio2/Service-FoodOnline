@@ -56,7 +56,7 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 		this.longtitudeDelivery = longtitudeDelivery;
 	}
 	
-	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode)
+	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode) throws InterruptedException
 	{
 		RoutePathDetail tmpNode;
 		HomeController home = new HomeController();
@@ -88,15 +88,18 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 				{
 					Merchants merStart = tmpNode.merList.get(j-1);
 					Merchants merEnd = tmpNode.merList.get(j);
+					
 					arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
+					Thread.sleep(1000);
 					tmpDuration = new BigDecimal(arrDetail[0]);
 					tmpDistance = new BigDecimal(arrDetail[1]);
-					
-					sumDuration = tmpDuration.doubleValue() + sumDuration;
+
+					sumDuration = tmpDuration.doubleValue() + sumDuration;				
 					if(sumDuration < merEnd.getCookingTime())
 					{
 						sumDuration = merEnd.getCookingTime();
 					}
+					
 					sumDistance = tmpDistance.doubleValue() + sumDistance;
 				}								
 			}
