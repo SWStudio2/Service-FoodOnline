@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.fooddelivery.Controller.HomeController;
+import com.fooddelivery.controller.HomeController;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.Station;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
