@@ -180,19 +180,23 @@ public class MessengerController {
 			}
 		}
 		
-		double chooseTime = Double.parseDouble(bestTimeOneMessThreeService);
+		double chooseTime = 0;
 		double diffValue = 0;
-		if(!bestTimeTwoMessTwoService.equals(""))
-		{
-			diffValue = chooseTime - Double.parseDouble(bestTimeTwoMessTwoService);
-			if(diffValue > 10)
+		if (!bestTimeOneMessThreeService.equals("")){
+			chooseTime = Double.parseDouble(bestTimeOneMessThreeService);
+			if(!bestTimeTwoMessTwoService.equals(""))
 			{
-				chooseTime = Double.parseDouble(bestTimeTwoMessTwoService);
+				diffValue = chooseTime - Double.parseDouble(bestTimeTwoMessTwoService);
+				if(diffValue > 10)
+				{
+					chooseTime = Double.parseDouble(bestTimeTwoMessTwoService);
+				}
 			}
 		}
 		
 		if(!bestTimeOneMessOneService.equals(""))
 		{
+			chooseTime = Double.parseDouble(bestTimeOneMessOneService);
 			diffValue = chooseTime - Double.parseDouble(bestTimeOneMessOneService);
 			if(diffValue > 10)
 			{

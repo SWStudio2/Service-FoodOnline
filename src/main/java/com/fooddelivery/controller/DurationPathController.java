@@ -34,7 +34,10 @@ public class DurationPathController {
 
 	@RequestMapping(value={"/service/durationPathAndDeliveryFeeResult"} ,method=RequestMethod.POST)
 	@ResponseBody
-	public void durationPathAndDeliveryFeeResult(@RequestParam("merchants") int[] merchantsId){ 
+	public List<NodeDetailVer2> durationPathAndDeliveryFeeResult(
+			@RequestParam("merchants") int[] merchantsId,
+			@RequestParam("cusLatitude") String cusLatitude,
+			@RequestParam("cusLongtitude") String cusLongtitude){ 
 		
 		/*
 		 * method that calculate TimeAndDistanceAllPath
@@ -43,13 +46,19 @@ public class DurationPathController {
 		 * 3 mess ...
 		 */
 		try {
-			String latCustomer = "13.7033152";
-			String longCustomer = "100.5023999";
-			int amountMerchants = merchantsId.length;
+			String latCustomer = cusLatitude;/*"13.7033152";*/
+			String longCustomer = cusLongtitude;/*"100.5023999";*/
+			//int amountMerchants = merchantsId.length;
 			
 			List<Integer> merchantsIdList = convertArrayToListInteger(merchantsId);
 			//info Merchants
-			List<Merchants> merchantsList = merchantsDao.getMerchantsByMerIds(merchantsIdList);
+			List<Merchants> merchantsList;
+			//if (merchantsId.size() == 1) {
+			//	merchantsList = merchantsDao.getMerchantByMerId(String.valueOf(merchantsId.get(0))/*merchantsIdList*/);
+			//}
+			//else {
+				merchantsList = merchantsDao.getMerchantsByMerIds(merchantsIdList/*merchantsIdList*/);
+			//}
 			//System.out.println(merchantsList.size());
 			HashMap<String, Merchants> merchantsHash = convertMerchantsListToHashMap(merchantsList);
 			
@@ -67,10 +76,12 @@ public class DurationPathController {
 			System.out.println("***************RESULT*****************");
 			System.out.println("**************************************");
 			printResult(result);
+			return result;
 			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		
 	}
