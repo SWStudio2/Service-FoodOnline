@@ -266,7 +266,7 @@ public class MessengerController {
 				
 				tmpNodeDetail.setMerList(arrMerchant);
 				tmpNodeDetail.setLatitudeDelivery(cus_Latitude);
-				tmpNodeDetail.setLatitudeDelivery(cus_Longtitude);
+				tmpNodeDetail.setLongtitudeDelivery(cus_Longtitude);
 				
 				arrNode.add(tmpNodeDetail);
 			}
