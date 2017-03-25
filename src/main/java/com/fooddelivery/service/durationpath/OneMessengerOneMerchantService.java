@@ -122,7 +122,7 @@ public class OneMessengerOneMerchantService {
 		
 		resultAll = sortResult(resultAll);
 		result = getBestResult(resultAll, merchantsHash);
-		
+
 		return result;
 	}
 	
