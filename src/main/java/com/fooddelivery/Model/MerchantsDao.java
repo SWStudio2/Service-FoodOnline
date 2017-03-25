@@ -35,7 +35,7 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 	  		+ "and work_close_time > :time "
 	  		+ "and work_day_status = 'open' )" 
 	  		, nativeQuery = true)
-	  public List<Merchants> findMerchantsByStatus(@Param("date") String date, @Param("time") String time);
+	  public List<Merchants> findByStatus(@Param("date") String date, @Param("time") String time);
 	  
 	  
 	  @Query(value = "SELECT * FROM merchants "
@@ -47,7 +47,7 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 		  		+ "and work_day_status = 'open' )"
 		  		+ "and mer_name like concat('%',:mername,'%') " 
 		  		, nativeQuery = true)
-	  public List<Merchants> findMerchantsByMerName(@Param("mername") String mername , @Param("date") String date, @Param("time") String time);
+	  public List<Merchants> findByMerName(@Param("mername") String mername , @Param("date") String date, @Param("time") String time);
 	  
 	  @Query(value = "select * from merchants" , nativeQuery = true )
 	  public List<Merchants> findAllMerchants();
