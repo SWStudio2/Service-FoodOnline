@@ -1,5 +1,7 @@
 package com.fooddelivery.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -205,10 +207,11 @@ public class MessengerController {
 		}		
 	  
 	  // Return response
-	  String estimatedTime = "1.2";
-	  estimatedTime = ""+chooseTime;
+	  String estimatedTime = "";
+	  BigDecimal valueAdjust = new BigDecimal(chooseTime);
+	  valueAdjust = valueAdjust.setScale(2, RoundingMode.HALF_UP);
 	  Map<String, Object> dataMap = new HashMap<String, Object>();
-
+	  estimatedTime = valueAdjust.toString();
 	  dataMap.put("estimatedTime",estimatedTime);
 
 	  return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Estimated time successfully", dataMap));
