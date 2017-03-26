@@ -19,10 +19,10 @@ public class OptionsMenu {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long option_id;
+	private int option_id;
 	
 	@NotNull
-	private long option_menu_id;
+	private int option_menu_id;
 	
 	@NotNull
 	private String option_name;
@@ -35,13 +35,13 @@ public class OptionsMenu {
 	
 	public OptionsMenu() { }
 
-	public OptionsMenu(long optionId) { 
+	public OptionsMenu(int optionId) { 
 	   this.option_id = optionId;
 	}
 	  
 	public OptionsMenu
 	(	
-			long optionMenuId, 
+			int optionMenuId, 
 			String optionName, 
 			float optionPrice, 
 			String optionStatus
@@ -56,7 +56,7 @@ public class OptionsMenu {
 		return option_id;
 	}
 
-	public void setOptionId(long optionId) {
+	public void setOptionId(int optionId) {
 		this.option_id = optionId;
 	}
 
@@ -64,7 +64,7 @@ public class OptionsMenu {
 		return option_menu_id;
 	}
 
-	public void setOptionMenuId(long optionMenuId) {
+	public void setOptionMenuId(int optionMenuId) {
 		this.option_menu_id = optionMenuId;
 	}
 

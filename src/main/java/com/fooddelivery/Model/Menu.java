@@ -3,6 +3,7 @@ package com.fooddelivery.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +37,8 @@ public class Menu {
 	
 	@NotNull
 	private String menu_picName;
+	
+	private List<OptionsMenu> opt_menuList;
 	
 	public Menu() { }
 
@@ -104,6 +107,14 @@ public class Menu {
 
 	public void setMenu_picName(String menu_picName) {
 		this.menu_picName = menu_picName;
+	}
+
+	public List<OptionsMenu> getOpt_menuList() {
+		return opt_menuList;
+	}
+
+	public void setOpt_menuList(List<OptionsMenu> opt_menuList) {
+		this.opt_menuList = opt_menuList;
 	}
 	
 	
