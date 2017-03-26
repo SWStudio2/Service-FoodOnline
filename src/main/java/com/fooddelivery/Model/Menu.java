@@ -19,10 +19,10 @@ public class Menu {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long menu_id;
+	private int menu_id;
 	
 	@NotNull
-	private long menu_mer_id;
+	private int menu_mer_id;
 	
 	@NotNull
 	private String menu_name;
@@ -33,30 +33,36 @@ public class Menu {
 	@NotNull
 	private String menu_status;
 	
+	
+	@NotNull
+	private String menu_picName;
+	
 	public Menu() { }
 
-	public Menu(long menuId) { 
+	public Menu(int menuId) { 
 	   this.menu_id = menuId;
 	}
 	  
 	public Menu
 	(	
-			long menuMerId, 
+			int menuMerId, 
 			String menuName, 
 			float menuPrice, 
-			String menuStatus
+			String menuStatus,
+			String menu_PicName
 	) {
 	  this.menu_mer_id = menuMerId;
 	  this.menu_name = menuName;
 	  this.menu_price = menuPrice;
 	  this.menu_status = menuStatus;
+	  this.menu_picName = menu_PicName;
 	}
 	
 	public long getMenuId() {
 		return menu_id;
 	}
 
-	public void setMenuId(long menuId) {
+	public void setMenuId(int menuId) {
 		this.menu_id = menuId;
 	}
 
@@ -64,7 +70,7 @@ public class Menu {
 		return menu_mer_id;
 	}
 
-	public void setMenuMerId(long menuMerId) {
+	public void setMenuMerId(int menuMerId) {
 		this.menu_mer_id = menuMerId;
 	}
 
@@ -91,4 +97,14 @@ public class Menu {
 	public void setMenuStatus(String menuStatus) {
 		this.menu_status = menuStatus;
 	}
+
+	public String getMenu_picName() {
+		return menu_picName;
+	}
+
+	public void setMenu_picName(String menu_picName) {
+		this.menu_picName = menu_picName;
+	}
+	
+	
 }
