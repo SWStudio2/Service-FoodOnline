@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -33,11 +35,12 @@ public class Menu {
 	
 	@NotNull
 	private String menu_status;
-	
-	
+
 	@NotNull
 	private String menu_picName;
 	
+	@OneToMany
+	@JoinColumn(name = "options_menu")
 	private List<OptionsMenu> opt_menuList;
 	
 	public Menu() { }

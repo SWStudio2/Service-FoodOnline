@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fooddelivery.Model.Menu;
 import com.fooddelivery.Model.MenuQuery;
@@ -17,6 +18,7 @@ import com.fooddelivery.Model.OptionsMenu;
 import com.fooddelivery.Model.OptionsMenuQuery;
 import com.fooddelivery.util.Response;
 
+@RestController
 public class MenuController {
 	@RequestMapping(value = "/service/merchant/{merId}", method = RequestMethod.GET)
     public ResponseEntity<Response<List<Menu>>> getMenuByMerId(
