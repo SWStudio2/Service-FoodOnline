@@ -2,7 +2,6 @@ package com.fooddelivery.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -38,7 +37,7 @@ public class Menu {
 
 	@NotNull
 	private String menu_picName;
-	
+
 	@OneToMany
 	@JoinColumn(name = "options_menu")
 	private List<OptionsMenu> opt_menuList;

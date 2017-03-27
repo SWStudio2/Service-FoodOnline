@@ -2,8 +2,6 @@ package com.fooddelivery.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,6 +43,7 @@ public class OptionsMenu {
 			String optionName, 
 			float optionPrice, 
 			String optionStatus
+			
 	) {
 	  this.option_menu_id = optionMenuId;
 	  this.option_name = optionName;

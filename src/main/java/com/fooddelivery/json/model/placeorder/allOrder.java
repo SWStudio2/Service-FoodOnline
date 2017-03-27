@@ -30,7 +30,7 @@ public class allOrder {
 		return orderDeliveryPrice;
 	}
 	
-	public List<merchant> merchant() {
+	public List<merchant> getMerchant() {
 		return merchant;
 	}
 }

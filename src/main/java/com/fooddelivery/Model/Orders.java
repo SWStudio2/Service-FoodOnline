@@ -1,7 +1,7 @@
 package com.fooddelivery.Model;
 
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,13 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
@@ -64,7 +61,7 @@ public class Orders {
 	@NotNull
 	@Column(name = "order_distance")
 	private double order_distance;
-	
+
 	@NotNull
 	@Column(name = "order_status")
 	private String order_status;
@@ -178,7 +175,7 @@ public class Orders {
 		return order_distance;
 	}
 	
-	public void setOrderStatud(String orderStatus) {
+	public void setOrderStatus(String orderStatus) {
 		this.order_status = orderStatus;
 	}
 	
