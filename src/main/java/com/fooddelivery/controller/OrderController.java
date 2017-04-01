@@ -23,11 +23,14 @@ import com.fooddelivery.Model.OrderDetail;
 import com.fooddelivery.Model.Orders;
 import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.OrdersDetailDao;
+import com.fooddelivery.Model.SequenceOrders;
+import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.json.model.placeorder.PlaceOrder;
 import com.fooddelivery.json.model.placeorder.allOrder;
 import com.fooddelivery.json.model.placeorder.merchant;
 import com.fooddelivery.json.model.placeorder.order;
 import com.fooddelivery.util.Response;
+import com.fooddelivery.util.VariableText;
 
 @RestController
 public class OrderController {
@@ -40,6 +43,9 @@ public class OrderController {
 	
 	@Autowired
 	private OrdersDetailDao orderDetailDao;
+	
+	@Autowired
+	private SequenceOrdersDao sequenceOrdersDao;
 	
 	private String ORDER_STATUS = "Pending";
 	
@@ -80,14 +86,9 @@ public class OrderController {
 			
 			ordersDao.save(orders);
 			
-			System.out.println("id: " + orders.getOrderId());
+			//System.out.println("id: " + orders.getOrderId());
 			
-			/*ordersDao.insertOrder(placeOrder.getCusId(), allorder.getOrderAddress(), 
-					allorder.getOrderAddressLatitude(), allorder.getOrderAddressLongitude(), 
-					dateFormat.format(date), dateFormat.format(date), 
-					deliveryRate, allorder.getOrderPrice(), 25.5, ORDER_STATUS);*/
-			
-			//orderDetail
+			//orderDetail & sequenceOrderDetail
 			List<merchant> merchants = allorder.getMerchant();
 			for (int i=0; i<merchants.size(); i++) {
 				merchant merchant = merchants.get(i);
@@ -101,17 +102,20 @@ public class OrderController {
 					orderDetail.setMenuId(order.getMenuId());
 					orderDetail.setMerId(merchant.getMerId());
 					orderDetailDao.save(orderDetail);
+					
+					SequenceOrders sequenceOrders = new SequenceOrders();
+					sequenceOrders.setSequenceOrderId(orders.getOrderId());
+					sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
+					sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT);
+					sequenceOrdersDao.save(sequenceOrders);
+					
 				}
 			}
 			
-			
-			
 			//sequenceOrderDetail
 			
-			
-			
-			  result = String.valueOf(placeOrder.getCusId());
-			  dataMap.put("result",result);
+			result = String.valueOf("Finish");
+			dataMap.put("result",result);
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());

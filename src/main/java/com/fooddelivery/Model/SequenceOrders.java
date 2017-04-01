@@ -25,19 +25,15 @@ public class SequenceOrders {
 	@Column(name = "seqor_mer_id")
 	private long seqor_mer_id;
 	
-	@NotNull
 	@Column(name = "seqor_sort")
 	private String seqor_sort;
 	
-	@NotNull
 	@Column(name = "seqor_receive_status")
 	private String seqor_receive_status;
 	
-	@NotNull
 	@Column(name = "seqor_mess_id")
 	private long seqor_mess_id;
 	
-	@NotNull
 	@Column(name = "seqor_type_mess")
 	private String seqor_type_mess;
 	
@@ -81,11 +77,11 @@ public class SequenceOrders {
 		return seqor_id;
 	}
 	
-	public void setSequenceOderMerchantId(long sequenceOderMerchantId) {
+	public void setSequenceOrderMerchantId(long sequenceOderMerchantId) {
 		this.seqor_mer_id = sequenceOderMerchantId;
 	}
 	
-	public long getSequenceOderMerchantId() {
+	public long getSequenceOrderMerchantId() {
 		return seqor_mer_id;
 	}
 	

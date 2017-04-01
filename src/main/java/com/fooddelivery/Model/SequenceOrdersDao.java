@@ -21,7 +21,7 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 
 	/*
 	 * "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)"*/
-	@Modifying
+	/*@Modifying
 	@Query(value = "insert into sequence_orders (seqor_mer_id, seqor_sort, "
 			+ "seqor_receive_status, seqor_mess_id, seqor_type_mess,"
 			+ "seqor_order_id, seqor_cook_status) values ("
@@ -36,7 +36,7 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 			 @Param("seqor_mess_id") String seqor_mess_id,
 			 @Param("seqor_type_mess") String seqor_type_mess,
 			 @Param("seqor_order_id") String seqor_order_id,
-			 @Param("seqor_cook_status") String seqor_cook_status);
+			 @Param("seqor_cook_status") String seqor_cook_status);*/
 	 
 	
 }
