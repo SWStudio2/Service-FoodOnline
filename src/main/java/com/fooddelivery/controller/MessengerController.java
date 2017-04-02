@@ -34,6 +34,7 @@ import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
 import com.fooddelivery.service.durationpath.OneMessengerOneMerchantService;
+import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
 import com.fooddelivery.util.NodeDetail;
 import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.Response;
@@ -146,7 +147,7 @@ public class MessengerController {
 		String bestTimeOneMessOneService = "";
 		String bestTimeTwoMessTwoService = "";
 		String bestTimeOneMessThreeService = "";
-
+		
 		if(list.size() == 1)
 		{
 			OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
@@ -175,36 +176,60 @@ public class MessengerController {
 		else if(list.size() == 3)
 		{
 			try {
+				//Mike
 				bestTimeOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+				//YUI
+				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
+				bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+				//MINT
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				double time = 99;
+				for(int i = 0;i<listNode.size();i++)
+				{
+					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+					if(time > Double.parseDouble(node.getDuration()))
+					{
+						time = Double.parseDouble(node.getDuration());
+					}	
+				}
+				bestTimeOneMessOneService = "" + time;				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+		double oneMessValue = 99d;
+		double twoMessValue = 99d;
+		double threeMessValue = 99d;		
 		double chooseTime = 0;
 		double diffValue = 0;
+		
 		if (!bestTimeOneMessThreeService.equals("")){
-			chooseTime = Double.parseDouble(bestTimeOneMessThreeService);
-			if(!bestTimeTwoMessTwoService.equals(""))
-			{
-				diffValue = chooseTime - Double.parseDouble(bestTimeTwoMessTwoService);
-				if(diffValue > 10)
-				{
-					chooseTime = Double.parseDouble(bestTimeTwoMessTwoService);
-				}
-			}
+			oneMessValue = Double.parseDouble(bestTimeOneMessThreeService);
+		}
+
+		if (!bestTimeTwoMessTwoService.equals("")){
+			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService);
 		}
 		
-		if(!bestTimeOneMessOneService.equals(""))
+		if (!bestTimeOneMessOneService.equals("")){
+			threeMessValue = Double.parseDouble(bestTimeOneMessOneService);
+		}
+		
+		chooseTime = oneMessValue;
+
+		diffValue = chooseTime - twoMessValue;
+		if(diffValue > 10)
 		{
-			chooseTime = Double.parseDouble(bestTimeOneMessOneService);
-			diffValue = chooseTime - Double.parseDouble(bestTimeOneMessOneService);
+			chooseTime = twoMessValue;
+			diffValue = twoMessValue - threeMessValue;
 			if(diffValue > 10)
 			{
-				chooseTime = Double.parseDouble(bestTimeOneMessOneService);
+				chooseTime = threeMessValue;
 			}
-		}		
+		}
+			
 	  
 	  // Return response
 	  String estimatedTime = "";
