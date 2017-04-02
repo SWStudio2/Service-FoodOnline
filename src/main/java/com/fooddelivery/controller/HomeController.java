@@ -183,7 +183,7 @@ public class HomeController {
 					if(timeURmspace.equalsIgnoreCase("hours")){
 						duraF = duraF*60;
 					}else if(timeURmspace.equalsIgnoreCase("morethanHours")){
-						String minAfHrStr = timeU.replaceAll(" hours ", "");
+						String minAfHrStr = timeU.replaceAll(" hour ", "");
 						minAfHrStr = minAfHrStr.replaceAll(" mins", "");
 						int minAfHr = Integer.valueOf(minAfHrStr);
 						duraF = duraF*60;
