@@ -265,7 +265,7 @@ public class TwoMessThreeMercService {
 	}
 	
 	
-	public static void main(String[] args) throws InterruptedException{
+	/*public static void main(String[] args) throws InterruptedException{
 		
 		List<Integer> merIdList = new ArrayList<Integer>();
 		merIdList.add(1);
@@ -275,5 +275,5 @@ public class TwoMessThreeMercService {
 		TwoMessThreeMercService test = new TwoMessThreeMercService();
 		System.out.println(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
 		
-	}
+	}*/
 }
