@@ -73,6 +73,9 @@ public class Orders {
 	@NotNull
 	@Column(name = "order_delivery_price")
 	private double order_delivery_price;
+	
+	@Column(name = "order_confirm_code")
+	private String order_confirm_code;
 		
 	public Orders() {}
 	
@@ -205,5 +208,13 @@ public class Orders {
 	
 	public double getOrderDeliveryPrice() {
 		return order_delivery_price;
+	}
+	
+	public void setOrderConfirmCode(String orderConfirmCode) {
+		this.order_confirm_code = orderConfirmCode;
+	}
+	
+	public String getOrderConfirmCode() {
+		return order_confirm_code;
 	}
 }

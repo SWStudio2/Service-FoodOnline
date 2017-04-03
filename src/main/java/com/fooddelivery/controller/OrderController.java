@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,14 +48,11 @@ public class OrderController {
 	@Autowired
 	private SequenceOrdersDao sequenceOrdersDao;
 	
-	private String ORDER_STATUS = "Pending";
-	
 	@RequestMapping(value="/service/orders/inserorders" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<Map<String, Object>>> insertOrders(@RequestBody PlaceOrder placeOrder
 			/*@RequestBody Map<String, Object> mapRequest*/){
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		String result;
 		try {
 			/*print param*/
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -79,13 +77,14 @@ public class OrderController {
 			orders.setOrderDatetime(date);
 			orders.setOrderDatetimeDelivery(date);
 			orders.setOrderDeliveryRate(deliveryRate);
-			orders.setOrderTotalPrice(allorder.getOrderPrice());
-			orders.setOrderDistance(25.5); //mock*******************************
-			orders.setOrderFoodPrice(0);//*******************************
-			orders.setOrderDeliveryPrice(0);//*******************************
-			//จากร้านไปหาลูกค้า ไม่ว่าจะกี่ร้าน ให้เอามาบวกกัน
-			orders.setOrderStatus(ORDER_STATUS);
-			
+			orders.setOrderTotalPrice(allorder.getOrderTotalPrice());
+			orders.setOrderDistance(allorder.getOrderDistance());
+			orders.setOrderFoodPrice(allorder.getOrderFoodPrice());
+			orders.setOrderDeliveryPrice(allorder.getOrderDeliveryPrice());
+			orders.setOrderStatus(VariableText.ORDER_PENDING_STATUS);
+			//confirm code
+			String confirmOrderCode = generateOrderConfirmCode();
+			orders.setOrderConfirmCode(confirmOrderCode);
 			ordersDao.save(orders);
 			
 			//System.out.println("id: " + orders.getOrderId());
@@ -99,7 +98,7 @@ public class OrderController {
 					order order = orderList.get(j);
 					OrderDetail orderDetail = new OrderDetail();
 					orderDetail.setOrderId(orders.getOrderId());
-					orderDetail.setOrderDetailAmount(order.getMenuAmount());
+					orderDetail.setOrderDetailAmount(order.getOrderDetailAmount());
 					orderDetail.setOrderRemark(order.getRemark());
 					orderDetail.setMenuId(order.getMenuId());
 					orderDetail.setMerId(merchant.getMerId());
@@ -108,22 +107,33 @@ public class OrderController {
 					SequenceOrders sequenceOrders = new SequenceOrders();
 					sequenceOrders.setSequenceOrderId(orders.getOrderId());
 					sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
-					sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT);
+					sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
 					sequenceOrdersDao.save(sequenceOrders);
 					
 				}
 			}
 			
-			//sequenceOrderDetail
-			
-			result = String.valueOf("Finish");
-			dataMap.put("result",result);
+			dataMap.put("orderNo",orders.getOrderId());
+			dataMap.put("orderConfirmCode", confirmOrderCode);
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
-		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Result", dataMap));
+		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Inserted order sucessfully", dataMap));
 
+	}
+	
+	private String generateOrderConfirmCode() {
+		String result = "";
+		Random rand = new Random();
+		int val1 = rand.nextInt(9);
+		int val2 = rand.nextInt(9);
+		int val3 = rand.nextInt(9);
+		int val4 = rand.nextInt(9);
+		
+		result = String.valueOf(val1) + String.valueOf(val2) + String.valueOf(val3) + String.valueOf(val4);
+		
+		return result;
 	}
 }

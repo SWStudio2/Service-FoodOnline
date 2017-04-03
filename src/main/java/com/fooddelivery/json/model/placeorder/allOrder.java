@@ -6,10 +6,11 @@ public class allOrder {
 	String orderAddress;
 	String orderAddressLatitude;
 	String orderAddressLongitude;
-	double orderPrice;
-	double orderDeliveryPrice;
-	List<merchant> merchant;
+	double orderTotalPrice;
 	double orderFoodPrice;
+	double orderDeliveryPrice;
+	double orderDistance;
+	List<merchant> merchant;
 	
 	public String getOrderAddress() {
 		return orderAddress;
@@ -23,8 +24,8 @@ public class allOrder {
 		return orderAddressLongitude;
 	}
 	
-	public double getOrderPrice() {
-		return orderPrice;
+	public double getOrderTotalPrice() {
+		return orderTotalPrice;
 	}
 	
 	public double getOrderDeliveryPrice() {
@@ -37,5 +38,9 @@ public class allOrder {
 	
 	public double getOrderFoodPrice() {
 		return orderFoodPrice;
+	}
+	
+	public double getOrderDistance() {
+		return orderDistance;
 	}
 }
