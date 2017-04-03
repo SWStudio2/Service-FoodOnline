@@ -155,7 +155,7 @@ public class TwoMessThreeMercService {
 //						System.out.println("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
 				}
 //				}
-				TimeUnit.SECONDS.sleep(30);
+				Thread.sleep(1000);
 			}
 			
 			//get Best Case
