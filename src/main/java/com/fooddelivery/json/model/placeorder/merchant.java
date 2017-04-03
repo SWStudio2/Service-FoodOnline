@@ -7,6 +7,7 @@ public class merchant {
 	String merLatitude;
 	String merLongitude;
 	List<order> order;
+	String merDistance;
 	
 	public long getMerId() {
 		return merId;
@@ -22,5 +23,9 @@ public class merchant {
 	
 	public List<order> getOrder() {
 		return order;
+	}
+	
+	public String getMerDistance() {
+		return merDistance;
 	}
 }

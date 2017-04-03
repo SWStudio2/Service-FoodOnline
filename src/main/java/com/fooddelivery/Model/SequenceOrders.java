@@ -44,6 +44,12 @@ public class SequenceOrders {
 	@NotNull
 	@Column(name = "seqor_cook_status")
 	private String seqor_cook_status;
+	
+	@Column(name = "seqor_cook_time")
+	private int seqor_cook_time;
+	
+	@Column(name = "seqor_mer_distance")
+	private double seqor_mer_distance;
 		
 	public SequenceOrders() {}
 	
@@ -131,6 +137,22 @@ public class SequenceOrders {
 	
 	public String getSequenceCookStatus() {
 		return seqor_cook_status;
+	}
+	
+	public void setSequenceCookTime(int sequenceCookTime) {
+		this.seqor_cook_time = sequenceCookTime;
+	}
+	
+	public int getSequenceCookTime() {
+		return seqor_cook_time;
+	}
+	
+	public void setSequenceMerDistance(double sequenceMerDistance) {
+		this.seqor_mer_distance = sequenceMerDistance;
+	}
+	
+	public double getSequenceMerDistance() {
+		return seqor_mer_distance;
 	}
 	
 }
