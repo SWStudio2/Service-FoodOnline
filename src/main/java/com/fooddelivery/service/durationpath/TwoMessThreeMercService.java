@@ -132,6 +132,7 @@ public class TwoMessThreeMercService {
 						routePathList = groupPathList.get(i).getAllRoutePath();
 						//cal duration and distance
 						routePathList = calDuraAndDist(routePathList);
+						
 						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
 						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
 						System.out.println("=========================================================================");
@@ -150,12 +151,14 @@ public class TwoMessThreeMercService {
 						
 						//set total distance and duration in GroupPath
 						groupPathList.get(i).setTotalDistance(String.valueOf(totalDist));
+						
 						groupPathList.get(i).setTotalDuration(String.valueOf(totalDura));
 						
 //						System.out.println("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
 				}
 //				}
-				Thread.sleep(1000);
+				TimeUnit.SECONDS.sleep(2);
+				
 			}
 			
 			//get Best Case
@@ -265,15 +268,15 @@ public class TwoMessThreeMercService {
 	}
 	
 	
-	/*public static void main(String[] args) throws InterruptedException{
-		
-		List<Integer> merIdList = new ArrayList<Integer>();
-		merIdList.add(1);
-		merIdList.add(2);
-		merIdList.add(3);
-		
-		TwoMessThreeMercService test = new TwoMessThreeMercService();
-		System.out.println(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
-		
-	}*/
+//	public static void main(String[] args) throws InterruptedException{
+//		
+//		List<Integer> merIdList = new ArrayList<Integer>();
+//		merIdList.add(1);
+//		merIdList.add(2);
+//		merIdList.add(3);
+//		
+//		TwoMessThreeMercService test = new TwoMessThreeMercService();
+//		System.out.println(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
+//		
+//	}
 }
