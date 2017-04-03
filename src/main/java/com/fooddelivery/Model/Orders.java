@@ -55,8 +55,8 @@ public class Orders {
 	private int order_delivery_rate;
 	
 	@NotNull
-	@Column(name = "order_price")
-	private double order_price;
+	@Column(name = "order_total_price")
+	private double order_total_price;
 	
 	@NotNull
 	@Column(name = "order_distance")
@@ -65,6 +65,14 @@ public class Orders {
 	@NotNull
 	@Column(name = "order_status")
 	private String order_status;
+	
+	@NotNull
+	@Column(name = "order_food_price")
+	private double order_food_price;
+	
+	@NotNull
+	@Column(name = "order_delivery_price")
+	private double order_delivery_price;
 		
 	public Orders() {}
 	
@@ -91,7 +99,7 @@ public class Orders {
 		this.order_datetime = orderDatetime;
 		this.order_datetime_delivery = orderDatetimeDelivery;
 		this.order_delivery_rate = orderDeliveryRate;
-		this.order_price = orderPrice;
+		this.order_total_price = orderPrice;
 		this.order_distance = orderDistance;
 	}
 	
@@ -159,12 +167,12 @@ public class Orders {
 		return order_delivery_rate;
 	}
 	
-	public void setOrderPrice(double orderPrice) {
-		this.order_price = orderPrice;
+	public void setOrderTotalPrice(double orderTotalPrice) {
+		this.order_total_price = orderTotalPrice;
 	}
 	
-	public double getOrderPrice() {
-		return order_price;
+	public double getOrderTotalPrice() {
+		return order_total_price;
 	}
 	
 	public void setOrderDistance(double orderDistance) {
@@ -181,5 +189,21 @@ public class Orders {
 	
 	public String getOrderStatus() {
 		return order_status;
+	}
+	
+	public void setOrderFoodPrice(double orderFoodPrice) {
+		this.order_food_price = orderFoodPrice;
+	}
+	
+	public double getOrderFoodPrice() {
+		return order_food_price;
+	}
+	
+	public void setOrderDeliveryPrice(double orderDeliveryPrice) {
+		this.order_delivery_price = orderDeliveryPrice;
+	}
+	
+	public double getOrderDeliveryPrice() {
+		return order_delivery_price;
 	}
 }

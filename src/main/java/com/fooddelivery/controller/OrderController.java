@@ -79,8 +79,10 @@ public class OrderController {
 			orders.setOrderDatetime(date);
 			orders.setOrderDatetimeDelivery(date);
 			orders.setOrderDeliveryRate(deliveryRate);
-			orders.setOrderPrice(allorder.getOrderPrice());
+			orders.setOrderTotalPrice(allorder.getOrderPrice());
 			orders.setOrderDistance(25.5); //mock*******************************
+			orders.setOrderFoodPrice(0);//*******************************
+			orders.setOrderDeliveryPrice(0);//*******************************
 			//จากร้านไปหาลูกค้า ไม่ว่าจะกี่ร้าน ให้เอามาบวกกัน
 			orders.setOrderStatus(ORDER_STATUS);
 			

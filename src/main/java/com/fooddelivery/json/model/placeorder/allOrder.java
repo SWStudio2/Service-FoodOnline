@@ -9,6 +9,7 @@ public class allOrder {
 	double orderPrice;
 	double orderDeliveryPrice;
 	List<merchant> merchant;
+	double orderFoodPrice;
 	
 	public String getOrderAddress() {
 		return orderAddress;
@@ -32,5 +33,9 @@ public class allOrder {
 	
 	public List<merchant> getMerchant() {
 		return merchant;
+	}
+	
+	public double getOrderFoodPrice() {
+		return orderFoodPrice;
 	}
 }

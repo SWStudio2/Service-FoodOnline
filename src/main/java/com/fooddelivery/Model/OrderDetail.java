@@ -29,7 +29,6 @@ public class OrderDetail {
 	@Column(name = "order_detail_amount")
 	private int order_detail_amount;
 	
-	@NotNull
 	@Column(name = "order_remark")
 	private String order_remark;
 	
