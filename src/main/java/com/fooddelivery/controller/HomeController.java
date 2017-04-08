@@ -108,7 +108,6 @@ public class HomeController {
 
 	}
 	
-	@RequestMapping(value="service/distanceMatrix/{oriLat}/{oriLng}/{desLat}/{desLng}" , method=RequestMethod.GET)
 	public String[] getDistanceDuration(@PathVariable(value="oriLat") String oriLat,
 							@PathVariable(value="oriLng") String oriLng,
 							@PathVariable(value="desLat") String desLat,
@@ -234,6 +233,36 @@ public class HomeController {
 		}
 	    
 	}
+    
+    @RequestMapping(value="service/getdistancematrix", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<Map<String, Object>>> getDistanceMatrix(@RequestBody Map<String, Object> mapRequest) {
+        
+        String oriLat = (String) mapRequest.get("oriLat");
+        String oriLng = (String) mapRequest.get("oriLng");
+        String desLat = (String) mapRequest.get("desLat");
+        String desLng = (String) mapRequest.get("desLng");
+        try{
+            String[] arr = getDistanceDuration(oriLat, oriLng,desLat,desLng);
+            String distDecm = arr[0];
+            String duraStr = arr[1];
+            
+            
+            Map<String, Object> dataMap = new HashMap<String, Object>();
+            dataMap.put("distance",distDecm);
+            dataMap.put("duration",duraStr);
+            
+            return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Get successfully", dataMap));
+            
+            
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println(ex.getMessage());
+            return null;
+        }
+        
+        
+    }
 	
 	
 	
