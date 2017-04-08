@@ -12,13 +12,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -108,7 +111,6 @@ public class HomeController {
 
 	}
 	
-	@RequestMapping(value="service/distanceMatrix/{oriLat}/{oriLng}/{desLat}/{desLng}" , method=RequestMethod.GET)
 	public String[] getDistanceDuration(@PathVariable(value="oriLat") String oriLat,
 							@PathVariable(value="oriLng") String oriLng,
 							@PathVariable(value="desLat") String desLat,
@@ -234,6 +236,36 @@ public class HomeController {
 		}
 	    
 	}
+    
+    @RequestMapping(value="service/getdistancematrix", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<Map<String, Object>>> getDistanceMatrix(@RequestBody Map<String, Object> mapRequest) {
+        
+        String oriLat = (String) mapRequest.get("oriLat");
+        String oriLng = (String) mapRequest.get("oriLng");
+        String desLat = (String) mapRequest.get("desLat");
+        String desLng = (String) mapRequest.get("desLng");
+        try{
+            String[] arr = getDistanceDuration(oriLat, oriLng,desLat,desLng);
+            String distDecm = arr[0];
+            String duraStr = arr[1];
+            
+            
+            Map<String, Object> dataMap = new HashMap<String, Object>();
+            dataMap.put("distance",distDecm);
+            dataMap.put("duration",duraStr);
+            
+            return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Get successfully", dataMap));
+            
+            
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println(ex.getMessage());
+            return null;
+        }
+        
+        
+    }
 	
 	
 	
