@@ -146,7 +146,7 @@ public class MessengerController {
 
 		String bestTimeOneMessOneService = "";
 		String bestTimeTwoMessTwoService = "";
-		String bestTimeOneMessThreeService = "";
+		RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
 		
 		if(list.size() == 1)
 		{
@@ -167,7 +167,7 @@ public class MessengerController {
 		{
 			//YUI
 			try {
-				bestTimeOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -177,7 +177,7 @@ public class MessengerController {
 		{
 			try {
 				//Mike
-				bestTimeOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				//YUI
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
 				bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
@@ -205,8 +205,8 @@ public class MessengerController {
 		double chooseTime = 0;
 		double diffValue = 0;
 		
-		if (!bestTimeOneMessThreeService.equals("")){
-			oneMessValue = Double.parseDouble(bestTimeOneMessThreeService);
+		if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
+			oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
 		}
 
 		if (!bestTimeTwoMessTwoService.equals("")){
@@ -243,7 +243,7 @@ public class MessengerController {
 
 	 }	
 	
-	public String searchFuncOneMessenger(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
+	public RoutePathDetail searchFuncOneMessenger(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
 		
 		//Define id Merchant from interface
 
@@ -306,7 +306,7 @@ public class MessengerController {
 		{
 			Merchants mer = bestNode.getMerList().get(i);
 		}
-		return bestNode.getDuration();
+		return bestNode;
 	}
 	
 	public static int[] getFullTimeIdAvailable(TimeAndDistanceDetail[] tmp)
