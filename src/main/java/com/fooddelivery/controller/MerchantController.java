@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.util.DateTime;
 
 
 @RestController
@@ -46,7 +47,6 @@ public class MerchantController {
 			}else{
 				merchants = merchantsDao.findByStatus(dateStr,time);
 			}
-			
 			
 			return merchants;
 
