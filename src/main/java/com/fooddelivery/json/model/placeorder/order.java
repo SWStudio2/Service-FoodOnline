@@ -7,6 +7,7 @@ public class order {
 	int orderDetailAmount;
 	String remark;
 	List<option> option;
+	double menuPrice;
 	
 	public long getMenuId() {
 		return menuId;
@@ -22,5 +23,9 @@ public class order {
 	
 	public List<option> getOption() {
 		return option;
+	}
+	
+	public double getMenuPrice() {
+		return menuPrice;
 	}
 }

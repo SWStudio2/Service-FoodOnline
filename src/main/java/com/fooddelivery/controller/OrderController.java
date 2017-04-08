@@ -84,13 +84,15 @@ public class OrderController {
 			orders.setOrderAddress(allorder.getOrderAddress());
 			orders.setOrderAddressLatitude(allorder.getOrderAddressLatitude());
 			orders.setOrderAddressLongtitude(allorder.getOrderAddressLongitude());
-			orders.setOrderDatetime(currentDateTime);
-			orders.setOrderDatetimeDelivery(currentDateTime);
+			orders.setOrderCreatedDatetime(currentDateTime);
+			//orders.setOrderReceiveDatetime(currentDateTime); //insert ตอนที่ mess มารับของ
 			orders.setOrderDeliveryRate(deliveryRate);
 			orders.setOrderTotalPrice(allorder.getOrderTotalPrice());
 			orders.setOrderDistance(allorder.getOrderDistance());
 			orders.setOrderFoodPrice(allorder.getOrderFoodPrice());
 			orders.setOrderDeliveryPrice(allorder.getOrderDeliveryPrice());
+			orders.setOrderEstimateTime(allorder.getOrderEstimateTime());
+			orders.setOrderEstimateDatetime(DateTime.getDateTime(allorder.getOrderEstimateDateTime()));
 			orders.setOrderStatus(VariableText.ORDER_PENDING_STATUS);
 			//confirm code
 			String confirmOrderCode = generateOrderConfirmCode();

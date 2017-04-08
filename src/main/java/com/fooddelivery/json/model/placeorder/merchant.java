@@ -8,6 +8,8 @@ public class merchant {
 	String merLongitude;
 	List<order> order;
 	String merDistance;
+	double merFoodPrice;
+	double merDeliveryPrice;
 	
 	public long getMerId() {
 		return merId;
@@ -27,5 +29,13 @@ public class merchant {
 	
 	public String getMerDistance() {
 		return merDistance;
+	}
+	
+	public double getMerFoodPrice() {
+		return merFoodPrice;
+	}
+	
+	public double getMerDeliveryPrice() {
+		return merDeliveryPrice;
 	}
 }
