@@ -17,7 +17,7 @@ import com.fooddelivery.util.Utils;
 public class TwoMessThreeMercService {
 	
 
-	public String TwoMessThreeMercService(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
+	public GroupPathDetail TwoMessThreeMercService(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
 		
 		//create Dao for query
 		TimeAndDistanceDetailDao timeDisDao = new TimeAndDistanceDetailDao();
@@ -167,7 +167,7 @@ public class TwoMessThreeMercService {
 		}
 		
 		//return best node's time estimate
-		return BestGroupPath.getTotalDuration();
+		return BestGroupPath;
 	}
 	
 	/**
