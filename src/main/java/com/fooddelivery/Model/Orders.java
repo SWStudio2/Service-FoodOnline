@@ -42,13 +42,12 @@ public class Orders {
 	
 	@NotNull
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "order_datetime")
-	private Date order_datetime;
-	
-	@NotNull
+	@Column(name = "order_created_datetime")
+	private Date order_created_datetime;
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "order_datetime_delivery")
-	private Date order_datetime_delivery;
+	@Column(name = "order_receive_datetime")
+	private Date order_receive_datetime;
 	
 	@NotNull
 	@Column(name = "order_delivery_rate")
@@ -76,6 +75,13 @@ public class Orders {
 	
 	@Column(name = "order_confirm_code")
 	private String order_confirm_code;
+	
+	@Column(name = "order_estimate_time")
+	private int order_estimate_time;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "order_estimate_datetime")
+	private Date order_estimate_datetime;
 		
 	public Orders() {}
 	
@@ -99,8 +105,8 @@ public class Orders {
 		this.order_address = orderAddress;
 		this.order_address_latitude = orderAddressLatitude;
 		this.order_address_longtitude = orderAddressLogtitude;
-		this.order_datetime = orderDatetime;
-		this.order_datetime_delivery = orderDatetimeDelivery;
+		this.order_created_datetime = orderDatetime;
+		this.order_receive_datetime = orderDatetimeDelivery;
 		this.order_delivery_rate = orderDeliveryRate;
 		this.order_total_price = orderPrice;
 		this.order_distance = orderDistance;
@@ -146,20 +152,20 @@ public class Orders {
 		return order_address_longtitude;
 	}
 	
-	public void setOrderDatetime(Date orderDatetime) {
-		this.order_datetime = orderDatetime;
+	public void setOrderCreatedDatetime(Date orderCreatedDatetime) {
+		this.order_created_datetime = orderCreatedDatetime;
 	}
 	
-	public Date getOderDatetime() {
-		return order_datetime;
+	public Date getOderCreatedDatetime() {
+		return order_created_datetime;
 	}
 	
-	public void setOrderDatetimeDelivery(Date orderDatetimeDelivery) {
-		this.order_datetime_delivery = orderDatetimeDelivery;
+	public void setOrderReceiveDatetime(Date orderReceiveDatetime) {
+		this.order_receive_datetime = orderReceiveDatetime;
 	}
 	
-	public Date getOrderDatetimeDelivery() {
-		return order_datetime_delivery;
+	public Date getOrderReceiveDatetime() {
+		return order_receive_datetime;
 	}
 	
 	public void setOrderDeliveryRate(int orderDeliveryRate) {
@@ -216,5 +222,21 @@ public class Orders {
 	
 	public String getOrderConfirmCode() {
 		return order_confirm_code;
+	}
+	
+	public void setOrderEstimateTime(int orderEstimateTime) {
+		this.order_estimate_time = orderEstimateTime;
+	} 
+	
+	public int getOrderEstimateTime() {
+		return order_estimate_time;
+	}
+	
+	public void setOrderEstimateDatetime(Date orderEstimateDatetime) {
+		this.order_estimate_datetime = orderEstimateDatetime;
+	}
+	
+	public Date getOrderEstimateDatetime() {
+		return order_estimate_datetime;
 	}
 }

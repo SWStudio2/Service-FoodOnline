@@ -1,13 +1,16 @@
 package com.fooddelivery.json.model.placeorder;
 
+import java.util.List;
+
 public class order {
-	long menuid;
+	long menuId;
 	int orderDetailAmount;
 	String remark;
-	int[] optionid;
+	List<option> option;
+	double menuPrice;
 	
 	public long getMenuId() {
-		return menuid;
+		return menuId;
 	}
 	
 	public int getOrderDetailAmount() {
@@ -18,7 +21,11 @@ public class order {
 		return remark;
 	}
 	
-	public int[] getOptionId() {
-		return optionid;
+	public List<option> getOption() {
+		return option;
+	}
+	
+	public double getMenuPrice() {
+		return menuPrice;
 	}
 }

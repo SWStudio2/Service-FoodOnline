@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,15 +22,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.OrderDetail;
+import com.fooddelivery.Model.OrdersDetailOption;
 import com.fooddelivery.Model.Orders;
 import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.OrdersDetailDao;
+import com.fooddelivery.Model.OrdersDetailOptionDao;
 import com.fooddelivery.Model.SequenceOrders;
 import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.json.model.placeorder.PlaceOrder;
 import com.fooddelivery.json.model.placeorder.allOrder;
 import com.fooddelivery.json.model.placeorder.merchant;
+import com.fooddelivery.json.model.placeorder.option;
 import com.fooddelivery.json.model.placeorder.order;
+import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.Response;
 import com.fooddelivery.util.VariableText;
 
@@ -48,6 +53,9 @@ public class OrderController {
 	@Autowired
 	private SequenceOrdersDao sequenceOrdersDao;
 	
+	@Autowired
+	private OrdersDetailOptionDao ordersDetailOptionsDao;
+	
 	@RequestMapping(value="/service/orders/inserorders" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<Map<String, Object>>> insertOrders(@RequestBody PlaceOrder placeOrder
@@ -55,9 +63,11 @@ public class OrderController {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		try {
 			/*print param*/
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			/*DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
 			dateFormat.setLenient(false);
-			Date date = new Date();
+			Date date = new Date();*/
+			Date currentDateTime = DateTime.getCurrentDateTime();
 			allOrder allorder = placeOrder.getAllOrder();
 			
 			List<DeliveryRate> deliveryRateList = deliveryRateDao.findAllDeliveryRate();
@@ -74,13 +84,15 @@ public class OrderController {
 			orders.setOrderAddress(allorder.getOrderAddress());
 			orders.setOrderAddressLatitude(allorder.getOrderAddressLatitude());
 			orders.setOrderAddressLongtitude(allorder.getOrderAddressLongitude());
-			orders.setOrderDatetime(date);
-			orders.setOrderDatetimeDelivery(date);
+			orders.setOrderCreatedDatetime(currentDateTime);
+			//orders.setOrderReceiveDatetime(currentDateTime); //insert ตอนที่ mess มารับของ
 			orders.setOrderDeliveryRate(deliveryRate);
 			orders.setOrderTotalPrice(allorder.getOrderTotalPrice());
 			orders.setOrderDistance(allorder.getOrderDistance());
 			orders.setOrderFoodPrice(allorder.getOrderFoodPrice());
 			orders.setOrderDeliveryPrice(allorder.getOrderDeliveryPrice());
+			orders.setOrderEstimateTime(allorder.getOrderEstimateTime());
+			orders.setOrderEstimateDatetime(DateTime.getDateTime(allorder.getOrderEstimateDateTime()));
 			orders.setOrderStatus(VariableText.ORDER_PENDING_STATUS);
 			//confirm code
 			String confirmOrderCode = generateOrderConfirmCode();
@@ -104,10 +116,21 @@ public class OrderController {
 					orderDetail.setMerId(merchant.getMerId());
 					orderDetailDao.save(orderDetail);
 					
+					if (order.getOption() != null) {
+						for (int k=0; k<order.getOption().size(); k++) {
+							option option = order.getOption().get(k);
+							OrdersDetailOption orderDetailOptions = new OrdersDetailOption();
+							orderDetailOptions.setOptionId(option.getOptionId());
+							orderDetailOptions.setOrderDetailId(orderDetail.getOrderDetailId());
+							ordersDetailOptionsDao.save(orderDetailOptions);
+						}
+					}
+					
 					SequenceOrders sequenceOrders = new SequenceOrders();
 					sequenceOrders.setSequenceOrderId(orders.getOrderId());
 					sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
 					sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
+					sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
 					sequenceOrdersDao.save(sequenceOrders);
 					
 				}

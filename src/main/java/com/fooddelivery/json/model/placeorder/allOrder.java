@@ -10,6 +10,8 @@ public class allOrder {
 	double orderFoodPrice;
 	double orderDeliveryPrice;
 	double orderDistance;
+	int orderEstimateTime;
+	String orderEstimateDateTime;
 	List<merchant> merchant;
 	
 	public String getOrderAddress() {
@@ -42,5 +44,13 @@ public class allOrder {
 	
 	public double getOrderDistance() {
 		return orderDistance;
+	}
+	
+	public int getOrderEstimateTime() {
+		return orderEstimateTime;
+	}
+	
+	public String getOrderEstimateDateTime() {
+		return orderEstimateDateTime;
 	}
 }
