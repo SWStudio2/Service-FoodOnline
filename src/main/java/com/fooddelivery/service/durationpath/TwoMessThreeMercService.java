@@ -157,7 +157,6 @@ public class TwoMessThreeMercService {
 //						System.out.println("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
 				}
 //				}
-				TimeUnit.SECONDS.sleep(2);
 				
 			}
 			
@@ -174,8 +173,9 @@ public class TwoMessThreeMercService {
 	 * cal duration and distance of each routePathDetail
 	 * @param routePathList
 	 * @return
+	 * @throws InterruptedException 
 	 */
-	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList){
+	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList) throws InterruptedException{
 		HomeController home = new HomeController();
 		List<RoutePathDetail> routePathListClone = routePathList;
 		
@@ -199,8 +199,11 @@ public class TwoMessThreeMercService {
 				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
 				
 				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
+				Thread.sleep(500);
 				String[] duraDistSecPath = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
+				Thread.sleep(500);
 				String[] duraDistLastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
+				Thread.sleep(500);
 				
 				double distFirst = Double.valueOf(duraDistFirstPath[0]);
 				double distSec = Double.valueOf(duraDistSecPath[0]);
@@ -223,6 +226,7 @@ public class TwoMessThreeMercService {
 				
 				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
 				String[] duraDistSecPath = home.getDistanceDuration(merThreeLat, merThreeLng, cusLat, cusLng);
+				Thread.sleep(500);
 				
 				double distOneMer = Double.valueOf(duraDistFirstPath[0])+Double.valueOf(duraDistSecPath[0]);
 				double duraOneMer = Double.valueOf(duraDistFirstPath[1])+Double.valueOf(duraDistSecPath[1]);
@@ -263,7 +267,6 @@ public class TwoMessThreeMercService {
 	public String[] callGoogleMap(String latOri,String lngOri,String latDes,String lngDes){
 		HomeController home = new HomeController();
 		String[] duraDist = home.getDistanceDuration(latOri, lngOri, latDes, lngDes);
-		
 		return duraDist;
 	}
 	
