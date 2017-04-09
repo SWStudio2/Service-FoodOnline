@@ -136,19 +136,4 @@ public class OrderController {
 		
 		return result;
 	}
-	
-//	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Response<Map<String, Object>>> getOrderDetail(@RequestBody String cusId , String isCurrentOrder){
-//		Map<String, Object> dataMap = new HashMap<String, Object>();
-//		try {
-//			
-//			
-//			
-//			return null;
-//		}catch (Exception e){
-//			System.out.println(e.getMessage());
-//			return null;
-//		}
-//	}
 }
