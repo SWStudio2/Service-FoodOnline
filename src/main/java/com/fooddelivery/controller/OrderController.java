@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
+import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.OrderDetail;
 import com.fooddelivery.Model.OrdersDetailOption;
 import com.fooddelivery.Model.Orders;
@@ -106,6 +107,9 @@ public class OrderController {
 			for (int i=0; i<merchants.size(); i++) {
 				merchant merchant = merchants.get(i);
 				List<order> orderList = merchant.getOrder();
+				
+				HashMap<String, String> merchantIds = new HashMap<String, String>();
+				
 				for (int j=0; j<orderList.size(); j++) {
 					order order = orderList.get(j);
 					OrderDetail orderDetail = new OrderDetail();
@@ -126,13 +130,15 @@ public class OrderController {
 						}
 					}
 					
-					SequenceOrders sequenceOrders = new SequenceOrders();
-					sequenceOrders.setSequenceOrderId(orders.getOrderId());
-					sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
-					sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
-					sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
-					sequenceOrdersDao.save(sequenceOrders);
-					
+					if (merchantIds.get(String.valueOf(merchant.getMerId())) == null) {
+						SequenceOrders sequenceOrders = new SequenceOrders();
+						sequenceOrders.setSequenceOrderId(orders.getOrderId());
+						sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
+						sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
+						sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
+						sequenceOrdersDao.save(sequenceOrders);
+						merchantIds.put(String.valueOf(merchant.getMerId()), String.valueOf(merchant.getMerId()));
+					}
 				}
 			}
 			
