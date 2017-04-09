@@ -405,6 +405,8 @@ public class MessengerController {
 				}
 			}
 			
+			chooseWay = "3Messenger";
+			
 			if(chooseWay.equals("1Messenger"))
 			{
 				Station tmpStation = routePathOneMessThreeService.getStation();
@@ -518,7 +520,7 @@ public class MessengerController {
 							if(tmpMerchant.getMerID() == seqOrderMerID)
 							{
 								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
-								runningNo++;
+								//runningNo++;
 								break;
 							}
 						}
