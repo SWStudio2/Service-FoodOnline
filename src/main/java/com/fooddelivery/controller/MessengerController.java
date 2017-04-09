@@ -19,6 +19,7 @@ import com.fooddelivery.Model.BikeStationDao;
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
+import com.fooddelivery.Model.FullTimeMessengerQuery;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsQuery;
 import com.fooddelivery.Model.Station;
@@ -29,6 +30,7 @@ import com.fooddelivery.Model.User;
 import com.fooddelivery.Model.UtilsQuery;
 import com.fooddelivery.service.durationpath.OneMessengerOneMerchantService;
 import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
+import com.fooddelivery.util.GroupPathDetail;
 import com.fooddelivery.util.NodeDetail;
 import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.Response;
@@ -77,7 +79,7 @@ public class MessengerController {
 		}
 
 		String bestTimeOneMessOneService = "";
-		String bestTimeTwoMessTwoService = "";
+		GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
 		RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
 		
 		if(list.size() == 1)
@@ -141,8 +143,8 @@ public class MessengerController {
 			oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
 		}
 
-		if (!bestTimeTwoMessTwoService.equals("")){
-			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService);
+		if (bestTimeTwoMessTwoService.getTotalDuration() != null && !bestTimeTwoMessTwoService.equals("")){
+			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
 		}
 		
 		if (!bestTimeOneMessOneService.equals("")){
@@ -250,19 +252,246 @@ public class MessengerController {
 	  UtilsQuery query = new UtilsQuery();
 	  ArrayList<HashMap<String, Object>> seqOrderAndMerchant = new ArrayList<HashMap<String,Object>>();
 	  // Return response
-	  String estimatedTime = ""+orderId;
 	  String isRecall = "N";
 	  isRecall = query.checkRecallOrder(orderId);
 	  HashMap<String, String> lantAndLong = new HashMap<String, String>();
+	  FullTimeMessengerQuery fullQuery = new FullTimeMessengerQuery();
 	  if(isRecall.equals("Y"))
 	  {
 		  
 		  seqOrderAndMerchant = query.getMerchantAndOrderSeqByOrderId(orderId);
-
 		  lantAndLong = query.getLatitudeAndLongtitudeByOrderId(orderId);
+		  
+		  	List<Integer> list = new ArrayList<Integer>();
+		  	for(int i = 0;i<seqOrderAndMerchant.size();i++)
+		  	{
+		  		HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
+		  		list.add((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"));
+		  	}
+		  	
+			int[] merIDList = new int[list.size()];
+			for(int i = 0;i<list.size();i++)
+			{
+				merIDList[i] = list.get(i);
+			}
+
+			String merIdAdjust = "";
+			for(int i = 0;i<list.size();i++)
+			{
+				if (i != 0) {
+					merIdAdjust += ",";
+				}
+				merIdAdjust += list.get(i);
+			}
+			
+			MerchantsQuery merDao = new MerchantsQuery();
+			Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
+			
+			List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
+			
+			List<Merchants> listMerchant = new ArrayList<Merchants>();
+			for(int i = 0;i<merList.length;i++)
+			{
+				listMerchant.add(merList[i]);
+			}			
+		  	
+		  	String cus_Latitude = "";
+		  	String cus_Longtitude = "";
+		  	
+		  	cus_Latitude = lantAndLong.get("ORDER_ADDRESS_LATITUDE");
+		  	cus_Longtitude = lantAndLong.get("ORDER_ADDRESS_LONGTITUDE");
+		  	
+		  	String bestTimeOneMessOneService = "";
+			GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
+			RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
+
+			if(list.size() == 1)
+			{
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				double time = 99;
+				for(int i = 0;i<listNode.size();i++)
+				{
+					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+					if(time > Double.parseDouble(node.getDuration()))
+					{
+						time = Double.parseDouble(node.getDuration());
+					}	
+				}
+				bestTimeOneMessOneService = "" + time;
+			}
+			else if(list.size() == 2)
+			{
+				//YUI
+				try {
+					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(list.size() == 3)
+			{
+				try {
+					//Mike
+					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+					//YUI
+					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
+					bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					//MINT
+					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+					List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+					double time = 99;
+					for(int i = 0;i<listNode.size();i++)
+					{
+						NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+						if(time > Double.parseDouble(node.getDuration()))
+						{
+							time = Double.parseDouble(node.getDuration());
+						}	
+					}
+					bestTimeOneMessOneService = "" + time;				
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			double oneMessValue = 99d;
+			double twoMessValue = 99d;
+			double threeMessValue = 99d;		
+			double chooseTime = 0;
+			double diffValue = 0;
+			
+			String chooseWay = "1Messenger";
+			
+			if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
+				oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
+			}
+
+			if (bestTimeTwoMessTwoService.getTotalDuration() != null && !bestTimeTwoMessTwoService.equals("")){
+				twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
+			}
+			
+//			if (!bestTimeOneMessOneService.equals("")){
+//				threeMessValue = Double.parseDouble(bestTimeOneMessOneService);
+//			}
+			
+			chooseTime = oneMessValue;
+
+			diffValue = chooseTime - twoMessValue;
+			if(diffValue > 10)
+			{
+				chooseWay = "2Messenger";
+				chooseTime = twoMessValue;
+				diffValue = chooseTime - threeMessValue;
+				if(diffValue > 10)
+				{
+					chooseWay = "3Messenger";
+					chooseTime = threeMessValue;
+				}
+			}
+			
+			if(chooseWay.equals("1Messenger"))
+			{
+				Station tmpStation = routePathOneMessThreeService.getStation();
+				ArrayList<Integer> arrFullId = fullQuery.getFulltimeMessengerFreeByStationID(tmpStation.getStationId());
+				if(arrFullId.size() > 0)
+				{
+					int idMessenger = arrFullId.get(0);
+					int runningNo = 1;
+					for(int i = 0;i<routePathOneMessThreeService.getMerList().size();i++)
+					{
+						Merchants tmpMerchant = routePathOneMessThreeService.getMerList().get(i);
+						for(int j = 0;j<seqOrderAndMerchant.size();j++)
+						{
+							HashMap<String, Object> tmpSeqOrderMerchant = seqOrderAndMerchant.get(j);
+							int seqOrderMerID = (Integer)tmpSeqOrderMerchant.get("SEQOR_MER_ID");
+							int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
+							if(tmpMerchant.getMerID() == seqOrderMerID)
+							{
+								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+								runningNo++;
+								break;
+							}
+						}
+					}
+					BigDecimal value = new BigDecimal(routePathOneMessThreeService.getDuration());
+					int estimateTime = value.intValue();
+					query.updateEstimateTimeToOrder(orderId, estimateTime);
+					System.out.println("esimate " + estimateTime);
+				}
+
+			}
+			else if(chooseWay.equals("2Messenger"))
+			{
+				for(int i = 0;i<bestTimeTwoMessTwoService.getAllRoutePath().size();i++)
+				{
+					RoutePathDetail tmpPath = bestTimeTwoMessTwoService.getAllRoutePath().get(i);
+					if(tmpPath.getMerList().size() == 1)
+					{
+						Station tmpStation = tmpPath.getStation();
+						ArrayList<Integer> arrFullId = fullQuery.getFulltimeMessengerFreeByStationID(tmpStation.getStationId());
+						if(arrFullId.size() > 0)
+						{
+							int idMessenger = arrFullId.get(0);
+							int runningNo = 1;
+							Merchants tmpMerchant = tmpPath.getMerList().get(0);
+							for(int j = 0;j<seqOrderAndMerchant.size();j++)
+							{
+								HashMap<String, Object> tmpSeqOrderMerchant = seqOrderAndMerchant.get(j);
+								int seqOrderMerID = (Integer)tmpSeqOrderMerchant.get("SEQOR_MER_ID");
+								int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
+								if(tmpMerchant.getMerID() == seqOrderMerID)
+								{
+									query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+									runningNo++;
+									break;
+								}
+							}
+						}
+					
+					}
+					else if(tmpPath.getMerList().size() == 2)
+					{
+						Station tmpStation = tmpPath.getStation();
+						ArrayList<Integer> arrFullId = fullQuery.getFulltimeMessengerFreeByStationID(tmpStation.getStationId());
+						if(arrFullId.size() > 0)
+						{
+							int idMessenger = arrFullId.get(0);
+							int runningNo = 1;
+							for(int j = 0;j<tmpPath.getMerList().size();j++)
+							{			
+								Merchants tmpMerchant = tmpPath.getMerList().get(j);
+								for(int k = 0;k<seqOrderAndMerchant.size();k++)
+								{
+									HashMap<String, Object> tmpSeqOrderMerchant = seqOrderAndMerchant.get(k);
+									int seqOrderMerID = (Integer)tmpSeqOrderMerchant.get("SEQOR_MER_ID");
+									int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
+									if(tmpMerchant.getMerID() == seqOrderMerID)
+									{
+										query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+										runningNo++;
+										break;
+									}
+								}							
+							}							
+						}
+					}				
+				}
+				int estimateTime = 99;
+				BigDecimal value = new BigDecimal(bestTimeTwoMessTwoService.getTotalDuration());
+				estimateTime = value.intValue();	
+				query.updateEstimateTimeToOrder(orderId, estimateTime);
+				System.out.println("esimate " + estimateTime);					
+			}
+			else if(chooseWay.equals("3Messenger"))
+			{
+				//System.out.println("debug3" );
+			}			
 
 	  }
-	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),"updateSequenceRoutePath successfully", estimatedTime));
+	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),"updateSequenceRoutePath successfully", "Success"));
 
 	 }	
 }

@@ -90,7 +90,7 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 					Merchants merEnd = tmpNode.merList.get(j);
 					
 					arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
-					Thread.sleep(1000);
+					Thread.sleep(500);
 					tmpDuration = new BigDecimal(arrDetail[0]);
 					tmpDistance = new BigDecimal(arrDetail[1]);
 

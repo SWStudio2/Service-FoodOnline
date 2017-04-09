@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FullTimeMessengerQuery {
 
@@ -81,4 +82,68 @@ public class FullTimeMessengerQuery {
 			}				  
 		  return merList;
 	  }
+	
+	public static ArrayList<Integer> getFulltimeMessengerFreeByStationID(int stationID)
+	{
+		  Connection connect = null;
+			Statement s = null;
+			String URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc";
+			URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc?useUnicode=true&characterEncoding=utf-8";
+			String USER = "ba8167e655c97d";
+			String PASSWORD = "fcc5664d";
+			ArrayList<Integer> arrId = new ArrayList<Integer>();
+			HashMap<String, String> tmpHash = new HashMap<String, String>();
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
+				
+				if(connect != null){
+					System.out.println("Database Connected.");
+				} else {
+					System.out.println("Database Connect Failed.");
+				}
+				s = connect.createStatement();
+							
+				String sql = "";
+				
+				StringBuffer sqlBuffer = new StringBuffer();
+				  
+				sqlBuffer.append("select f.FULL_ID from fulltime_messenger f\n ");
+				sqlBuffer.append("inner join bike_station b\n ");
+				sqlBuffer.append("on f.full_bike_station_now = b.bike_station_id\n ");
+				sqlBuffer.append(" WHERE \n ");
+				sqlBuffer.append("full_status IN ('stand by','back to station') and b.bike_station_id = " + stationID +"\n ");
+
+
+				sql = sqlBuffer.toString();	
+				
+				ResultSet rec = s.executeQuery(sql);
+
+				if(rec == null)
+				{
+					System.out.print(" record not found ");
+				}
+//				System.out.println("" + sql);
+				
+				while((rec!=null) && (rec.next()))
+	            {
+					arrId.add(rec.getInt("FULL_ID"));
+	            }
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			// Close
+			try {
+				if(connect != null){
+					connect.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}				  
+		  return arrId;
+	}	
 }
