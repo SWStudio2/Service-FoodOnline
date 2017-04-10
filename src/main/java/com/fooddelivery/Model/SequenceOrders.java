@@ -1,6 +1,8 @@
 package com.fooddelivery.Model;
 
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -50,6 +53,13 @@ public class SequenceOrders {
 	
 	@Column(name = "seqor_mer_distance")
 	private double seqor_mer_distance;
+	
+	@Column(name = "seqor_confirm_code")
+	private String seqor_confirm_code;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "seqor_receive_datetime")
+	private Date seqor_receive_datetime;
 		
 	public SequenceOrders() {}
 	
@@ -153,6 +163,22 @@ public class SequenceOrders {
 	
 	public double getSequenceMerDistance() {
 		return seqor_mer_distance;
+	}
+	
+	public void setSequenceConfirmCode(String sequenceConfirmCode) {
+		this.seqor_confirm_code = sequenceConfirmCode;
+	}
+	
+	public String getSequenceConfirmCode() {
+		return seqor_confirm_code;
+	}
+	
+	public void setSequenceReceiveDatetime(Date sequenceReceiveDatetime) {
+		this.seqor_receive_datetime = sequenceReceiveDatetime;
+	}
+	
+	public Date getSequenceReceiveDatetime() {
+		return seqor_receive_datetime;
 	}
 	
 }

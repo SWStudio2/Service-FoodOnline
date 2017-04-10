@@ -136,6 +136,8 @@ public class OrderController {
 						sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
 						sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
 						sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
+						String confirmSequenceOrderCode = generateOrderConfirmCode();
+						sequenceOrders.setSequenceConfirmCode(confirmSequenceOrderCode);
 						sequenceOrdersDao.save(sequenceOrders);
 						merchantIds.put(String.valueOf(merchant.getMerId()), String.valueOf(merchant.getMerId()));
 					}

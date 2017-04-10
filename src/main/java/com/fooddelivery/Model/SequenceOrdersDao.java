@@ -19,24 +19,15 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	
 	Logger logger = (Logger) LoggerFactory.getLogger(SequenceOrdersDao.class);
 
-	/*
-	 * "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)"*/
-	/*@Modifying
-	@Query(value = "insert into sequence_orders (seqor_mer_id, seqor_sort, "
-			+ "seqor_receive_status, seqor_mess_id, seqor_type_mess,"
-			+ "seqor_order_id, seqor_cook_status) values ("
-			+ ":seqor_mer_id, :seqor_sort, "
-			+ ":seqor_receive_status, :seqor_mess_id, :seqor_type_mess,"
-			+ ":seqor_order_id, :seqor_cook_status)"
+	@Query(value = "select seqor_id from sequence_orders "
+	  		+ "where seqor_order_id = :orderId and seqor_mer_id = :merId and seqor_confirm_code = :confirmCode"
 	  		, nativeQuery = true)
-	 public void insertOrder(
-			 @Param("seqor_mer_id") String seqor_mer_id,
-			 @Param("seqor_sort") String seqor_sort, 
-			 @Param("seqor_receive_status") String seqor_receive_status,
-			 @Param("seqor_mess_id") String seqor_mess_id,
-			 @Param("seqor_type_mess") String seqor_type_mess,
-			 @Param("seqor_order_id") String seqor_order_id,
-			 @Param("seqor_cook_status") String seqor_cook_status);*/
-	 
+	public List<Integer> checkConfirmCode(@Param("orderId") long orderId, @Param("merId") long merId,
+			  @Param("confirmCode") String confirmCode);
+	
+	@Query(value = "select * from sequence_orders "
+	  		+ "where seqor_id = :seqId"
+	  		, nativeQuery = true)
+	public SequenceOrders getSequenceOrderById(@Param("seqId") long seqOrderId);
 	
 }
