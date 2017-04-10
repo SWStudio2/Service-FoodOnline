@@ -309,21 +309,35 @@ public class MessengerController {
 			if(list.size() == 1)
 			{
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
-				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
 				double time = 99;
-				for(int i = 0;i<listNode.size();i++)
+				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
 				{
-					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+					NodeDetailVer2 node = (NodeDetailVer2)bestTimeOneMessOneService.get(i);
+					if(time > Double.parseDouble(node.getDuration()))
+					{
+						time = Double.parseDouble(node.getDuration());
+					}	
+				}
+				bestTimeOneMessOneServiceStr = "" + time;	
+			}
+			else if(list.size() == 2)
+			{
+				//1 mess to one merchant
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				double time = 99;
+				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
+				{
+					NodeDetailVer2 node = (NodeDetailVer2)bestTimeOneMessOneService.get(i);
 					if(time > Double.parseDouble(node.getDuration()))
 					{
 						time = Double.parseDouble(node.getDuration());
 					}	
 				}
 				bestTimeOneMessOneServiceStr = "" + time;
-			}
-			else if(list.size() == 2)
-			{
-				//YUI
+				
+				//1 mess to many merchant
 				try {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				} catch (InterruptedException e) {
@@ -364,7 +378,7 @@ public class MessengerController {
 			double chooseTime = 0;
 			double diffValue = 0;
 			
-			String chooseWay = "1Messenger";
+			String chooseWay = "";
 			
 			if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
 				oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
@@ -390,22 +404,36 @@ public class MessengerController {
 				threeMessValue = longestDuration;
 			}
 			
-			chooseTime = oneMessValue;
-
-			diffValue = chooseTime - twoMessValue;
-			if(diffValue > 10)
+			if(list.size() == 1)
 			{
-				chooseWay = "2Messenger";
-				chooseTime = twoMessValue;
+				chooseWay = "3Messenger";
+			}
+			else if(list.size() == 2)
+			{
+				chooseWay = "1Messenger";
+				chooseTime = oneMessValue;
 				diffValue = chooseTime - threeMessValue;
 				if(diffValue > 10)
 				{
 					chooseWay = "3Messenger";
-					chooseTime = threeMessValue;
 				}
 			}
-			
-			chooseWay = "3Messenger";
+			else if(list.size() == 3)
+			{
+				chooseTime = oneMessValue;
+				diffValue = chooseTime - twoMessValue;
+				if(diffValue > 10)
+				{
+					chooseWay = "2Messenger";
+					chooseTime = twoMessValue;
+					diffValue = chooseTime - threeMessValue;
+					if(diffValue > 10)
+					{
+						chooseTime = threeMessValue;
+						chooseWay = "3Messenger";
+					}
+				}				
+			}	
 			
 			if(chooseWay.equals("1Messenger"))
 			{
