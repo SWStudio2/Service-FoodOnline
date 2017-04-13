@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.fooddelivery.MySpecialListener;
+import com.fooddelivery.json.model.placeorder.PlaceOrder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -47,63 +48,6 @@ public class HomeController {
 	@RequestMapping(value="/service/{id}", method=RequestMethod.GET)
 	public String getID(@PathVariable int id){
 		return "Your ID is "+id;
-	}
-	
-	@RequestMapping(value={"/service/auth"} ,method=RequestMethod.POST)
-	public ResponseEntity<Response<HashMap>> authen(@RequestParam("username") String username ,@RequestParam("pass") String pass){
-
-//		User user = new User();
-//		user.setId(1);
-//		user.setName("Test1");
-//
-//		return ResponseEntity.ok(new Response<User>(HttpStatus.OK.value(),
-//				"Login successfully", user));
-		
-		List<DeliveryRate> delvRate = null;
-		List<Customer> customer = null;
-		HashMap<String,String> resultList = new HashMap<String, String>();
-		
-		try {
-			logger.info("Check point 0");
-			delvRate = 	delvDao.findAllDeliveryRate();
-			logger.info("Check point 0.1");
-			customer = customerDao.findByCusEmail(username, pass);
-			logger.info(""+customer);
-			logger.info(""+delvRate);
-			
-			if(customer.size() != 0){
-				Customer cust = customer.get(0);
-				resultList.put("cus_id", String.valueOf(cust.getCusId()));
-				resultList.put("cus_name", cust.getCusName());
-				resultList.put("cus_username", cust.getCusUserName());
-				resultList.put("cus_password", cust.getCusPassword());
-				resultList.put("cus_contact_number", cust.getCusContactNumber());
-				
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-				Date createdDate = cust.getCusCreatedDate();  
-				resultList.put("cus_created_date", df.format(createdDate));
-				
-				resultList.put("delivery_rate", String.valueOf(delvRate.get(0).getDeliveryRate()));
-				
-				logger.info(""+resultList);
-			}else{
-				logger.info("Check point 1");
-				return null;
-			}
-			
-			
-			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
-					"Login successfully", resultList));
-			
-	    }
-	    catch (Exception ex) {
-	    	ex.printStackTrace();
-	    	logger.info(ex.getMessage());
-	    	logger.info("Check point 2");
-	    	return null;
-	    }
-		
-
 	}
 	
 	public String[] getDistanceDuration(@PathVariable(value="oriLat") String oriLat,
