@@ -40,7 +40,7 @@ public class OneMessengerOneMerchantService {
 		for (int i=0; i<stationList.size(); i++) {
 			BikeStation bikeStation = stationList.get(i);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(600);
 				for (int j=0; j<merchantsList.size(); j++) {
 					Merchants merchants = merchantsList.get(j);
 					String[] detailArray = (String[])homeController.getDistanceDuration(
@@ -66,7 +66,7 @@ public class OneMessengerOneMerchantService {
 		for (int i=0; i<merchantsList.size(); i++) {
 			Merchants merchants = merchantsList.get(i);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(600);
 				String[] detailArray = (String[]) homeController.getDistanceDuration(
 						merchants.getMerLatitude(), 
 						merchants.getMerLongtitude(), 

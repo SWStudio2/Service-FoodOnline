@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fooddelivery.MySpecialListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +44,7 @@ import com.google.api.client.json.Json;
 
 @RestController
 public class MessengerController {
+	private static final Logger logger = LoggerFactory.getLogger(MessengerController.class);
 
 	private FullTimeMessengerDao fullMessDao;
 	@Autowired
@@ -462,7 +467,7 @@ public class MessengerController {
 					BigDecimal value = new BigDecimal(routePathOneMessThreeService.getDuration());
 					int estimateTime = value.intValue();
 					query.updateEstimateTimeToOrder(orderId, estimateTime);
-					System.out.println("esimate " + estimateTime);
+					logger.info("esimate " + estimateTime);
 				}
 
 			}
@@ -526,7 +531,7 @@ public class MessengerController {
 				BigDecimal value = new BigDecimal(bestTimeTwoMessTwoService.getTotalDuration());
 				estimateTime = value.intValue();	
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
-				System.out.println("esimate " + estimateTime);					
+				logger.info("esimate " + estimateTime);
 			}
 			else if(chooseWay.equals("3Messenger"))
 			{
@@ -558,7 +563,7 @@ public class MessengerController {
 				BigDecimal value = new BigDecimal(threeMessValue);
 				estimateTime = value.intValue();	
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
-				System.out.println("esimate " + estimateTime);
+				logger.info("esimate " + estimateTime);
 			}			
 
 	  }

@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.controller.HomeController;
+import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NodeDetail {
+	private static final Logger logger = LoggerFactory.getLogger(NodeDetail.class);
 	private FullTimeMessenger fullMess;
 	private ArrayList<Merchants> merList;
 	private String latitudeDelivery;
@@ -80,7 +84,7 @@ public class NodeDetail {
 				bestTime = sumAll;
 			}
 		}
-		System.out.println("bestTime " + bestTime);
+		logger.info("bestTime " + bestTime);
 
 		return bestNode;
 	}

@@ -4,18 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.fooddelivery.Model.Merchants;
-import com.fooddelivery.Model.MerchantsQuery;
-import com.fooddelivery.Model.Station;
-import com.fooddelivery.Model.StationQuery;
-import com.fooddelivery.Model.TimeAndDistanceDetailDao;
+import com.fooddelivery.Model.*;
 import com.fooddelivery.controller.HomeController;
 import com.fooddelivery.util.GroupPathDetail;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TwoMessThreeMercService {
-	
+	private static final Logger logger = LoggerFactory.getLogger(TwoMessThreeMercService.class);
 
 	public GroupPathDetail TwoMessThreeMercService(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
 		
@@ -133,9 +131,9 @@ public class TwoMessThreeMercService {
 						//cal duration and distance
 						routePathList = calDuraAndDist(routePathList);
 						
-						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
-						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
-						System.out.println("=========================================================================");
+						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
+						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
+						logger.info("=========================================================================");
 						
 						//cal total distance and duration of this GroupPath
 						double totalDist = Double.valueOf(routePathList.get(0).getDistance()) + Double.valueOf(routePathList.get(1).getDistance());
@@ -154,10 +152,10 @@ public class TwoMessThreeMercService {
 						
 						groupPathList.get(i).setTotalDuration(String.valueOf(totalDura));
 						
-//						System.out.println("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
+//						logger.info("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
 				}
 //				}
-				TimeUnit.SECONDS.sleep(2);
+				//TimeUnit.SECONDS.sleep(2);
 				
 			}
 			
@@ -175,7 +173,7 @@ public class TwoMessThreeMercService {
 	 * @param routePathList
 	 * @return
 	 */
-	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList){
+	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList) throws InterruptedException {
 		HomeController home = new HomeController();
 		List<RoutePathDetail> routePathListClone = routePathList;
 		
@@ -199,9 +197,11 @@ public class TwoMessThreeMercService {
 				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
 				
 				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
+				Thread.sleep(600);
 				String[] duraDistSecPath = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
+				Thread.sleep(600);
 				String[] duraDistLastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
-				
+				Thread.sleep(600);
 				double distFirst = Double.valueOf(duraDistFirstPath[0]);
 				double distSec = Double.valueOf(duraDistSecPath[0]);
 				double distLast = Double.valueOf(duraDistLastPath[0]);
@@ -222,8 +222,9 @@ public class TwoMessThreeMercService {
 				String merThreeLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
 				
 				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
+				Thread.sleep(600);
 				String[] duraDistSecPath = home.getDistanceDuration(merThreeLat, merThreeLng, cusLat, cusLng);
-				
+				Thread.sleep(600);
 				double distOneMer = Double.valueOf(duraDistFirstPath[0])+Double.valueOf(duraDistSecPath[0]);
 				double duraOneMer = Double.valueOf(duraDistFirstPath[1])+Double.valueOf(duraDistSecPath[1]);
 				
@@ -276,7 +277,7 @@ public class TwoMessThreeMercService {
 //		merIdList.add(3);
 //		
 //		TwoMessThreeMercService test = new TwoMessThreeMercService();
-//		System.out.println(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
+//		logger.info(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
 //		
 //	}
 }

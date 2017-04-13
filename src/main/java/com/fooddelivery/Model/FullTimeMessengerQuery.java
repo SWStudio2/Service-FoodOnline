@@ -1,5 +1,9 @@
 package com.fooddelivery.Model;
 
+import com.fooddelivery.controller.UserController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FullTimeMessengerQuery {
+	private static final Logger logger = LoggerFactory.getLogger(FullTimeMessengerQuery.class);
 
 	public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
@@ -25,9 +30,9 @@ public class FullTimeMessengerQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -48,7 +53,7 @@ public class FullTimeMessengerQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
 				while((rec!=null) && (rec.next()))
 	            {
@@ -65,7 +70,9 @@ public class FullTimeMessengerQuery {
 				{
 					merList[i] = (Merchants)arrMerchant.get(i);
 				}
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -98,9 +105,9 @@ public class FullTimeMessengerQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -123,7 +130,7 @@ public class FullTimeMessengerQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				
 				while((rec!=null) && (rec.next()))
 	            {

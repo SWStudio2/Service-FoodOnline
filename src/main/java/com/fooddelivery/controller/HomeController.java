@@ -8,21 +8,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import com.fooddelivery.MySpecialListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.CustomerDao;
@@ -34,7 +31,8 @@ import com.google.gson.Gson;
 
 @RestController
 public class HomeController {
-	
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+
 	// Wire the UserDao used inside this controller.
 	@Autowired
 	private CustomerDao customerDao;
@@ -66,12 +64,12 @@ public class HomeController {
 		HashMap<String,String> resultList = new HashMap<String, String>();
 		
 		try {
-			System.out.println("Check point 0");
+			logger.info("Check point 0");
 			delvRate = 	delvDao.findAllDeliveryRate();
-			System.out.println("Check point 0.1");
+			logger.info("Check point 0.1");
 			customer = customerDao.findByCusEmail(username, pass);
-			System.out.println(customer);
-			System.out.println(delvRate);
+			logger.info(""+customer);
+			logger.info(""+delvRate);
 			
 			if(customer.size() != 0){
 				Customer cust = customer.get(0);
@@ -87,9 +85,9 @@ public class HomeController {
 				
 				resultList.put("delivery_rate", String.valueOf(delvRate.get(0).getDeliveryRate()));
 				
-				System.out.println(resultList);
+				logger.info(""+resultList);
 			}else{
-				System.out.println("Check point 1");
+				logger.info("Check point 1");
 				return null;
 			}
 			
@@ -100,15 +98,14 @@ public class HomeController {
 	    }
 	    catch (Exception ex) {
 	    	ex.printStackTrace();
-	    	System.out.println(ex.getMessage());
-	    	System.out.println("Check point 2");
+	    	logger.info(ex.getMessage());
+	    	logger.info("Check point 2");
 	    	return null;
 	    }
 		
 
 	}
 	
-	@RequestMapping(value="service/distanceMatrix/{oriLat}/{oriLng}/{desLat}/{desLng}" , method=RequestMethod.GET)
 	public String[] getDistanceDuration(@PathVariable(value="oriLat") String oriLat,
 							@PathVariable(value="oriLng") String oriLng,
 							@PathVariable(value="desLat") String desLat,
@@ -118,7 +115,7 @@ public class HomeController {
 			
 //			String url = "https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyCQQmDCGFkJ4bR3sslC1f9OXFIcXNveStU&mode=driving&destinations="+desLat+"%2C"+desLng+"&origins="+oriLat+"%2C"+oriLng;
 			String url = "https://maps.googleapis.com/maps/api/directions/json?destination="+desLat+"%2C"+desLng+"&origin="+oriLat+"%2C"+oriLng+"&units=imperial&alternatives=true";
-//			System.out.println(">>" + url);
+//			logger.info(">>" + url);
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -135,7 +132,7 @@ public class HomeController {
 			in.close();
 
 			//print result
-			//System.out.println(response.toString());
+			//logger.info(response.toString());
 			
 			Gson gson = new Gson();  
 			Directions directionArray = gson.fromJson(response.toString(), Directions.class);
@@ -145,20 +142,20 @@ public class HomeController {
 			//List<String> list = new ArrayList<String>();
 			
 			//String duration = objJson.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
-			//System.out.println("duration: " + duration);
+			//logger.info("duration: " + duration);
 			
 			//=====================
 			JSONArray jsonMainArr = objJson.getJSONArray("routes");
-			//System.out.println(">>" + jsonMainArr.length());
+			//logger.info(">>" + jsonMainArr.length());
 			
 			List<Double> distanceList = new ArrayList<Double>();
 			List<Integer> durationList = new ArrayList<Integer>();
 		
 			for (int i=0; i<jsonMainArr.length(); i++) {
-//					System.out.println("--" + jsonMainArr.get(i));
+//					logger.info("--" + jsonMainArr.get(i));
 
-//					System.out.println(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"));
-//					System.out.println(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text"));
+//					logger.info(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"));
+//					logger.info(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text"));
 					
 					String dist = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text") ;
 					String dura = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");					
@@ -175,7 +172,7 @@ public class HomeController {
 						timeURmspace = timeU.replaceAll(" ", "");// remove space
 					}
 					
-					//System.out.println(distF);
+					//logger.info(distF);
 					//System.out.print(duraF);
 							
 					
@@ -234,7 +231,36 @@ public class HomeController {
 		}
 	    
 	}
-	
+	@RequestMapping(value="service/getdistancematrix", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Response<Map<String, Object>>> getDistanceMatrix(@RequestBody Map<String, Object> mapRequest) {
+
+		String oriLat = (String) mapRequest.get("oriLat");
+		String oriLng = (String) mapRequest.get("oriLng");
+		String desLat = (String) mapRequest.get("desLat");
+		String desLng = (String) mapRequest.get("desLng");
+		try{
+			//Thread.sleep(300);
+			String[] arr = getDistanceDuration(oriLat, oriLng,desLat,desLng);
+			String distDecm = arr[0];
+			String duraStr = arr[1];
+
+
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("distance",distDecm);
+			dataMap.put("duration",duraStr);
+
+			return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Get successfully", dataMap));
+
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+
+
+	}
 	
 	
 //	public static void main(String[] args){

@@ -1,4 +1,7 @@
 package com.fooddelivery.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,6 +14,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 public class TimeAndDistanceDetailDao {
+	private static final Logger logger = LoggerFactory.getLogger(TimeAndDistanceDetailDao.class);
+
 	TimeAndDistanceDetail timeAndDistance;
 	
 	public static TimeAndDistanceDetail[] getTimeAndDistanceDetail(String[] merchantIdList)
@@ -46,9 +51,9 @@ public class TimeAndDistanceDetailDao {
 			connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 			
 			if(connect != null){
-				System.out.println("Database Connected.");
+				logger.info("Database Connected.");
 			} else {
-				System.out.println("Database Connect Failed.");
+				logger.info("Database Connect Failed.");
 			}
 			s = connect.createStatement();
 						
@@ -100,7 +105,7 @@ public class TimeAndDistanceDetailDao {
 			{
 				System.out.print(" record not found ");
 			}
-			System.out.println("" + sql);
+			logger.info("" + sql);
 			ArrayList<TimeAndDistanceDetail> arrTimeDetail = new ArrayList<TimeAndDistanceDetail>();
 			while((rec!=null) && (rec.next()))
             {

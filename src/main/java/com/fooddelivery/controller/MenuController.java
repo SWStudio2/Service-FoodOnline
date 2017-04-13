@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fooddelivery.util.NodeDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,7 @@ import com.fooddelivery.util.Response;
 
 @RestController
 public class MenuController {
+	private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
 	@RequestMapping(value = "/service/merchant/{merId}", method = RequestMethod.GET)
     public ResponseEntity<Response<List<Menu>>> getMenuByMerId(
             @PathVariable("merId") String merId) {
@@ -49,7 +53,7 @@ public class MenuController {
             optionsMenu = optMenuQuery.getMenuQueryByMenuId(menuIdAll);
             
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            logger.info(ex.getMessage());
             return null;
         }
         

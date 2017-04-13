@@ -27,8 +27,8 @@ public class DateTime {
 	}
 	
 	/*public static void main(String[] args) throws ParseException {
-		System.out.println("TEST");
-		System.out.println(getDateTime("2017/04/08 23:21:44"));
+		logger.info("TEST");
+		logger.info(getDateTime("2017/04/08 23:21:44"));
 	}*/
 
 

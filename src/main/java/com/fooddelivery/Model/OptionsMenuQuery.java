@@ -8,9 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.querydsl.QPageRequest;
 
 public class OptionsMenuQuery {
+	private static final Logger logger = LoggerFactory.getLogger(OptionsMenuQuery.class);
+
 	public static List<OptionsMenu> getMenuQueryByMenuId(String menuId)
 	{
 		  Connection connect = null;
@@ -26,9 +30,9 @@ public class OptionsMenuQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -46,7 +50,7 @@ public class OptionsMenuQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				optMenu = new ArrayList<OptionsMenu>();
 				while((rec!=null) && (rec.next()))
 	            {
@@ -57,7 +61,9 @@ public class OptionsMenuQuery {
 					tmpOptMenu.setOptionPrice(rec.getFloat("option_price"));
 					optMenu.add(tmpOptMenu);
 	            }
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

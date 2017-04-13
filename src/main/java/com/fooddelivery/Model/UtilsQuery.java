@@ -1,5 +1,8 @@
 package com.fooddelivery.Model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UtilsQuery {
+	private static final Logger logger = LoggerFactory.getLogger(UtilsQuery.class);
+
 
 	public static String checkRecallOrder(int orderID)
 	{
@@ -25,9 +30,9 @@ public class UtilsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -60,7 +65,9 @@ public class UtilsQuery {
 	            {
 					resultRecall = rec.getString("CHK_RECALL");
 	            }
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,9 +100,9 @@ public class UtilsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -127,7 +134,7 @@ public class UtilsQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				
 				while((rec!=null) && (rec.next()))
 	            {
@@ -173,9 +180,9 @@ public class UtilsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -198,7 +205,7 @@ public class UtilsQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				
 				while((rec!=null) && (rec.next()))
 	            {
@@ -238,9 +245,9 @@ public class UtilsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -301,9 +308,9 @@ public class UtilsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							

@@ -59,12 +59,12 @@ public class DurationPathController {
 			//else {
 				merchantsList = merchantsDao.getMerchantsByMerIds(merchantsIdList/*merchantsIdList*/);
 			//}
-			//System.out.println(merchantsList.size());
+			//logger.info(merchantsList.size());
 			HashMap<String, Merchants> merchantsHash = convertMerchantsListToHashMap(merchantsList);
 			
 			//get Station
 			List<BikeStation> stationList = bikeStationDao.getBikeStationAvailable();
-			//System.out.println(stationList.size());
+			//logger.info(stationList.size());
 			
 			/*
 			 * Algorithm choose
@@ -72,9 +72,9 @@ public class DurationPathController {
 			OneMessengerOneMerchantService durationPathService = new OneMessengerOneMerchantService(merchantsId, latCustomer, longCustomer);
 			List<NodeDetailVer2> result = durationPathService.oneMessengerForOneMerchants(stationList, merchantsList);
 
-			System.out.println("**************************************");
-			System.out.println("***************RESULT*****************");
-			System.out.println("**************************************");
+			logger.info("**************************************");
+			logger.info("***************RESULT*****************");
+			logger.info("**************************************");
 			printResult(result);
 			return result;
 			
@@ -96,12 +96,12 @@ public class DurationPathController {
 	
 	private void printResult(List<NodeDetailVer2> result) {
 		for (int i=0; i<result.size(); i++) {
-		    System.out.println("Path: " + result.get(i).getStation() + "-"
+		    logger.info("Path: " + result.get(i).getStation() + "-"
 		    		+ result.get(i).getMerList().get(0).getMerID() + "-"
 		    		+ "Customer");
-		    System.out.println("Duration: " + result.get(i).getDuration());
-		    System.out.println("Distance: " + result.get(i).getDistance());
-		    System.out.println("----------------------------------");
+		    logger.info("Duration: " + result.get(i).getDuration());
+		    logger.info("Distance: " + result.get(i).getDistance());
+		    logger.info("----------------------------------");
 		}
 	}
 	

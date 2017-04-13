@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,7 +43,7 @@ import com.fooddelivery.util.VariableText;
 
 @RestController
 public class OrderController {
-	
+	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	@Autowired
 	private OrdersDao ordersDao;
 	
@@ -100,7 +102,7 @@ public class OrderController {
 			orders.setOrderConfirmCode(confirmOrderCode);
 			ordersDao.save(orders);
 			
-			//System.out.println("id: " + orders.getOrderId());
+			//logger.info("id: " + orders.getOrderId());
 			
 			//orderDetail & sequenceOrderDetail
 			List<merchant> merchants = allorder.getMerchant();
@@ -148,7 +150,7 @@ public class OrderController {
 			dataMap.put("orderConfirmCode", confirmOrderCode);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			return null;
 		}
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Inserted order sucessfully", dataMap));

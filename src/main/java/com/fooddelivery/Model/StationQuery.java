@@ -1,5 +1,8 @@
 package com.fooddelivery.Model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class StationQuery {
+	private static final Logger logger = LoggerFactory.getLogger(StationQuery.class);
 
 	public static Station[] getStationAvailable()
 	{
@@ -24,9 +28,9 @@ public class StationQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -47,7 +51,7 @@ public class StationQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				ArrayList<Station> arrStation = new ArrayList<Station>();
 				while((rec!=null) && (rec.next()))
 	            {
@@ -63,7 +67,9 @@ public class StationQuery {
 				{
 					stationList[i] = (Station)arrStation.get(i);
 				}
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

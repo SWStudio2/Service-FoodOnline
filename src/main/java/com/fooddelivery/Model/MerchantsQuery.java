@@ -10,13 +10,15 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 @Transactional
 public class MerchantsQuery {
-
+	private static final Logger logger = LoggerFactory.getLogger(MerchantsQuery.class);
 	  
 	  public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
@@ -33,9 +35,9 @@ public class MerchantsQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -56,7 +58,7 @@ public class MerchantsQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				ArrayList<Merchants> arrMerchant = new ArrayList<Merchants>();
 				while((rec!=null) && (rec.next()))
 	            {
@@ -73,7 +75,9 @@ public class MerchantsQuery {
 				{
 					merList[i] = (Merchants)arrMerchant.get(i);
 				}
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

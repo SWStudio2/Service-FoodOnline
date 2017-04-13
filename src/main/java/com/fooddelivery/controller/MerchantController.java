@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ import com.fooddelivery.util.VariableText;
 
 @RestController
 public class MerchantController {
-	
+	private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
 	// Wire the UserDao used inside this controller.
 	@Autowired
 	private MerchantsDao merchantsDao;
@@ -65,7 +67,7 @@ public class MerchantController {
 			
 	    }
 	    catch (Exception ex) {
-	    	System.out.println(ex.getMessage());
+	    	logger.info(ex.getMessage());
 	    	return null;
 	    }
 		

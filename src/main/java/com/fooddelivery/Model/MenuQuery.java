@@ -1,5 +1,8 @@
 package com.fooddelivery.Model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuQuery {
+	private static final Logger logger = LoggerFactory.getLogger(MenuQuery.class);
 	public static List<Menu> getMenuByID(String merId)
 	{
 		  Connection connect = null;
@@ -24,9 +28,9 @@ public class MenuQuery {
 				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
 				
 				if(connect != null){
-					System.out.println("Database Connected.");
+					logger.info("Database Connected.");
 				} else {
-					System.out.println("Database Connect Failed.");
+					logger.info("Database Connect Failed.");
 				}
 				s = connect.createStatement();
 							
@@ -44,7 +48,7 @@ public class MenuQuery {
 				{
 					System.out.print(" record not found ");
 				}
-//				System.out.println("" + sql);
+//				logger.info("" + sql);
 				menus = new ArrayList<Menu>();
 				while((rec!=null) && (rec.next()))
 	            {
@@ -56,7 +60,9 @@ public class MenuQuery {
 					tmpMenu.setMenuMerId(rec.getInt("MENU_MER_ID"));
 					menus.add(tmpMenu);
 	            }
-				
+				// ADD THESE LINES
+				rec.close(); rec = null;
+				s.close(); s = null;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
