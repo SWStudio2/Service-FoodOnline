@@ -2,21 +2,10 @@ package com.fooddelivery.controller;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import com.fooddelivery.MySpecialListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 import com.fooddelivery.Model.BikeStation;
 import com.fooddelivery.Model.BikeStationDao;
@@ -32,6 +21,16 @@ import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
 import com.fooddelivery.Model.User;
 import com.fooddelivery.Model.UtilsQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
 import com.fooddelivery.service.durationpath.OneMessengerOneMerchantService;
 import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
 import com.fooddelivery.util.GroupPathDetail;
@@ -45,16 +44,16 @@ import com.google.api.client.json.Json;
 @RestController
 public class MessengerController {
 	private static final Logger logger = LoggerFactory.getLogger(MessengerController.class);
-
+	@Autowired
 	private FullTimeMessengerDao fullMessDao;
 	@Autowired
 	private BikeStationDao bikeDao;
 
-	
+
 	@RequestMapping(value="/service/getestimatedtime", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	 public ResponseEntity<Response<Map<String, Object>>> getEstimatedTime(
 	   @RequestBody Map<String, Object> mapRequest) {
-	  
+
 	  String cus_Latitude = (String) mapRequest.get("cusLatitude");
 	  String cus_Longtitude = (String) mapRequest.get("cusLongitude");
 	  List<Integer> list = new ArrayList<Integer>();
@@ -74,9 +73,9 @@ public class MessengerController {
 		}
 		MerchantsQuery merDao = new MerchantsQuery();
 		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
-		
+
 		List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
-		
+
 		List<Merchants> listMerchant = new ArrayList<Merchants>();
 		for(int i = 0;i<merList.length;i++)
 		{
@@ -86,7 +85,7 @@ public class MessengerController {
 		String bestTimeOneMessOneService = "";
 		GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
 		RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
-		
+
 		if(list.size() == 1)
 		{
 			OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
@@ -98,7 +97,7 @@ public class MessengerController {
 				if(time > Double.parseDouble(node.getDuration()))
 				{
 					time = Double.parseDouble(node.getDuration());
-				}	
+				}
 			}
 			bestTimeOneMessOneService = "" + time;
 		}
@@ -130,9 +129,9 @@ public class MessengerController {
 					if(time > Double.parseDouble(node.getDuration()))
 					{
 						time = Double.parseDouble(node.getDuration());
-					}	
+					}
 				}
-				bestTimeOneMessOneService = "" + time;				
+				bestTimeOneMessOneService = "" + time;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -140,10 +139,10 @@ public class MessengerController {
 		}
 		double oneMessValue = 99d;
 		double twoMessValue = 99d;
-		double threeMessValue = 99d;		
+		double threeMessValue = 99d;
 		double chooseTime = 0;
 		double diffValue = 0;
-		
+
 		if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
 			oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
 		}
@@ -151,11 +150,11 @@ public class MessengerController {
 		if (bestTimeTwoMessTwoService.getTotalDuration() != null && !bestTimeTwoMessTwoService.equals("")){
 			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
 		}
-		
+
 		if (!bestTimeOneMessOneService.equals("")){
 			threeMessValue = Double.parseDouble(bestTimeOneMessOneService);
 		}
-		
+
 		chooseTime = oneMessValue;
 
 		diffValue = chooseTime - twoMessValue;
@@ -168,8 +167,8 @@ public class MessengerController {
 				chooseTime = threeMessValue;
 			}
 		}
-			
-	  
+
+
 	  // Return response
 	  String estimatedTime = "";
 	  BigDecimal valueAdjust = new BigDecimal(chooseTime);
@@ -180,10 +179,10 @@ public class MessengerController {
 
 	  return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Estimated time successfully", dataMap));
 
-	 }	
-	
+	 }
+
 	public RoutePathDetail searchFuncOneMessenger(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
-		
+
 		//Define id Merchant from interface
 
 		TimeAndDistanceDetailDao timeDisDao = new TimeAndDistanceDetailDao();
@@ -203,7 +202,7 @@ public class MessengerController {
 			indexPos.add(i);
 		}
 		Object[] resultSet = (Object[])Utils.listPermutations(indexPos).toArray();
-		
+
 		ArrayList<String> arrResult = new ArrayList<String>();
 		for(int i = 0;i<resultSet.length;i++)
 		{
@@ -214,7 +213,7 @@ public class MessengerController {
 		}
 		StationQuery stationQue = new StationQuery();
 		Station[] staList = stationQue.getStationAvailable();
-		
+
 		ArrayList<RoutePathDetail> arrNode = new ArrayList<RoutePathDetail>();
 		for(int i = 0;i<staList.length;i++)
 		{
@@ -230,15 +229,15 @@ public class MessengerController {
 					int pos = Integer.parseInt(postList[k].trim());
 					arrMerchant.add(merList[pos]);
 				}
-				
+
 				tmpNodeDetail.setMerList(arrMerchant);
 				tmpNodeDetail.setLatitudeDelivery(cus_Latitude);
 				tmpNodeDetail.setLongtitudeDelivery(cus_Longtitude);
-				
+
 				arrNode.add(tmpNodeDetail);
 			}
 		}
-		
+
 		RoutePathDetail bestNode = new RoutePathDetail();
 		bestNode = bestNode.getBestNodeDetail(arrNode);
 		for(int i = 0;i<bestNode.getMerList().size();i++)
@@ -247,10 +246,10 @@ public class MessengerController {
 		}
 		return bestNode;
 	}
-	
+
 	//Service P'Boat
 	@RequestMapping(value="/service/updateSequenceRoutePath/{orderId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	
+
 	 public ResponseEntity<Response<String>> updateSequenceRoutePath(
 			 @PathVariable("orderId") int orderId) {
 
@@ -263,17 +262,17 @@ public class MessengerController {
 	  FullTimeMessengerQuery fullQuery = new FullTimeMessengerQuery();
 	  if(isRecall.equals("Y"))
 	  {
-		  
+
 		  seqOrderAndMerchant = query.getMerchantAndOrderSeqByOrderId(orderId);
 		  lantAndLong = query.getLatitudeAndLongtitudeByOrderId(orderId);
-		  
+
 		  	List<Integer> list = new ArrayList<Integer>();
 		  	for(int i = 0;i<seqOrderAndMerchant.size();i++)
 		  	{
 		  		HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
 		  		list.add((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"));
 		  	}
-		  	
+
 			int[] merIDList = new int[list.size()];
 			for(int i = 0;i<list.size();i++)
 			{
@@ -288,24 +287,24 @@ public class MessengerController {
 				}
 				merIdAdjust += list.get(i);
 			}
-			
+
 			MerchantsQuery merDao = new MerchantsQuery();
 			Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
-			
+
 			List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
-			
+
 			List<Merchants> listMerchant = new ArrayList<Merchants>();
 			for(int i = 0;i<merList.length;i++)
 			{
 				listMerchant.add(merList[i]);
-			}			
-		  	
+			}
+
 		  	String cus_Latitude = "";
 		  	String cus_Longtitude = "";
-		  	
+
 		  	cus_Latitude = lantAndLong.get("ORDER_ADDRESS_LATITUDE");
 		  	cus_Longtitude = lantAndLong.get("ORDER_ADDRESS_LONGTITUDE");
-		  	
+
 		  	String bestTimeOneMessOneServiceStr = "";
 			GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
 			RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
@@ -322,9 +321,9 @@ public class MessengerController {
 					if(time > Double.parseDouble(node.getDuration()))
 					{
 						time = Double.parseDouble(node.getDuration());
-					}	
+					}
 				}
-				bestTimeOneMessOneServiceStr = "" + time;	
+				bestTimeOneMessOneServiceStr = "" + time;
 			}
 			else if(list.size() == 2)
 			{
@@ -338,10 +337,10 @@ public class MessengerController {
 					if(time > Double.parseDouble(node.getDuration()))
 					{
 						time = Double.parseDouble(node.getDuration());
-					}	
+					}
 				}
 				bestTimeOneMessOneServiceStr = "" + time;
-				
+
 				//1 mess to many merchant
 				try {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
@@ -368,23 +367,23 @@ public class MessengerController {
 						if(time > Double.parseDouble(node.getDuration()))
 						{
 							time = Double.parseDouble(node.getDuration());
-						}	
+						}
 					}
-					bestTimeOneMessOneServiceStr = "" + time;				
+					bestTimeOneMessOneServiceStr = "" + time;
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+
 			double oneMessValue = 99d;
 			double twoMessValue = 99d;
-			double threeMessValue = 99d;		
+			double threeMessValue = 99d;
 			double chooseTime = 0;
 			double diffValue = 0;
-			
+
 			String chooseWay = "";
-			
+
 			if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
 				oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
 			}
@@ -392,7 +391,7 @@ public class MessengerController {
 			if (bestTimeTwoMessTwoService.getTotalDuration() != null && !bestTimeTwoMessTwoService.equals("")){
 				twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
 			}
-				
+
 			//find the longest duration
 			if (bestTimeOneMessOneService.size() != 0) {
 				double longestDuration = 0;
@@ -408,7 +407,7 @@ public class MessengerController {
 				}
 				threeMessValue = longestDuration;
 			}
-			
+
 			if(list.size() == 1)
 			{
 				chooseWay = "3Messenger";
@@ -437,9 +436,9 @@ public class MessengerController {
 						chooseTime = threeMessValue;
 						chooseWay = "3Messenger";
 					}
-				}				
-			}	
-			
+				}
+			}
+
 			if(chooseWay.equals("1Messenger"))
 			{
 				Station tmpStation = routePathOneMessThreeService.getStation();
@@ -498,7 +497,7 @@ public class MessengerController {
 								}
 							}
 						}
-					
+
 					}
 					else if(tmpPath.getMerList().size() == 2)
 					{
@@ -509,7 +508,7 @@ public class MessengerController {
 							int idMessenger = arrFullId.get(0);
 							int runningNo = 1;
 							for(int j = 0;j<tmpPath.getMerList().size();j++)
-							{			
+							{
 								Merchants tmpMerchant = tmpPath.getMerList().get(j);
 								for(int k = 0;k<seqOrderAndMerchant.size();k++)
 								{
@@ -522,14 +521,14 @@ public class MessengerController {
 										runningNo++;
 										break;
 									}
-								}							
-							}							
+								}
+							}
 						}
-					}				
+					}
 				}
 				int estimateTime = 99;
 				BigDecimal value = new BigDecimal(bestTimeTwoMessTwoService.getTotalDuration());
-				estimateTime = value.intValue();	
+				estimateTime = value.intValue();
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
 			}
@@ -561,15 +560,58 @@ public class MessengerController {
 				}
 				int estimateTime = 99;
 				BigDecimal value = new BigDecimal(threeMessValue);
-				estimateTime = value.intValue();	
+				estimateTime = value.intValue();
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
-			}			
+			}
 
 	  }
 	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),"updateSequenceRoutePath successfully", "Success"));
 
-	 }	
+	 }
+	@RequestMapping(value={"service/fulltime/auth"} ,method=RequestMethod.POST)
+	public ResponseEntity<Response<HashMap>> authen(@RequestBody FullTimeMessenger full){
+		List<FullTimeMessenger> fullMess = null;
+		HashMap<String,String> resultList = new HashMap<String, String>();
+
+		try {
+			logger.info("Check point 0");
+
+			fullMess = fullMessDao.findByFullEmail(full.getFullEmail(),full.getFullPassword());
+
+			logger.info(""+fullMess);
+
+			if(fullMess.size() != 0){
+				FullTimeMessenger fullMess1 = fullMess.get(0);
+				resultList.put("full_id", String.valueOf(fullMess1.getFullId()));
+				resultList.put("full_name", fullMess1.getFullName());
+				resultList.put("full_contact_number", fullMess1.getFullContactNumber());
+				resultList.put("full_email", fullMess1.getFullEmail());
+				resultList.put("full_status", fullMess1.getFullStatus());
+				resultList.put("full_recommend_lattitude", fullMess1.getFullRecommendLattitude());
+				resultList.put("full_recommend_longtitude", fullMess1.getFullRecommendLongtitude());
+
+
+				logger.info(""+resultList);
+			}else{
+				logger.info("Check point 1");
+				return null;
+			}
+
+
+			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
+					"Login successfully", resultList));
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			logger.info("Check point 2");
+			return null;
+		}
+
+
+	}
 }
 
 
