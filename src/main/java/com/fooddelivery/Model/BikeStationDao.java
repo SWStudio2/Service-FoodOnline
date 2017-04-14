@@ -10,10 +10,10 @@ import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface BikeStationDao extends CrudRepository<BikeStation, Long> {
-
+	final static String statusID = "9,10";
 	@Query(value = "SELECT * FROM bike_station WHERE bike_station_id IN "
 			+ "(SELECT DISTINCT full_bike_station_now FROM fulltime_messenger "
-			+ "WHERE full_status IN ('stand by','back to station'))"
+			+ "WHERE full_status_id IN (" +statusID+"))"
 	  		, nativeQuery = true)
 	 public List<BikeStation> getBikeStationAvailable();
 	 

@@ -56,7 +56,7 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 		this.longtitudeDelivery = longtitudeDelivery;
 	}
 	
-	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode) throws InterruptedException
+	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode,TimeAndDistanceDetail[] timeDistance) throws InterruptedException
 	{
 		RoutePathDetail tmpNode;
 		HomeController home = new HomeController();
@@ -70,16 +70,27 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 			double sumDuration = 0;
 			tmpNode = (RoutePathDetail)arrNode.get(i);
 			Merchants firstMerchant = tmpNode.merList.get(0);
-			String[] arrDetail = home.getDistanceDuration(tmpNode.station.getStationLantitude(), tmpNode.station.getStationLongtitude(), firstMerchant.getMerLatitude(), firstMerchant.getMerLongtitude());
-			BigDecimal tmpDuration = new BigDecimal(arrDetail[0]);
-			BigDecimal tmpDistance = new BigDecimal(arrDetail[1]);
+			BigDecimal tmpDuration = new BigDecimal("0");
+			BigDecimal tmpDistance = new BigDecimal("0");
+			for(int m = 0;m<timeDistance.length;m++)
+			{
+				TimeAndDistanceDetail tmpTimeDistance = timeDistance[m];
+				if(tmpTimeDistance.getSourceId() == (tmpNode.station.getStationId()) && tmpTimeDistance.getDestinationId() == firstMerchant.getMerID() && tmpTimeDistance.getPathType().equals("bike"))
+				{
+					tmpDuration = new BigDecimal(tmpTimeDistance.getDuration());
+					tmpDistance = new BigDecimal(tmpTimeDistance.getDistance());
+				}
+			}
+			//String[] arrDetail = home.getDistanceDuration(tmpNode.station.getStationLantitude(), tmpNode.station.getStationLongtitude(), firstMerchant.getMerLatitude(), firstMerchant.getMerLongtitude());
+			//BigDecimal tmpDuration = new BigDecimal(arrDetail[0]);
+			//BigDecimal tmpDistance = new BigDecimal(arrDetail[1]);
 			if(firstMerchant.getCookingTime() < tmpDuration.doubleValue())
 			{
 				sumDuration = tmpDuration.doubleValue() + sumDuration;
 			}
 			else
 			{
-				sumDuration = firstMerchant.getCookingTime() + sumDuration;
+				sumDuration = firstMerchant.getCookingTime();
 			}
 			sumDistance = tmpDistance.doubleValue() + sumDistance;
 			if(tmpNode.merList.size() > 1)
@@ -88,24 +99,34 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 				{
 					Merchants merStart = tmpNode.merList.get(j-1);
 					Merchants merEnd = tmpNode.merList.get(j);
-					
-					arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
-					Thread.sleep(600);
-					tmpDuration = new BigDecimal(arrDetail[0]);
-					tmpDistance = new BigDecimal(arrDetail[1]);
 
-					sumDuration = tmpDuration.doubleValue() + sumDuration;				
+					//arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
+					//Thread.sleep(600);
+					//tmpDuration = new BigDecimal(arrDetail[0]);
+					//tmpDistance = new BigDecimal(arrDetail[1]);
+					
+					for(int m = 0;m<timeDistance.length;m++)
+					{
+						TimeAndDistanceDetail tmpTimeDistance = timeDistance[m];
+						if(tmpTimeDistance.getSourceId() == (merStart.getMerID()) && tmpTimeDistance.getDestinationId() == merEnd.getMerID() && tmpTimeDistance.getPathType().equals("merchant"))
+						{
+							tmpDuration = new BigDecimal(tmpTimeDistance.getDuration());
+							tmpDistance = new BigDecimal(tmpTimeDistance.getDistance());
+							
+						}
+					}					
+
+					sumDuration = tmpDuration.doubleValue() + sumDuration;
 					if(sumDuration < merEnd.getCookingTime())
 					{
 						sumDuration = merEnd.getCookingTime();
 					}
-					
 					sumDistance = tmpDistance.doubleValue() + sumDistance;
-				}								
+				}
 			}
 			Merchants endMerchant = tmpNode.merList.get(tmpNode.merList.size()-1);
 			
-			arrDetail = (String[])home.getDistanceDuration(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
+			String[] arrDetail = (String[])home.getDistanceDuration(endMerchant.getMerLatitude(), endMerchant.getMerLongtitude(), tmpNode.latitudeDelivery, tmpNode.longtitudeDelivery);
 			sumDuration = sumDuration + Double.parseDouble(arrDetail[1]);
 			sumDistance = tmpDistance.doubleValue() + sumDistance;
 			

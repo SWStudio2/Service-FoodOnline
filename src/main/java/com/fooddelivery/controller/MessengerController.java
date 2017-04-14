@@ -88,22 +88,27 @@ public class MessengerController {
 
 		if(list.size() == 1)
 		{
-			OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
-			List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
-			double time = 99;
-			for(int i = 0;i<listNode.size();i++)
-			{
-				NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
-				if(time > Double.parseDouble(node.getDuration()))
-				{
-					time = Double.parseDouble(node.getDuration());
-				}
-			}
-			bestTimeOneMessOneService = "" + time;
+//			OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+//			List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+//			double time = 99;
+//			for(int i = 0;i<listNode.size();i++)
+//			{
+//				NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+//				if(time > Double.parseDouble(node.getDuration()))
+//				{
+//					time = Double.parseDouble(node.getDuration());
+//				}
+//			}
+//			bestTimeOneMessOneService = "" + time;
+			try {
+				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
 		else if(list.size() == 2)
 		{
-			//YUI
 			try {
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
@@ -115,23 +120,24 @@ public class MessengerController {
 		{
 			try {
 				//Mike
+
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				//YUI
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-				bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+				//bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 				//MINT
-				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
-				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
-				double time = 99;
-				for(int i = 0;i<listNode.size();i++)
-				{
-					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
-					if(time > Double.parseDouble(node.getDuration()))
-					{
-						time = Double.parseDouble(node.getDuration());
-					}
-				}
-				bestTimeOneMessOneService = "" + time;
+//				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+//				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+//				double time = 99;
+//				for(int i = 0;i<listNode.size();i++)
+//				{
+//					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
+//					if(time > Double.parseDouble(node.getDuration()))
+//					{
+//						time = Double.parseDouble(node.getDuration());
+//					}
+//				}
+//				bestTimeOneMessOneService = "" + time;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -168,6 +174,35 @@ public class MessengerController {
 			}
 		}
 
+		
+		if(list.size() == 1)
+		{
+			chooseTime = threeMessValue;
+			chooseTime = oneMessValue;//Use this step temporary
+		}
+		else if(list.size() == 2)
+		{
+			chooseTime = oneMessValue;
+			diffValue = chooseTime - threeMessValue;
+			if(diffValue > 10)
+			{
+				chooseTime = threeMessValue;
+			}
+		}
+		else if(list.size() == 3)
+		{
+			chooseTime = oneMessValue;
+			diffValue = chooseTime - twoMessValue;
+			if(diffValue > 10)
+			{
+				chooseTime = twoMessValue;
+				diffValue = chooseTime - threeMessValue;
+				if(diffValue > 10)
+				{
+					chooseTime = threeMessValue;
+				}
+			}
+		}		
 
 	  // Return response
 	  String estimatedTime = "";
@@ -237,9 +272,11 @@ public class MessengerController {
 				arrNode.add(tmpNodeDetail);
 			}
 		}
-
+		
+		TimeAndDistanceDetailDao timeAndDistance = new TimeAndDistanceDetailDao();
+		TimeAndDistanceDetail[] tmpTimeAndDistance = timeAndDistance.getTimeAndDistanceDetail(merIdAdjust);
 		RoutePathDetail bestNode = new RoutePathDetail();
-		bestNode = bestNode.getBestNodeDetail(arrNode);
+		bestNode = bestNode.getBestNodeDetail(arrNode,tmpTimeAndDistance);
 		for(int i = 0;i<bestNode.getMerList().size();i++)
 		{
 			Merchants mer = bestNode.getMerList().get(i);
@@ -587,7 +624,7 @@ public class MessengerController {
 				resultList.put("full_name", fullMess1.getFullName());
 				resultList.put("full_contact_number", fullMess1.getFullContactNumber());
 				resultList.put("full_email", fullMess1.getFullEmail());
-				resultList.put("full_status", fullMess1.getFullStatus());
+				//resultList.put("full_status", fullMess1.getFullStatus());
 				resultList.put("full_recommend_lattitude", fullMess1.getFullRecommendLattitude());
 				resultList.put("full_recommend_longtitude", fullMess1.getFullRecommendLongtitude());
 

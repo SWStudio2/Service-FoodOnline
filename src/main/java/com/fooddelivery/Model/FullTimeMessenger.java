@@ -35,7 +35,7 @@ public class FullTimeMessenger {
 	private String full_password;
 	
 	@NotNull
-	private String full_status;
+	private int full_status_id;
 	
 	@NotNull
 	private String full_lastest_lattitude;
@@ -61,7 +61,7 @@ public class FullTimeMessenger {
 			String fullContactNumber, 
 			String fullEmail, 
 			String fullPassword,
-			String fullStatus,
+			int fullStatus,
 			String fullLastestLattitude,
 			String fullLastestLongtitude,
 			String fullRecommendLattitude,
@@ -71,7 +71,7 @@ public class FullTimeMessenger {
 	  this.full_contact_number = fullContactNumber;
 	  this.full_email = fullEmail;
 	  this.full_password = fullPassword;
-	  this.full_status = fullStatus;
+	  this.full_status_id = fullStatus;
 	  this.full_lastest_lattitude = fullLastestLattitude;
 	  this.full_lastest_longtitude = fullLastestLongtitude;
 	  this.full_recommend_lattitude = fullRecommendLattitude;
@@ -119,12 +119,12 @@ public class FullTimeMessenger {
 		this.full_password = fullPassword;
 	}
 	
-	public String getFullStatus() {
-		return full_status;
+	public int getFullStatus() {
+		return full_status_id;
 	}
 	
-	public void setFullStatus(String fullStatus) {
-		this.full_status = fullStatus;
+	public void setFullStatus(int fullStatus) {
+		this.full_status_id = fullStatus;
 	} 
 
 	public String getFullLatestLattitude() {

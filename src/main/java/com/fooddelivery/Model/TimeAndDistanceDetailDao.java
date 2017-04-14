@@ -17,31 +17,19 @@ public class TimeAndDistanceDetailDao {
 	private static final Logger logger = LoggerFactory.getLogger(TimeAndDistanceDetailDao.class);
 
 	TimeAndDistanceDetail timeAndDistance;
+	final static String statusID = "9,10";
 	
-	public static TimeAndDistanceDetail[] getTimeAndDistanceDetail(String[] merchantIdList)
+	public static TimeAndDistanceDetail[] getTimeAndDistanceDetail(String merchantIdForQuery)
 	{
 		Connection connect = null;
 		Statement s = null;
 		String URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc";
-		URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc?useUnicode=true&amp;characterEncoding=UTF-8";
+		URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc?useUnicode=true&characterEncoding=utf-8";
 		String USER = "ba8167e655c97d";
 		String PASSWORD = "fcc5664d";
 		
-		String merchantIdForQuery = "";
-		TimeAndDistanceDetail[] detailListReturn = null;
-		for(int i = 0;i<merchantIdList.length;i++)
-		{
-			if(i == 0)
-			{
-				merchantIdForQuery += merchantIdList[i];
-			}
-			else
-			{
-				merchantIdForQuery += "," + merchantIdList[i];
-			}
-		}
-		
 
+		TimeAndDistanceDetail[] detailListReturn = null;
 
 		// Close
 
@@ -62,38 +50,38 @@ public class TimeAndDistanceDetailDao {
 			StringBuffer sqlBuffer = new StringBuffer();
 
 			sqlBuffer.append("(\n ");
-			sqlBuffer.append("select \n ");
+			sqlBuffer.append("SELECT \n ");
 			sqlBuffer.append("bp.bike_path_source_id,\n ");
 			sqlBuffer.append("bp.bike_path_destination_id,\n ");
 			sqlBuffer.append("bp.bike_path_duration,\n ");
 			sqlBuffer.append("bp.bike_path_distance,\n ");
 			sqlBuffer.append("bp.bike_path_type\n ");
-			sqlBuffer.append("from bike_path bp\n ");
-			sqlBuffer.append("where \n ");
-			sqlBuffer.append("bike_path_source_id in (" + merchantIdForQuery + ") \n ");
-			sqlBuffer.append("and bike_path_destination_id in (" + merchantIdForQuery + ") \n ");
-			sqlBuffer.append("and bike_path_type = 'merchant'\n ");
+			sqlBuffer.append("FROM bike_path bp\n ");
+			sqlBuffer.append("WHERE \n ");
+			sqlBuffer.append("bike_path_source_id IN ("+ merchantIdForQuery +") \n ");
+			sqlBuffer.append("AND bike_path_destination_id IN ("+ merchantIdForQuery+") \n ");
+			sqlBuffer.append("AND bike_path_type = 'merchant'\n ");
 			sqlBuffer.append(")\n ");
-			sqlBuffer.append("union\n ");
+			sqlBuffer.append("UNION\n ");
 			sqlBuffer.append("(\n ");
-			sqlBuffer.append("select \n ");
+			sqlBuffer.append("SELECT \n ");
 			sqlBuffer.append("bp.bike_path_source_id,\n ");
 			sqlBuffer.append("bp.bike_path_destination_id,\n ");
 			sqlBuffer.append("bp.bike_path_duration,\n ");
 			sqlBuffer.append("bp.bike_path_distance,\n ");
 			sqlBuffer.append("bp.bike_path_type\n ");
-			sqlBuffer.append("from bike_path bp\n ");
-			sqlBuffer.append("where \n ");
-			sqlBuffer.append("bike_path_source_id in \n ");
+			sqlBuffer.append("FROM bike_path bp\n ");
+			sqlBuffer.append("WHERE \n ");
+			sqlBuffer.append("bike_path_source_id IN \n ");
 			sqlBuffer.append("(\n ");
-			sqlBuffer.append("select distinct full_biKe_station_now\n ");
-			sqlBuffer.append("  from fulltime_messenger \n ");
-			sqlBuffer.append("  where full_status in ('stand by','back to station')\n ");
+			sqlBuffer.append("SELECT DISTINCT full_biKe_station_now\n ");
+			sqlBuffer.append("  FROM fulltime_messenger \n ");
+			sqlBuffer.append("  WHERE full_status_id IN ("+ statusID +")\n ");
 			sqlBuffer.append(")  \n ");
-			sqlBuffer.append("and bike_path_destination_id in (" + merchantIdForQuery + ")\n ");
-			sqlBuffer.append("and  bike_path_type = 'bike'\n ");
+			sqlBuffer.append("AND bike_path_destination_id IN ("+ merchantIdForQuery +")\n ");
+			sqlBuffer.append("AND  bike_path_type = 'bike'\n ");
 			sqlBuffer.append(")\n ");
-			sqlBuffer.append("\n ");
+
 
 
 			
@@ -105,7 +93,7 @@ public class TimeAndDistanceDetailDao {
 			{
 				System.out.print(" record not found ");
 			}
-			logger.info("" + sql);
+			
 			ArrayList<TimeAndDistanceDetail> arrTimeDetail = new ArrayList<TimeAndDistanceDetail>();
 			while((rec!=null) && (rec.next()))
             {

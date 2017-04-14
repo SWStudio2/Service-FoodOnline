@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class FullTimeMessengerQuery {
 	private static final Logger logger = LoggerFactory.getLogger(FullTimeMessengerQuery.class);
-
+	final static String statusID = "9,10";
 	public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
 		  Connection connect = null;
@@ -119,7 +119,7 @@ public class FullTimeMessengerQuery {
 				sqlBuffer.append("inner join bike_station b\n ");
 				sqlBuffer.append("on f.full_bike_station_now = b.bike_station_id\n ");
 				sqlBuffer.append(" WHERE \n ");
-				sqlBuffer.append("full_status IN ('stand by','back to station') and b.bike_station_id = " + stationID +"\n ");
+				sqlBuffer.append("full_status_id IN (" + statusID + ") and b.bike_station_id = " + stationID +"\n ");
 
 
 				sql = sqlBuffer.toString();	

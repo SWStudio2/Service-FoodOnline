@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class StationQuery {
 	private static final Logger logger = LoggerFactory.getLogger(StationQuery.class);
-
+	final static String statusID = "9,10";
 	public static Station[] getStationAvailable()
 	{
 		  Connection connect = null;
@@ -41,7 +41,7 @@ public class StationQuery {
 				sqlBuffer.append("SELECT bike_station_id,bike_station_latitude,bike_station_longitude  \n ");
 				sqlBuffer.append("FROM bike_station WHERE  bike_station_id IN (SELECT DISTINCT full_biKe_station_now  \n ");
 				sqlBuffer.append("FROM fulltime_messenger  \n ");
-				sqlBuffer.append("WHERE full_status IN ('stand by','back to station'))  \n ");
+				sqlBuffer.append("WHERE full_status_id IN (" + statusID + "))  \n ");
 				
 				sql = sqlBuffer.toString();	
 				
