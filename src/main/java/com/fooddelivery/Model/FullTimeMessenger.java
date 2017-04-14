@@ -119,11 +119,11 @@ public class FullTimeMessenger {
 		this.full_password = fullPassword;
 	}
 	
-	public int getFullStatus() {
+	public int getFullStatusId() {
 		return full_status_id;
 	}
 	
-	public void setFullStatus(int fullStatus) {
+	public void setFullStatusId(int fullStatus) {
 		this.full_status_id = fullStatus;
 	} 
 

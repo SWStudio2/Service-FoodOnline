@@ -624,7 +624,7 @@ public class MessengerController {
 				resultList.put("full_name", fullMess1.getFullName());
 				resultList.put("full_contact_number", fullMess1.getFullContactNumber());
 				resultList.put("full_email", fullMess1.getFullEmail());
-				//resultList.put("full_status", fullMess1.getFullStatus());
+				resultList.put("full_status_id", String.valueOf(fullMess1.getFullStatusId()));
 				resultList.put("full_recommend_lattitude", fullMess1.getFullRecommendLattitude());
 				resultList.put("full_recommend_longtitude", fullMess1.getFullRecommendLongtitude());
 
