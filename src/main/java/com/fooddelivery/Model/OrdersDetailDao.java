@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.fooddelivery.Model.Order.OrderHeaderAndDetail;
 
 import ch.qos.logback.classic.Logger;
 
@@ -35,4 +36,25 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 			 @Param("mer_id") String mer_id);
 	 
 	
+	 
+	 @Query(value="select "	  
+		      +"o.*,"
+		      +"m.menu_name,"
+		      +"m.menu_price,"
+		      +"od.order_detail_amount,"
+		      +"od.order_remark,"
+		       +"IFNULL(sop.sum_option,0) as option_total_price,"
+		      +"((m.menu_price * od.order_detail_amount) +  IFNULL(sop.sum_option,0) ) as menu_total_price"
+		    +" from order_detail od"
+		      +" inner join menu m on m.menu_id = od.menu_id"
+		    +" inner join orders o on od.order_id = o.order_id" 
+		    +" Left  join ( "
+		  		+" select odp.order_detail_id,sum(om.option_price) as sum_option" 
+		  		+" from order_detail od"
+		  		+" inner join orders_detail_option odp  ON odp.order_detail_id = od.order_detail_id"
+		  		+" inner join options_menu om on om.option_id = odp.option_id"
+		  		+" where od.order_id = :order_id"
+		  		+" group by odp.order_detail_id) sop on sop.order_detail_id = od.order_detail_id"
+		    +" where od.order_id = :order_id" , nativeQuery = true)
+	 public List<Object[]> findByOrderId(@Param("order_id") Long order_id);
 }

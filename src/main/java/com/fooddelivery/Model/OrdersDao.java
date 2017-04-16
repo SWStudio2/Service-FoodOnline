@@ -39,6 +39,18 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			 @Param("order_price") double order_price,
 			 @Param("order_distance") double order_distance,
 			 @Param("order_status") String order_status);
-	 
 	
+	 
+	 @Query(value="select * from orders o where o.order_cus_id = :order_cus_id" , nativeQuery = true)
+	 public List<Orders> findByOrderCusId(@Param("order_cus_id") Long order_cus_id);
+
+//	 @Query(nativeQuery=true, value="select o.*, 1 as a from orders o limit 1")
+//	 public List<Object[]> customQuery();
+	 
+
+    
+
+	 
+	 
+	 
 }

@@ -131,9 +131,15 @@ public class TwoMessThreeMercService {
 						//cal duration and distance
 						routePathList = calDuraAndDist(routePathList);
 						
+
 						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
 						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
 						logger.info("=========================================================================");
+
+//						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
+//						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
+//						System.out.println("=========================================================================");
+
 						
 						//cal total distance and duration of this GroupPath
 						double totalDist = Double.valueOf(routePathList.get(0).getDistance()) + Double.valueOf(routePathList.get(1).getDistance());

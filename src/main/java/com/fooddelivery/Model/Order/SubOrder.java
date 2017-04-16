@@ -1,22 +1,28 @@
 package com.fooddelivery.Model.Order;
 
 public class SubOrder {
-	private String menuid;
-	private String menuAmount;
+	private String menuId;
+	private String orderDetailAmount;
+	private String menuPrice;
 	private String remark;
-	private String[] optioId;
-	
-	public String getMenuid() {
-		return menuid;
+	private SubOrderOption[] optionList;
+	public String getMenuId() {
+		return menuId;
 	}
-	public void setMenuid(String menuid) {
-		this.menuid = menuid;
+	public void setMenuId(String menuId) {
+		this.menuId = menuId;
 	}
-	public String getMenuAmount() {
-		return menuAmount;
+	public String getOrderDetailAmount() {
+		return orderDetailAmount;
 	}
-	public void setMenuAmount(String menuAmount) {
-		this.menuAmount = menuAmount;
+	public void setOrderDetailAmount(String orderDetailAmount) {
+		this.orderDetailAmount = orderDetailAmount;
+	}
+	public String getMenuPrice() {
+		return menuPrice;
+	}
+	public void setMenuPrice(String menuPrice) {
+		this.menuPrice = menuPrice;
 	}
 	public String getRemark() {
 		return remark;
@@ -24,11 +30,13 @@ public class SubOrder {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	public String[] getOptioId() {
-		return optioId;
+	public SubOrderOption[] getOptionList() {
+		return optionList;
 	}
-	public void setOptioId(String[] optioId) {
-		this.optioId = optioId;
+	public void setOptionList(SubOrderOption[] optionList) {
+		this.optionList = optionList;
 	}
+	
+	
 	
 }

@@ -1,18 +1,26 @@
 package com.fooddelivery.Model;
 
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
@@ -40,11 +48,10 @@ public class Orders {
 	@Column(name = "order_address_longtitude")
 	private String order_address_longtitude;
 	
-	@NotNull
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "order_created_datetime")
 	private Date order_created_datetime;
-
+	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "order_receive_datetime")
 	private Date order_receive_datetime;
@@ -55,7 +62,7 @@ public class Orders {
 	
 	@NotNull
 	@Column(name = "order_total_price")
-	private double order_total_price;
+	private Double order_total_price;
 	
 	@NotNull
 	@Column(name = "order_distance")
@@ -67,11 +74,11 @@ public class Orders {
 	
 	@NotNull
 	@Column(name = "order_food_price")
-	private double order_food_price;
+	private Double order_food_price;
 	
 	@NotNull
 	@Column(name = "order_delivery_price")
-	private double order_delivery_price;
+	private Double order_delivery_price;
 	
 	@Column(name = "order_confirm_code")
 	private String order_confirm_code;
@@ -82,7 +89,11 @@ public class Orders {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "order_estimate_datetime")
 	private Date order_estimate_datetime;
-		
+	
+	//--------------RELATION----------------
+	@OneToMany(mappedBy="order_id",targetEntity=OrderDetail.class,fetch=FetchType.LAZY) //EAGER
+	private List<OrderDetail> orderDetails;
+	
 	public Orders() {}
 	
 	public Orders(long orderId) {
@@ -94,22 +105,25 @@ public class Orders {
 		String orderAddress,
 		String orderAddressLatitude,
 		String orderAddressLogtitude,
-		Date orderDatetime,
-		Date orderDatetimeDelivery,
+		Date orderCreatedDatetime,
+		Date orderReceiveDateTime,
 		int orderDeliveryRate,
 		double orderPrice,
-		double orderDistance
-		
+		double orderDistance,
+		int orderEstimateTime,
+		Date orderEstimateDatetime
 	) {
 		this.order_cus_id = orderCusId;
 		this.order_address = orderAddress;
 		this.order_address_latitude = orderAddressLatitude;
 		this.order_address_longtitude = orderAddressLogtitude;
-		this.order_created_datetime = orderDatetime;
-		this.order_receive_datetime = orderDatetimeDelivery;
+		this.order_created_datetime = orderCreatedDatetime;
+		this.order_receive_datetime = orderReceiveDateTime;
 		this.order_delivery_rate = orderDeliveryRate;
 		this.order_total_price = orderPrice;
 		this.order_distance = orderDistance;
+		this.order_estimate_time = orderEstimateTime;
+		this.order_estimate_datetime = orderEstimateDatetime;
 	}
 	
 	public void setOrderId(long orderId) {
@@ -168,6 +182,27 @@ public class Orders {
 		return order_receive_datetime;
 	}
 	
+	public Date getOrderCreatedDatetime() {
+		return order_created_datetime;
+	}
+
+
+	public Integer getOrderEstimateTime() {
+		return order_estimate_time;
+	}
+
+	public void setOrderEstimateTime(Integer order_estimate_time) {
+		this.order_estimate_time = order_estimate_time;
+	}
+
+	public Date getOrderEstimateDatetime() {
+		return order_estimate_datetime;
+	}
+
+	public void setOrderEstimateDatetime(Date order_estimate_datetime) {
+		this.order_estimate_datetime = order_estimate_datetime;
+	}
+
 	public void setOrderDeliveryRate(int orderDeliveryRate) {
 		this.order_delivery_rate = orderDeliveryRate;
 	} 
@@ -176,11 +211,11 @@ public class Orders {
 		return order_delivery_rate;
 	}
 	
-	public void setOrderTotalPrice(double orderTotalPrice) {
+	public void setOrderTotalPrice(Double orderTotalPrice) {
 		this.order_total_price = orderTotalPrice;
 	}
 	
-	public double getOrderTotalPrice() {
+	public Double getOrderTotalPrice() {
 		return order_total_price;
 	}
 	
@@ -200,19 +235,19 @@ public class Orders {
 		return order_status;
 	}
 	
-	public void setOrderFoodPrice(double orderFoodPrice) {
+	public void setOrderFoodPrice(Double orderFoodPrice) {
 		this.order_food_price = orderFoodPrice;
 	}
 	
-	public double getOrderFoodPrice() {
+	public Double getOrderFoodPrice() {
 		return order_food_price;
 	}
 	
-	public void setOrderDeliveryPrice(double orderDeliveryPrice) {
+	public void setOrderDeliveryPrice(Double orderDeliveryPrice) {
 		this.order_delivery_price = orderDeliveryPrice;
 	}
 	
-	public double getOrderDeliveryPrice() {
+	public Double getOrderDeliveryPrice() {
 		return order_delivery_price;
 	}
 	
@@ -224,19 +259,20 @@ public class Orders {
 		return order_confirm_code;
 	}
 	
-	public void setOrderEstimateTime(int orderEstimateTime) {
-		this.order_estimate_time = orderEstimateTime;
-	} 
-	
-	public int getOrderEstimateTime() {
-		return order_estimate_time;
+	//-------------RELATION--------------
+	public List<OrderDetail> getOrderDetails(){
+		return orderDetails;
 	}
 	
-	public void setOrderEstimateDatetime(Date orderEstimateDatetime) {
-		this.order_estimate_datetime = orderEstimateDatetime;
-	}
-	
-	public Date getOrderEstimateDatetime() {
-		return order_estimate_datetime;
+	@Override
+	public String toString() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+
 	}
 }
