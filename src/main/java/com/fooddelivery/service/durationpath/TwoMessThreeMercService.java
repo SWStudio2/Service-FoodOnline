@@ -11,9 +11,13 @@ import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TwoMessThreeMercService {
 	private static final Logger logger = LoggerFactory.getLogger(TwoMessThreeMercService.class);
+	
+	@Autowired
+	private BikePathDao bikePathDao;
 
 	public GroupPathDetail TwoMessThreeMercService(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
 		
@@ -136,9 +140,9 @@ public class TwoMessThreeMercService {
 						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
 						logger.info("=========================================================================");
 
-//						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
-//						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
-//						System.out.println("=========================================================================");
+						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
+						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
+						System.out.println("=========================================================================");
 
 						
 						//cal total distance and duration of this GroupPath
@@ -193,46 +197,56 @@ public class TwoMessThreeMercService {
 				
 		for(int i=0;i<routePathList.size();i++){
 			
-			String staLat = routePathListClone.get(i).getStation().getStationLantitude();
-			String staLng = routePathListClone.get(i).getStation().getStationLongtitude();
+			int staId = routePathListClone.get(i).getStation().getStationId();
 			
 			if(i == 0){
-				String merOneLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
-				String merOneLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
-				String merTwoLat = routePathListClone.get(i).getMerList().get(1).getMerLatitude();
-				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
+				int merOneId = routePathListClone.get(i).getMerList().get(0).getMerID();
+				int merTwoId = routePathListClone.get(i).getMerList().get(1).getMerID();
 				
-				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
-				Thread.sleep(600);
-				String[] duraDistSecPath = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
-				Thread.sleep(600);
-				String[] duraDistLastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
-				Thread.sleep(600);
-				double distFirst = Double.valueOf(duraDistFirstPath[0]);
-				double distSec = Double.valueOf(duraDistSecPath[0]);
-				double distLast = Double.valueOf(duraDistLastPath[0]);
-				double duraFirst = Double.valueOf(duraDistFirstPath[1]);
-				double duraSec = Double.valueOf(duraDistSecPath[1]);
-				double duraLast = Double.valueOf(duraDistLastPath[1]);
+				String merTwoLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
+				String merTwoLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
+				
+//				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
+//				Thread.sleep(600);
+//				String[] duraDistSecPath = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
+//				Thread.sleep(600);
+//				String[] duraDistLastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
+//				Thread.sleep(600);
+				
+				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merOneId);
+				BikePath secPath = bikePathDao.findBikePathFromId(merOneId, merTwoId);
+				String[] lastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
+				
+				double distFirst = firstPath.getBike_path_distance();
+				double distSec = secPath.getBike_path_distance();
+				double distLast = Double.valueOf(lastPath[0]);
+				double duraFirst = firstPath.getBike_path_duration();
+				double duraSec = secPath.getBike_path_duration();
+				double duraLast = Double.valueOf(lastPath[1]);
 				
 				
-				if(duraDistFirstPath != null && duraDistSecPath != null && duraDistLastPath != null){
+				if(firstPath != null && secPath != null && lastPath != null){
 					distTwoMerRoutePath = String.valueOf(distFirst+distSec+distLast);
-					duraTwoMerRoutePath = String.valueOf(duraFirst+duraSec+duraLast);
+					duraTwoMerRoutePath = String.valueOf(duraFirst+duraSec+duraLast); //TODO ยังไม่รวมเวลาทำอาหาร
 				}
 				
 				routePathListClone.get(i).setDistance(distTwoMerRoutePath);
 				routePathListClone.get(i).setDuration(duraTwoMerRoutePath);
 			}else if(i == 1){
+				int merThreeId = routePathListClone.get(i).getMerList().get(0).getMerID();
 				String merThreeLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
 				String merThreeLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
 				
-				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
-				Thread.sleep(600);
+//				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
+//				Thread.sleep(600);
+				
+				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merThreeId);
 				String[] duraDistSecPath = home.getDistanceDuration(merThreeLat, merThreeLng, cusLat, cusLng);
-				Thread.sleep(600);
-				double distOneMer = Double.valueOf(duraDistFirstPath[0])+Double.valueOf(duraDistSecPath[0]);
-				double duraOneMer = Double.valueOf(duraDistFirstPath[1])+Double.valueOf(duraDistSecPath[1]);
+//				Thread.sleep(600);
+				
+				
+				double distOneMer = firstPath.getBike_path_distance()+Double.valueOf(duraDistSecPath[0]);
+				double duraOneMer = firstPath.getBike_path_duration()+Double.valueOf(duraDistSecPath[1]);
 				
 				routePathListClone.get(i).setDistance(String.valueOf(distOneMer));
 				routePathListClone.get(i).setDuration(String.valueOf(duraOneMer));
@@ -274,16 +288,15 @@ public class TwoMessThreeMercService {
 		return duraDist;
 	}
 	
-	
 //	public static void main(String[] args) throws InterruptedException{
 //		
 //		List<Integer> merIdList = new ArrayList<Integer>();
-//		merIdList.add(1);
-//		merIdList.add(2);
-//		merIdList.add(3);
+//		merIdList.add(7);
+//		merIdList.add(6);
+//		merIdList.add(5);
 //		
 //		TwoMessThreeMercService test = new TwoMessThreeMercService();
-//		logger.info(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
+//		System.out.println(test.TwoMessThreeMercService(merIdList,"13.718996", "100.532571"));
 //		
 //	}
 }

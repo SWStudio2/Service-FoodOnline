@@ -22,5 +22,4 @@ public interface BikeStationDao extends CrudRepository<BikeStation, Long> {
 	  		, nativeQuery = true)
 	 public List<BikeStation> getBikeStationAll();	
 	 
-	
 }

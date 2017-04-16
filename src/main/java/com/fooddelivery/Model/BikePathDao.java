@@ -3,7 +3,6 @@ package com.fooddelivery.Model;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -32,5 +31,10 @@ public interface BikePathDao extends CrudRepository<BikePath, Long> {
 			 @Param("bike_path_distance") double bike_path_distance,
 			 @Param("bike_path_type") String bike_path_type);	
 	 
+	
+	@Query(value = "SELECT * FROM bike_path WHERE bike_path_source_id = :sID "
+			+ "AND bike_path_destination_id = :dID"
+	  		, nativeQuery = true)
+	public BikePath findBikePathFromId(@Param("sID") int sourceId,@Param("dID") int destId);
 	
 }

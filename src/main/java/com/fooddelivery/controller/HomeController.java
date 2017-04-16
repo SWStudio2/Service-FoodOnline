@@ -17,11 +17,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fooddelivery.Model.BikePath;
+import com.fooddelivery.Model.BikePathDao;
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRate;
@@ -39,11 +42,19 @@ public class HomeController {
 	private CustomerDao customerDao;
 	@Autowired
 	private DeliveryRateDao delvDao;
+	@Autowired
+	private BikePathDao bikePathDao;
 
 //	@RequestMapping("/")
 //	public String index(){
 //		return "Hello World";
 //	}
+	
+	@RequestMapping(value="/service/findBikePath", method=RequestMethod.GET)
+	@ResponseBody
+	public BikePath getBikePath(@RequestParam("sID") int sourceId,@RequestParam("dID") int destId){
+		return bikePathDao.findBikePathFromId(sourceId, destId);
+	}
 	
 	@RequestMapping(value="/service/{id}", method=RequestMethod.GET)
 	public String getID(@PathVariable int id){
@@ -209,9 +220,9 @@ public class HomeController {
 	
 //	public static void main(String[] args){
 //		HomeController home = new HomeController();
-//		//mins
-//		//home.getDistance("13.7325473","100.5295583","13.7266196","100.5281344");
-//		// > hours min
+		//mins
+		//home.getDistance("13.7325473","100.5295583","13.7266196","100.5281344");
+		// > hours min
 //		home.getDistance("13.7325473","100.5295583","12.583369","99.681333");
 //	}
 	
