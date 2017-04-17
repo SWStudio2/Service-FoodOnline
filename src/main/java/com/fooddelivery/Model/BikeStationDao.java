@@ -16,6 +16,11 @@ public interface BikeStationDao extends CrudRepository<BikeStation, Long> {
 			+ "WHERE full_status_id IN (" +statusID+"))"
 	  		, nativeQuery = true)
 	 public List<BikeStation> getBikeStationAvailable();
+	
+	
+	@Query(value = "SELECT * FROM bike_station "
+	  		, nativeQuery = true)
+	 public List<BikeStation> getBikeStationAll();	
 	 
 	
 }
