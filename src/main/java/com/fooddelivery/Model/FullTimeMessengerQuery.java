@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class FullTimeMessengerQuery {
 	private static final Logger logger = LoggerFactory.getLogger(FullTimeMessengerQuery.class);
 	final static String statusID = "9,10";
+	final static String FULL_STATUS_ID = "5";
 	public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
 		  Connection connect = null;
@@ -152,5 +153,67 @@ public class FullTimeMessengerQuery {
 				e.printStackTrace();
 			}				  
 		  return arrId;
+	}
+	
+	public static String updateFulltimeMessengerStatus(int orderId,int idMessenger)
+	{
+		  Connection connect = null;
+			Statement s = null;
+			String URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc";
+			URL_DB = "jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/ad_4e5de0567b1e3fc?useUnicode=true&characterEncoding=utf-8";
+			String USER = "ba8167e655c97d";
+			String PASSWORD = "fcc5664d";
+			String resultText = "";
+			HashMap<String, String> tmpHash = new HashMap<String, String>();
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				connect = DriverManager.getConnection(URL_DB, USER, PASSWORD);
+				
+				if(connect != null){
+					logger.info("Database Connected.");
+				} else {
+					logger.info("Database Connect Failed.");
+				}
+				s = connect.createStatement();
+							
+				String sql = "";
+				
+				StringBuffer sqlBuffer = new StringBuffer();
+				  
+				sqlBuffer.append("UPDATE fulltime_messenger     \n ");
+				sqlBuffer.append(" SET FULL_ORDER_ID = " + orderId +",  \n ");
+				sqlBuffer.append(" FULL_STATUS_ID = " + FULL_STATUS_ID + "  \n ");
+				sqlBuffer.append("  WHERE FULL_ID = " + idMessenger + " \n ");
+
+
+
+				sql = sqlBuffer.toString();	
+
+				boolean result = s.execute(sql);
+				if(result)
+				{
+					resultText = "Success";
+				}
+				else
+				{
+					resultText = "Fail";
+				}
+
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			// Close
+			try {
+				if(connect != null){
+					connect.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}				  
+		  return resultText;
 	}	
 }

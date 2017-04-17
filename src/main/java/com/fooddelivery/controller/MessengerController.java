@@ -495,6 +495,7 @@ public class MessengerController {
 							if(tmpMerchant.getMerID() == seqOrderMerID)
 							{
 								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+								fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 								runningNo++;
 								break;
 							}
@@ -529,6 +530,7 @@ public class MessengerController {
 								if(tmpMerchant.getMerID() == seqOrderMerID)
 								{
 									query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+									fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 									runningNo++;
 									break;
 								}
@@ -555,6 +557,7 @@ public class MessengerController {
 									if(tmpMerchant.getMerID() == seqOrderMerID)
 									{
 										query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+										fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 										runningNo++;
 										break;
 									}

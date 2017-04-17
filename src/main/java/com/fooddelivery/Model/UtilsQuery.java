@@ -14,7 +14,10 @@ import java.util.HashMap;
 public class UtilsQuery {
 	private static final Logger logger = LoggerFactory.getLogger(UtilsQuery.class);
 
-
+	final static String statusConfirm = "13,14";
+	final static String status_13 = "13";
+	final static String RECEIVE_STATUS = "6";
+	final static String WAILMEAL = "2";
 	public static String checkRecallOrder(int orderID)
 	{
 		  Connection connect = null;
@@ -49,7 +52,7 @@ public class UtilsQuery {
 				sqlBuffer.append("select count(seqor_id) \n ");
 				sqlBuffer.append("from sequence_orders\n ");
 				sqlBuffer.append("where seqor_order_id = "+ orderID+"\n ");
-				sqlBuffer.append("and seqor_cook_status in ('ยืนยันการรับออร์เดอร์','ไม่รับออร์เดอร์')\n ");
+				sqlBuffer.append("and seqor_cook_status in (" + statusConfirm + ")\n ");
 				sqlBuffer.append("),'Y','N') As CHK_RECALL\n ");
 		
 				sql = sqlBuffer.toString();	
@@ -122,7 +125,7 @@ public class UtilsQuery {
 				sqlBuffer.append("  INNER JOIN merchants m   \n ");
 				sqlBuffer.append("    ON m.mer_id = so.SEQOR_MER_ID   \n ");
 				sqlBuffer.append("WHERE seqor_order_id = " + orderID + "    \n ");
-				sqlBuffer.append("  AND seqor_cook_status = 'ยืนยันการรับออร์เดอร์'  \n ");
+				sqlBuffer.append("  AND seqor_cook_status = " + status_13 +" \n ");
 
 
 				
@@ -259,7 +262,7 @@ public class UtilsQuery {
 				sqlBuffer.append("  SET SEQOR_MESS_ID = " + idMessenger +",  \n ");
 				sqlBuffer.append("  SEQOR_SORT = " + seqSort+",   \n ");
 				sqlBuffer.append("  SEQOR_TYPE_MESS = 'FULLTIME',  \n ");
-				sqlBuffer.append("  SEQOR_RECEIVE_STATUS = 'กำลังไปรับอาหาร'  \n ");
+				sqlBuffer.append("  SEQOR_RECEIVE_STATUS = " + RECEIVE_STATUS + " \n ");
 				sqlBuffer.append("  WHERE SEQOR_ID = " + seqOrder+ "  \n ");
 
 
@@ -318,7 +321,7 @@ public class UtilsQuery {
 				
 				StringBuffer sqlBuffer = new StringBuffer();  
 				sqlBuffer.append("UPDATE orders     \n ");
-				sqlBuffer.append("  SET ORDER_STATUS  = 'รอรับอาหาร',  \n ");
+				sqlBuffer.append("  SET ORDER_STATUS  = "+ WAILMEAL + ",  \n ");
 				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + "   \n ");
 				sqlBuffer.append("  WHERE ORDER_ID = "+ orderId+"  \n ");
 
