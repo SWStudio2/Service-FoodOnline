@@ -44,7 +44,7 @@ public class TwoMessThreeMercService {
 	}
 	
 	//not a service
-	public GroupPathDetail twoMessThreeMercService(ArrayList<Integer> merIdArray, String cus_Latitude, String cus_Longtitude) throws InterruptedException
+	public GroupPathDetail twoMessThreeMercService(List<Integer> merIdArray, String cus_Latitude, String cus_Longtitude) throws InterruptedException
 	{
 		//create Dao for query
 		MerchantsQuery merDao = new MerchantsQuery();

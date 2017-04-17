@@ -393,7 +393,7 @@ public class MessengerController {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 					//YUI
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-					bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 					//MINT
 					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
 					bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
