@@ -52,8 +52,8 @@ public class HomeController {
 	
 	@RequestMapping(value="/service/findBikePath", method=RequestMethod.GET)
 	@ResponseBody
-	public BikePath getBikePath(@RequestParam("sID") int sourceId,@RequestParam("dID") int destId){
-		return bikePathDao.findBikePathFromId(sourceId, destId);
+	public BikePath getBikePath(@RequestParam("sID") int sourceId,@RequestParam("dID") int destId, @RequestParam("type") String type){
+		return bikePathDao.findBikePathFromId(sourceId, destId , type);
 	}
 	
 	@RequestMapping(value="/service/{id}", method=RequestMethod.GET)
@@ -69,7 +69,7 @@ public class HomeController {
 		try{
 			
 //			String url = "https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyCQQmDCGFkJ4bR3sslC1f9OXFIcXNveStU&mode=driving&destinations="+desLat+"%2C"+desLng+"&origins="+oriLat+"%2C"+oriLng;
-			String url = "https://maps.googleapis.com/maps/api/directions/json?destination="+desLat+"%2C"+desLng+"&origin="+oriLat+"%2C"+oriLng+"&units=imperial&alternatives=true";
+			String url = "https://maps.googleapis.com/maps/api/directions/json?destination="+desLat+"%2C"+desLng+"&origin="+oriLat+"%2C"+oriLng+"&units=metric&alternatives=true";
 //			logger.info(">>" + url);
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -113,8 +113,15 @@ public class HomeController {
 //					logger.info(objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text"));
 					
 					String dist = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text") ;
-					String dura = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");					
-					double distF = Double.valueOf(dist.substring(0, dist.indexOf(" mi"))) * 1.609; // change mi to km
+					String dura = objJson.getJSONArray("routes").getJSONObject(i).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");		
+					System.out.println("dist[Google] "+dist);
+					double distF = Double.valueOf(dist.substring(0, dist.indexOf(" ")));
+					if(dist.indexOf(" m")>=0){
+						//unit=meter --> convert to km
+						distF = distF/1000.0;
+					}
+					//otherwise, unit=kilometer --> no need to convert
+					
 					distanceList.add(distF);
 					int duraF = Integer.valueOf(dura.substring(0, dura.indexOf(" ")));	
 					
@@ -182,6 +189,7 @@ public class HomeController {
 			return resultArry;
 
 		}catch (Exception ex){
+			ex.printStackTrace();
 			return null;
 		}
 	    

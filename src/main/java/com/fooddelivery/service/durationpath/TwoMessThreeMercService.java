@@ -1,8 +1,9 @@
 package com.fooddelivery.service.durationpath;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 import com.fooddelivery.Model.*;
 import com.fooddelivery.controller.HomeController;
@@ -12,17 +13,40 @@ import com.fooddelivery.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class TwoMessThreeMercService {
 	private static final Logger logger = LoggerFactory.getLogger(TwoMessThreeMercService.class);
 	
 	@Autowired
 	private BikePathDao bikePathDao;
-
-	public GroupPathDetail TwoMessThreeMercService(List<Integer> merId,String cus_Latitude,String cus_Longtitude) throws InterruptedException {
+	
+	private HashMap<Integer, Double[]> mapMercDistDura = new HashMap<Integer, Double[]>();
+	
+	
+	
+	@RequestMapping(value="/service/TwoMessThreeMercService", method=RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+	public GroupPathDetail twoMessThreeMercService(@RequestBody Map<String, Object> mapRequest) throws InterruptedException {	
 		
+		//Define variable from mapRequest
+		ArrayList<Integer> merIdArray = (ArrayList<Integer>) mapRequest.get("merIdArray");
+		String cus_Latitude = (String) mapRequest.get("lat");
+		String cus_Longtitude = (String) mapRequest.get("lng");
+		System.out.println("MerIDArray " +merIdArray);
+		System.out.println("cus_Latitude " +cus_Latitude);
+		System.out.println("cus_Longtitude " +cus_Longtitude);
+		return twoMessThreeMercService(merIdArray, cus_Latitude, cus_Longtitude);
+	}
+	
+	//not a service
+	public GroupPathDetail twoMessThreeMercService(ArrayList<Integer> merIdArray, String cus_Latitude, String cus_Longtitude) throws InterruptedException
+	{
 		//create Dao for query
-		TimeAndDistanceDetailDao timeDisDao = new TimeAndDistanceDetailDao();
 		MerchantsQuery merDao = new MerchantsQuery();
 		
 		//get station from database
@@ -31,20 +55,42 @@ public class TwoMessThreeMercService {
 		
 		//get Merchant List from merID from Database 
 		String merIdAdjust = "";
-		for(int i = 0;i<merId.size();i++)
+		for(int i = 0;i<merIdArray.size();i++)
 		{
 			if (i != 0) {
 				merIdAdjust += ",";
 			}
-			merIdAdjust += merId.get(i);
+			merIdAdjust += merIdArray.get(i);
+			
 		}
-		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
+		System.out.println("merIdAdjust" + merIdAdjust);
+		//===================== For Test ===========================
+//		List<Integer> merId = new ArrayList<Integer>();
+//		merId.add(1);
+//		merId.add(2);
+//		merId.add(3);
+//		merIdAdjust = "1,2,3";
 		
+		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
+		HomeController home = new HomeController();
+		
+		//clear hashmap for new customer
+		mapMercDistDura.clear();
+		for(int i=0;i<merList.length;i++){
+			String[] distDuraStr = home.getDistanceDuration(merList[i].getMerLatitude(), merList[i].getMerLongtitude(), cus_Latitude, cus_Longtitude);
+			Double[] distDuraD = new Double[2];
+			Double distD = Double.valueOf(distDuraStr[0]);
+			Double duraD = Double.valueOf(distDuraStr[1]);
+			distDuraD[0] = distD;
+			distDuraD[1] = duraD;
+			mapMercDistDura.put(merList[i].getMerID(), distDuraD);
+			System.out.println("Merchant to customer[Google]"+distD +" "+duraD + " " + mapMercDistDura.size());
+		}
 		
 		
 		//create copy of merId
 		ArrayList<Integer> indexPos = new ArrayList<Integer>();
-		for(int i = 0;i<merId.size();i++)
+		for(int i = 0;i<merIdArray.size();i++)
 		{
 			indexPos.add(i);
 		}
@@ -124,6 +170,7 @@ public class TwoMessThreeMercService {
 		
 		// set total distance and total duration of each GroupPath
 		GroupPathDetail BestGroupPath = null;
+		
 		if(groupPathList != null && groupPathList.size() != 0){
 			//Loop routePathList of each GroupPath
 			for(int i=0;i<groupPathList.size();i++){
@@ -133,6 +180,7 @@ public class TwoMessThreeMercService {
 						
 						routePathList = groupPathList.get(i).getAllRoutePath();
 						//cal duration and distance
+						System.out.println("GroupPath : "+ i);
 						routePathList = calDuraAndDist(routePathList);
 						
 
@@ -187,69 +235,130 @@ public class TwoMessThreeMercService {
 		HomeController home = new HomeController();
 		List<RoutePathDetail> routePathListClone = routePathList;
 		
-		String cusLat = routePathListClone.get(0).getLatitudeDelivery();
-		String cusLng = routePathListClone.get(0).getLongtitudeDelivery();
-		
 		String duraTwoMerRoutePath = "";
 		String distTwoMerRoutePath = "";
-		String duraOneMerRoutePath = "";
-		String distOneMerRoutePath = "";
 				
 		for(int i=0;i<routePathList.size();i++){
-			
+			System.out.println("RoutPath [" + i + "]");
 			int staId = routePathListClone.get(i).getStation().getStationId();
+			//For call Google Map API
+			String staLat = routePathListClone.get(i).getStation().getStationLantitude();
+			String staLng = routePathListClone.get(i).getStation().getStationLongtitude();
 			
 			if(i == 0){
+				
 				int merOneId = routePathListClone.get(i).getMerList().get(0).getMerID();
 				int merTwoId = routePathListClone.get(i).getMerList().get(1).getMerID();
+				//For call Google Map API
+				String merOneLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
+				String merOneLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
+				String merTwoLat = routePathListClone.get(i).getMerList().get(1).getMerLatitude();
+				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
 				
-				String merTwoLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
-				String merTwoLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
+				//For set distance and duration of three path
+				Double[] duraDistFirstPath = new Double[2];
+				Double[] duraDistSecPath = new Double[2];
+				Double[] duraDistLastPath = new Double[2];
 				
-//				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
-//				Thread.sleep(600);
-//				String[] duraDistSecPath = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
-//				Thread.sleep(600);
-//				String[] duraDistLastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
-//				Thread.sleep(600);
+				//Cal First Path 
+				System.out.println(staId +" "+merOneId);
+				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merOneId , "bike");
+				System.out.println("firstPath "+firstPath);
 				
-				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merOneId);
-				BikePath secPath = bikePathDao.findBikePathFromId(merOneId, merTwoId);
-				String[] lastPath = home.getDistanceDuration(merTwoLat, merTwoLng, cusLat, cusLng);
-				
-				double distFirst = firstPath.getBike_path_distance();
-				double distSec = secPath.getBike_path_distance();
-				double distLast = Double.valueOf(lastPath[0]);
-				double duraFirst = firstPath.getBike_path_duration();
-				double duraSec = secPath.getBike_path_duration();
-				double duraLast = Double.valueOf(lastPath[1]);
-				
-				
-				if(firstPath != null && secPath != null && lastPath != null){
-					distTwoMerRoutePath = String.valueOf(distFirst+distSec+distLast);
-					duraTwoMerRoutePath = String.valueOf(duraFirst+duraSec+duraLast); //TODO ยังไม่รวมเวลาทำอาหาร
+				if(firstPath != null){
+					duraDistFirstPath[0] = firstPath.getBike_path_distance();
+					duraDistFirstPath[1] = firstPath.getBike_path_duration();
+				}else{
+					String[] duraDistFirstPathStr = home.getDistanceDuration(staLat, staLng, merOneLat, merOneLng);
+					BikePath newBikePath = new BikePath();
+					newBikePath.setBike_path_source_id(staId);
+					newBikePath.setBike_path_destination_id(merOneId);
+					newBikePath.setBike_path_type("bike");
+					newBikePath.setBike_path_distance(Double.valueOf(duraDistFirstPathStr[0]));
+					newBikePath.setBike_path_duration(Double.valueOf(duraDistFirstPathStr[1]));
+					bikePathDao.save(newBikePath);
+					System.out.println("firduraDistFirstPath[Google] "+duraDistFirstPath);
 				}
+				
+				System.out.println("duraDistFirstPath[0] -> "+duraDistFirstPath[0]);
+				
+				//Cal Second Path 
+				BikePath secPath = bikePathDao.findBikePathFromId(merOneId, merTwoId , "merchant");
+				if(secPath != null){
+					duraDistSecPath[0] = secPath.getBike_path_distance();
+					duraDistSecPath[1] = secPath.getBike_path_duration();
+				}else{
+					String[] duraDistSecPathStr = home.getDistanceDuration(merOneLat, merOneLng, merTwoLat, merTwoLng);
+					BikePath newBikePath = new BikePath();
+					newBikePath.setBike_path_source_id(merOneId);
+					newBikePath.setBike_path_destination_id(merTwoId);
+					newBikePath.setBike_path_type("merchant");
+					newBikePath.setBike_path_distance(Double.valueOf(duraDistSecPathStr[0]));
+					newBikePath.setBike_path_duration(Double.valueOf(duraDistSecPathStr[1]));
+					bikePathDao.save(newBikePath);
+				}
+				
+				//cal Last Path 
+				duraDistLastPath = mapMercDistDura.get(merTwoId);
+				
+				double distFirst = Double.valueOf(duraDistFirstPath[0]);
+				double distSec = Double.valueOf(duraDistSecPath[0]);
+				double distLast = Double.valueOf(duraDistLastPath[0]);
+				double duraFirst = Double.valueOf(duraDistFirstPath[1]);
+				double duraSec = Double.valueOf(duraDistSecPath[1]);
+				double duraLast = Double.valueOf(duraDistLastPath[1]);
+	
+				distTwoMerRoutePath = String.valueOf(distFirst+distSec+distLast);
+				duraTwoMerRoutePath = String.valueOf(duraFirst+duraSec+duraLast); //TODO ยังไม่รวมเวลาทำอาหาร
 				
 				routePathListClone.get(i).setDistance(distTwoMerRoutePath);
 				routePathListClone.get(i).setDuration(duraTwoMerRoutePath);
+				
+				System.out.println("duraDistFirstPath : " + duraDistFirstPath[0]);
+				System.out.println("duraDuraFirstPath : " + duraDistFirstPath[1]);
+				System.out.println("duraDistSecPath : " + duraDistSecPath[0]);
+				System.out.println("duraDuraSecPath : " + duraDistSecPath[1]);
+				System.out.println("duraDistLastPath : " + duraDistLastPath[0]);
+				System.out.println("duraDuraLastPath : " + duraDistLastPath[1]);
+				
 			}else if(i == 1){
 				int merThreeId = routePathListClone.get(i).getMerList().get(0).getMerID();
 				String merThreeLat = routePathListClone.get(i).getMerList().get(0).getMerLatitude();
 				String merThreeLng = routePathListClone.get(i).getMerList().get(0).getMerLongtitude();
 				
-//				String[] duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
-//				Thread.sleep(600);
+				String[] duraDistFirstPath = new String[2];
 				
-				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merThreeId);
-				String[] duraDistSecPath = home.getDistanceDuration(merThreeLat, merThreeLng, cusLat, cusLng);
-//				Thread.sleep(600);
+				//Cal First Path 
+				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merThreeId , "bike");
+				System.out.println("bikePathDao : " +bikePathDao);
+				System.out.println("firstPath : " +firstPath);
+				if(firstPath != null){
+					duraDistFirstPath[0] = String.valueOf(firstPath.getBike_path_distance());
+					duraDistFirstPath[1] = String.valueOf(firstPath.getBike_path_duration());
+				}else{
+					duraDistFirstPath = home.getDistanceDuration(staLat, staLng, merThreeLat, merThreeLng);
+					BikePath newBikePath = new BikePath();
+					newBikePath.setBike_path_source_id(staId);
+					newBikePath.setBike_path_destination_id(merThreeId);
+					newBikePath.setBike_path_type("bike");
+					newBikePath.setBike_path_distance(Double.valueOf(duraDistFirstPath[0]));
+					newBikePath.setBike_path_duration(Double.valueOf(duraDistFirstPath[1]));
+					bikePathDao.save(newBikePath);
+				}
 				
+				//Cal Second or Last Path 
+				Double[] duraDistSecPath = mapMercDistDura.get(merThreeId);
 				
-				double distOneMer = firstPath.getBike_path_distance()+Double.valueOf(duraDistSecPath[0]);
-				double duraOneMer = firstPath.getBike_path_duration()+Double.valueOf(duraDistSecPath[1]);
+				double distOneMer = Double.valueOf(duraDistFirstPath[0])+duraDistSecPath[0];
+				double duraOneMer = Double.valueOf(duraDistFirstPath[1])+duraDistSecPath[1];
 				
 				routePathListClone.get(i).setDistance(String.valueOf(distOneMer));
 				routePathListClone.get(i).setDuration(String.valueOf(duraOneMer));
+				
+				System.out.println("duraDistFirstPath : " + duraDistFirstPath[0]);
+				System.out.println("duraDuraFirstPath : " + duraDistFirstPath[1]);
+				System.out.println("duraDistSecPath : " + duraDistSecPath[0]);
+				System.out.println("duraDuraSecPath : " + duraDistSecPath[1]);
 			}
 
 		}
@@ -279,13 +388,6 @@ public class TwoMessThreeMercService {
 		}
 		
 		return bestDuraGroupPath;
-	}
-	
-	public String[] callGoogleMap(String latOri,String lngOri,String latDes,String lngDes){
-		HomeController home = new HomeController();
-		String[] duraDist = home.getDistanceDuration(latOri, lngOri, latDes, lngDes);
-		
-		return duraDist;
 	}
 	
 //	public static void main(String[] args) throws InterruptedException{
