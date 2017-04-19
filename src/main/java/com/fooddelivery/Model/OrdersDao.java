@@ -21,7 +21,6 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 
 	/*
 	 * "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)"*/
-	@Modifying
 	@Query(value = "insert into orders (order_cus_id, order_address, order_address_latitude,"
 			+ "order_address_longtitude, order_datetime, order_datetime_delivery, "
 			+ "order_delivery_rate, order_price, order_distance, order_status) values ("
@@ -44,6 +43,16 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	 @Query(value="select * from orders o where o.order_cus_id = :order_cus_id" , nativeQuery = true)
 	 public List<Orders> findByOrderCusId(@Param("order_cus_id") Long order_cus_id);
 
+	 
+	 @Query(value="select IF(" +
+	"(Select seqor_id  from sequence_orders where seqor_order_id = :seqorder"
+	+ " and seqor_mer_id = :merid"
+	+ " and seqor_confirm_code = :confirmcode"
+	+ "),'Y','N') As CHK_CONFIRM" , 
+	nativeQuery = true)
+	 public String verifyConfirmCodeMerchant(@Param("seqorder") int order_id,
+			 @Param("merid") int mer_id,
+			 @Param("confirmcode") String confirm_code);	 
 //	 @Query(nativeQuery=true, value="select o.*, 1 as a from orders o limit 1")
 //	 public List<Object[]> customQuery();
 	 

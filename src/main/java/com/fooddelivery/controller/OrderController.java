@@ -336,4 +336,43 @@ public class OrderController {
 		}
 	}
 
+	@RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
+	{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String messeage = "";
+		try {
+		  int seqor_id = (Integer) mapRequest.get("seqor_id");
+		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
+		  int mer_id = (Integer) mapRequest.get("mer_id");
+		  System.out.println("seqor_id " + seqor_id);
+		  System.out.println("seqor_confirm_code " + seqor_confirm_code);
+		  System.out.println("mer_id " + mer_id);
+		  String result = ordersDao.verifyConfirmCodeMerchant(seqor_id, mer_id, seqor_confirm_code);
+		  String resultVerify = "";
+		  dataMap.put("isPass", "Y");
+		  dataMap.put("seqor_id", seqor_id);
+		  if(result.equals("Y"))
+		  {
+			  resultVerify = "correct confirm code";
+		  }
+		  else
+		  {
+			  resultVerify = "incorrect confirm code";
+		  }
+		  dataMap.put("seqor_receive_status", resultVerify);
+		  messeage = "Call seqor confirm code successfully";
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			dataMap.put("isPass", "N");
+			messeage = "Call seqor confirm code unsuccessfully";
+			return null;
+		}
+		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
+
+	}	
+	
+	
 }
