@@ -346,9 +346,6 @@ public class OrderController {
 		  int seqor_id = (Integer) mapRequest.get("seqor_id");
 		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
 		  int mer_id = (Integer) mapRequest.get("mer_id");
-		  System.out.println("seqor_id " + seqor_id);
-		  System.out.println("seqor_confirm_code " + seqor_confirm_code);
-		  System.out.println("mer_id " + mer_id);
 		  String result = ordersDao.verifyConfirmCodeMerchant(seqor_id, mer_id, seqor_confirm_code);
 		  String resultVerify = "";
 		  dataMap.put("isPass", "Y");
