@@ -159,6 +159,7 @@ public class OrderController {
 			
 			dataMap.put("orderNo",orders.getOrderId());
 			dataMap.put("orderConfirmCode", confirmOrderCode);
+			dataMap.put("orderStatus", orders.getOrderStatus());
 		}
 		catch (Exception e) {
 			logger.info(e.getMessage());

@@ -30,4 +30,12 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	  		, nativeQuery = true)
 	public SequenceOrders getSequenceOrderById(@Param("seqId") long seqOrderId);
 	
+	@Query(value = "select * from sequence_orders "
+			+ "where seqor_mess_id = :seqMessId"
+			, nativeQuery = true)
+	public SequenceOrders getSequenceOrderByMessId(@Param("seqMessId") long seqMessId);
+	
+	@Query(value = "select * from sequence_orders"
+			, nativeQuery = true)
+	public List<SequenceOrders> findAll();
 }

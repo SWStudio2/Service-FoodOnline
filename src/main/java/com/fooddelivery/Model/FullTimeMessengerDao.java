@@ -19,5 +19,14 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 			+ "where full_email = :email and full_password = :pass"
 			, nativeQuery = true)
 	public List<FullTimeMessenger> findByFullEmail(@Param("email") String email , @Param("pass") String pass);
+	
+	@Query(value = "select * from fulltime_messenger "
+			+ "where full_id = :full_id"
+			, nativeQuery = true)
+	public FullTimeMessenger findById(@Param("full_id") long fullId);
+	
+	@Query(value = "select * from fulltime_messenger "
+			, nativeQuery = true)
+	public List<FullTimeMessenger> findAll();
 
 }

@@ -14,7 +14,10 @@ import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.FullTimeMessengerQuery;
 import com.fooddelivery.Model.Merchants;
+import com.fooddelivery.Model.MerchantsDao;
 import com.fooddelivery.Model.MerchantsQuery;
+import com.fooddelivery.Model.SequenceOrders;
+import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.Model.Station;
 import com.fooddelivery.Model.StationQuery;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
@@ -48,6 +51,11 @@ public class MessengerController {
 	private FullTimeMessengerDao fullMessDao;
 	@Autowired
 	private BikeStationDao bikeDao;
+	@Autowired
+	private MerchantsDao merchantsDao;
+	
+	@Autowired
+	private SequenceOrdersDao seqOrderDao;
 
 
 	@RequestMapping(value="/service/getestimatedtime", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -82,28 +90,23 @@ public class MessengerController {
 			listMerchant.add(merList[i]);
 		}
 
-		String bestTimeOneMessOneService = "";
+		//String bestTimeOneMessOneService = "";
+		GroupPathDetail bestTimeOneMessOneMerchantService = new GroupPathDetail();
 		GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
 		RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
 
 		if(list.size() == 1)
 		{
-//			OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
-//			List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
-//			double time = 99;
-//			for(int i = 0;i<listNode.size();i++)
-//			{
-//				NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
-//				if(time > Double.parseDouble(node.getDuration()))
-//				{
-//					time = Double.parseDouble(node.getDuration());
-//				}
-//			}
-//			bestTimeOneMessOneService = "" + time;
 			try {
+				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
+				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
+				List<Station> stations = getStationAvailable();
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
+						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
+				bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation);
+				
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
@@ -126,18 +129,13 @@ public class MessengerController {
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
 				//bestTimeTwoMessTwoService = twoMessService.TwoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 				//MINT
-//				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
-//				List<NodeDetailVer2> listNode = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
-//				double time = 99;
-//				for(int i = 0;i<listNode.size();i++)
-//				{
-//					NodeDetailVer2 node = (NodeDetailVer2)listNode.get(i);
-//					if(time > Double.parseDouble(node.getDuration()))
-//					{
-//						time = Double.parseDouble(node.getDuration());
-//					}
-//				}
-//				bestTimeOneMessOneService = "" + time;
+				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
+				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
+				List<Station> stations = getStationAvailable();
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
+						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
+				bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation);
+				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -157,8 +155,8 @@ public class MessengerController {
 			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
 		}
 
-		if (!bestTimeOneMessOneService.equals("")){
-			threeMessValue = Double.parseDouble(bestTimeOneMessOneService);
+		if (bestTimeOneMessOneMerchantService.getTotalDuration() != null && !bestTimeOneMessOneMerchantService.equals("")){
+			threeMessValue = Double.parseDouble(bestTimeOneMessOneMerchantService.getTotalDuration());
 		}
 
 		chooseTime = oneMessValue;
@@ -349,7 +347,11 @@ public class MessengerController {
 
 			if(list.size() == 1)
 			{
-				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
+				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
+				List<Station> stations = getStationAvailable();
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
+						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
 				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
 				double time = 99;
 				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
@@ -365,7 +367,11 @@ public class MessengerController {
 			else if(list.size() == 2)
 			{
 				//1 mess to one merchant
-				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
+				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
+				List<Station> stations = getStationAvailable();
+				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
+						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
 				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
 				double time = 99;
 				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
@@ -395,7 +401,11 @@ public class MessengerController {
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
 					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 					//MINT
-					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, cus_Latitude, cus_Longtitude);
+					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
+					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
+					List<Station> stations = getStationAvailable();
+					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
+							cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
 					bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
 					double time = 99;
 					for(int i = 0;i<bestTimeOneMessOneService.size();i++)
@@ -641,7 +651,6 @@ public class MessengerController {
 
 			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
 					"Login successfully", resultList));
-
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -649,8 +658,111 @@ public class MessengerController {
 			logger.info("Check point 2");
 			return null;
 		}
-
-
 	}
+	
+	private TimeAndDistanceDetail[] getBikePathByMerchants(int[] merchantsId) {
+		TimeAndDistanceDetail[] result = null;
+		try {
+			// merchantsId --> '1,2,3'
+			String merchantsIdStr = "";
+			for (int i=0; i<merchantsId.length; i++) {
+				if (i != 0) {
+					merchantsIdStr += ",";
+				}
+				merchantsIdStr += merchantsId[i];
+			}
+			TimeAndDistanceDetailDao timeAndDistance = new TimeAndDistanceDetailDao();
+			result = timeAndDistance.getTimeAndDistanceDetail(merchantsIdStr);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+		return result;
+	}
+	
+	private List<Merchants> getMerchantsByMerchantsId(int[] merchantsId) {
+		List<Merchants> result = null;
+		try {
+			// merchantsId --> 1,2,3 <--List<Integer>
+			List<Integer> merchantsIdList = new ArrayList<Integer>();
+			for (int i=0; i<merchantsId.length; i++) {
+				merchantsIdList.add(Integer.valueOf(merchantsId[i]));
+			}
+			result = merchantsDao.getMerchantsByMerIds(merchantsIdList);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+		return result;
+	}
+	
+	private List<Station> getStationAvailable() {
+		StationQuery stationQue = new StationQuery();
+		Station[] staList = stationQue.getStationAvailable();
+		List<Station> result = new ArrayList<Station>();
+		for (int i=0; i<staList.length; i++) {
+			result.add(staList[i]);
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value={"service/fulltime/updateloc"} ,method=RequestMethod.POST)
+	public ResponseEntity<Response<HashMap>> updateLocation(@RequestBody FullTimeMessenger fullTimeMess){
+		try {
+			FullTimeMessenger fullTimeMessenger = fullMessDao.findById(fullTimeMess.getFullId());
+			
+			if (fullTimeMessenger != null) {
+				fullTimeMessenger.setFullLastestLattitude(fullTimeMess.getFullLatestLattitude());
+				fullTimeMessenger.setFullLastestLongtitude(fullTimeMess.getFullLatestLongtitude());
+				fullMessDao.save(fullTimeMessenger);
+			}
+			
+			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),"Get data successfully",null));
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+	}
+	
+	@RequestMapping(value={"service/fulltime/{fullId}"} ,method=RequestMethod.GET)
+	public ResponseEntity<Response<HashMap>> getOrderByFullTimeMessenger(@PathVariable("fullId") String fullId){
+		try {
+			
+			String temp = fullId.substring(1);
+			temp = temp.substring(0,temp.length()-1);
+			long fullTimeMessengerId = Long.parseLong(temp);
+			
+			List<FullTimeMessenger> fullTimes = fullMessDao.findAll();
+			for (int i=0; i<fullTimes.size(); i++) {
+				System.out.println("FullId: " + fullTimes.get(i).getFullId());
+			}
+			
+			List<SequenceOrders> seqOrderss = seqOrderDao.findAll(); 
+			for (int i=0; i<fullTimes.size(); i++) {
+				System.out.println("seqOrderssIddd: " + seqOrderss.get(i).getSequenceId());
+				System.out.println("seqOrderssMess: " + seqOrderss.get(i).getSequenceMessengerId());
+			}
+			
+			
+			//SequenceOrders seqOrders = seqOrderDao.getSequenceOrderByMessId(fullTimeMessengerId);
+			
+			//System.out.println(seqOrders.getSequenceMessengerId());
+			
+			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),"Get data successfully",null));
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+	}
+	
 }
 

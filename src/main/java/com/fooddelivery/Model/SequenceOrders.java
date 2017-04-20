@@ -2,12 +2,20 @@ package com.fooddelivery.Model;
 
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -60,6 +68,15 @@ public class SequenceOrders {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "seqor_receive_datetime")
 	private Date seqor_receive_datetime;
+	
+	//--------------RELATION----------------
+	//@OneToOne(cascade=CascadeType.ALL,targetEntity=FullTimeMessenger.class,fetch=FetchType.LAZY)
+	/*@OneToOne(cascade = CascadeType.ALL)
+	@JoinTable(
+			name="SEQORDER_FULLTIME",
+			joinColumns = @JoinColumn(name="full_id")
+	)
+	private FullTimeMessenger fullTimeMessenger;*/
 		
 	public SequenceOrders() {}
 	

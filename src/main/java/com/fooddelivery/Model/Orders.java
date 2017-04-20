@@ -5,15 +5,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -93,6 +95,9 @@ public class Orders {
 	//--------------RELATION----------------
 	@OneToMany(mappedBy="order_id",targetEntity=OrderDetail.class,fetch=FetchType.LAZY) //EAGER
 	private List<OrderDetail> orderDetails;
+	
+	/*@OneToOne(cascade=CascadeType.ALL,targetEntity=Customer.class,fetch=FetchType.LAZY)
+	private Customer customers;*/
 	
 	public Orders() {}
 	
