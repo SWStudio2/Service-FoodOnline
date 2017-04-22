@@ -70,6 +70,7 @@ public class OrderController {
 	@Autowired
 	private OrdersDetailOptionDao ordersDetailOptionsDao;
 
+	final static int RECEIVESTATUS = 14;
 	
 	@RequestMapping(value="/service/orders/inserorders" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -354,6 +355,8 @@ public class OrderController {
 		  if(result.equals("Y"))
 		  {
 			  resultVerify = "correct confirm code";
+			  Date currentDateTime = DateTime.getCurrentDateTime();
+			  ordersDao.updateReceiveStatus(currentDateTime.toString(), RECEIVESTATUS, order_id, mer_id);
 		  }
 		  else
 		  {

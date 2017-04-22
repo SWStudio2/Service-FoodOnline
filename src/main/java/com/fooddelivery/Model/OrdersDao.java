@@ -56,10 +56,17 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 //	 @Query(nativeQuery=true, value="select o.*, 1 as a from orders o limit 1")
 //	 public List<Object[]> customQuery();
 	 
+	 @Modifying
+	 @Query(value="UPDATE sequence_orders SET" +
+	"SEQOR_RECEIVE_DATETIME = :confirmDateTime"
+	+ "SEQOR_RECEIVE_STATUS = :receive_status"
+	+ "where SEQOR_ORDER_ID = :order_id"
+	+ "And SEQOR_MER_ID = :mer_id" , 
+	nativeQuery = true)
+	 public void updateReceiveStatus(@Param("confirmDateTime") String confirmDateTime,
+			 @Param("receive_status") int receive_status,@Param("order_id") int order_id,
+			 @Param("mer_id") int mer_id);   
 
-    
-
-	 
 	 
 	 
 }

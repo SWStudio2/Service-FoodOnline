@@ -6,14 +6,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 //import java.util.Optional;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,4 +91,17 @@ public class CustomerController {
 
 
 	}
+	
+	@RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
+	{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		int order_id = (Integer) mapRequest.get("order_id");
+		String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");	
+		
+		String messeage = "";
+		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
+
+	}		
 }
