@@ -72,7 +72,7 @@ public class Orders {
 
 	@NotNull
 	@Column(name = "order_status")
-	private String order_status;
+	private int order_status;
 	
 	@NotNull
 	@Column(name = "order_food_price")
@@ -232,11 +232,11 @@ public class Orders {
 		return order_distance;
 	}
 	
-	public void setOrderStatus(String orderStatus) {
+	public void setOrderStatus(int orderStatus) {
 		this.order_status = orderStatus;
 	}
 	
-	public String getOrderStatus() {
+	public int getOrderStatus() {
 		return order_status;
 	}
 	

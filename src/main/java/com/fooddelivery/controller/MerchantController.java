@@ -103,7 +103,7 @@ public class MerchantController {
 				//update
 				SequenceOrders sequenceOrder = sequenceOrderDao.getSequenceOrderById(Long.valueOf(results.get(0)));
 				sequenceOrder.setSequenceReceiveDatetime(DateTime.getCurrentDateTime());
-				sequenceOrder.setSequenceReceiveStatus(VariableText.ORDER_RECEIVED_STATUS);
+				sequenceOrder.setSequenceReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS);
 				sequenceOrderDao.save(sequenceOrder);
 			}
 			dataMap.put("result",results.get(0));

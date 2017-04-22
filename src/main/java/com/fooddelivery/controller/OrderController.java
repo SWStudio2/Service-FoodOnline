@@ -108,7 +108,7 @@ public class OrderController {
 			orders.setOrderDeliveryPrice(allorder.getOrderDeliveryPrice());
 			orders.setOrderEstimateTime(allorder.getOrderEstimateTime());
 			orders.setOrderEstimateDatetime(DateTime.getDateTime(allorder.getOrderEstimateDateTime()));
-			orders.setOrderStatus(VariableText.ORDER_PENDING_STATUS);
+			orders.setOrderStatus(VariableText.ORDER_WAITING_RESPONSE_STATUS);
 			//confirm code
 			String confirmOrderCode = generateOrderConfirmCode();
 			orders.setOrderConfirmCode(confirmOrderCode);
@@ -148,7 +148,7 @@ public class OrderController {
 						SequenceOrders sequenceOrders = new SequenceOrders();
 						sequenceOrders.setSequenceOrderId(orders.getOrderId());
 						sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
-						sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAIT_STATUS);
+						sequenceOrders.setSequenceCookStatus(VariableText.ORDER_WAITING_RESPONSE_STATUS);
 						sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
 						String confirmSequenceOrderCode = generateOrderConfirmCode();
 						sequenceOrders.setSequenceConfirmCode(confirmSequenceOrderCode);

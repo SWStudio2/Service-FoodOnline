@@ -40,7 +40,7 @@ public class SequenceOrders {
 	private String seqor_sort;
 	
 	@Column(name = "seqor_receive_status")
-	private String seqor_receive_status;
+	private int seqor_receive_status;
 	
 	@Column(name = "seqor_mess_id")
 	private long seqor_mess_id;
@@ -54,7 +54,7 @@ public class SequenceOrders {
 	
 	@NotNull
 	@Column(name = "seqor_cook_status")
-	private String seqor_cook_status;
+	private int seqor_cook_status;
 	
 	@Column(name = "seqor_cook_time")
 	private int seqor_cook_time;
@@ -87,11 +87,11 @@ public class SequenceOrders {
 	public SequenceOrders(
 		long sequenceOderMerchantId,
 		String sequenceSort,
-		String sequenceReceiveStatus,
+		int sequenceReceiveStatus,
 		long sequenceMessengerId,
 		String sequenceTypeMessenger,
 		long sequenceOrderId,
-		String sequenceCookStatus
+		int sequenceCookStatus
 	) {
 		this.seqor_mer_id = sequenceOderMerchantId;
 		this.seqor_sort = sequenceSort;
@@ -126,11 +126,11 @@ public class SequenceOrders {
 		return seqor_sort;
 	}
 	
-	public void setSequenceReceiveStatus(String sequenceReceiveStatus) {
+	public void setSequenceReceiveStatus(int sequenceReceiveStatus) {
 		this.seqor_receive_status = sequenceReceiveStatus;
 	}
 	
-	public String getSequenceReceiveStatus() {
+	public int getSequenceReceiveStatus() {
 		return seqor_receive_status;
 	}
 	
@@ -158,11 +158,11 @@ public class SequenceOrders {
 		return seqor_order_id;
 	}
 	
-	public void setSequenceCookStatus(String sequenceCookStatus) {
+	public void setSequenceCookStatus(int sequenceCookStatus) {
 		this.seqor_cook_status = sequenceCookStatus;
 	}
 	
-	public String getSequenceCookStatus() {
+	public int getSequenceCookStatus() {
 		return seqor_cook_status;
 	}
 	
