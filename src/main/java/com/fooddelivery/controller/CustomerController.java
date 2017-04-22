@@ -92,7 +92,7 @@ public class CustomerController {
 
 	}
 	
-	@RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/service/orders/confirmcode/customer" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
 	{

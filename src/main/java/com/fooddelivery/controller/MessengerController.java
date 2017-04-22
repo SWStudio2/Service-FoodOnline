@@ -127,7 +127,7 @@ public class MessengerController {
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				//YUI
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-				bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+				//bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 				//MINT
 				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -295,13 +295,15 @@ public class MessengerController {
 	  isRecall = query.checkRecallOrder(orderId);
 	  HashMap<String, String> lantAndLong = new HashMap<String, String>();
 	  FullTimeMessengerQuery fullQuery = new FullTimeMessengerQuery();
+	  String msg = "";
 	  if(isRecall.equals("Y"))
 	  {
-
+		  
 		  seqOrderAndMerchant = query.getMerchantAndOrderSeqByOrderId(orderId);
 		  lantAndLong = query.getLatitudeAndLongtitudeByOrderId(orderId);
 
 		  	List<Integer> list = new ArrayList<Integer>();
+		  	System.out.println("SIZE : " + seqOrderAndMerchant.size());
 		  	for(int i = 0;i<seqOrderAndMerchant.size();i++)
 		  	{
 		  		HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
@@ -323,15 +325,16 @@ public class MessengerController {
 				merIdAdjust += list.get(i);
 			}
 
-			MerchantsQuery merDao = new MerchantsQuery();
-			Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
-
+			MerchantsQuery merQuery = new MerchantsQuery();
+			//Merchants[] merList = merQuery.queryMerChantByID(merIdAdjust);
+			System.out.println(""+list);
+			List<Merchants> merList = merchantsDao.getMerchantsByMerIds(list);
 			List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
 
 			List<Merchants> listMerchant = new ArrayList<Merchants>();
-			for(int i = 0;i<merList.length;i++)
+			for(int i = 0;i<merList.size();i++)
 			{
-				listMerchant.add(merList[i]);
+				listMerchant.add(merList.get(i));
 			}
 
 		  	String cus_Latitude = "";
@@ -399,7 +402,7 @@ public class MessengerController {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 					//YUI
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					//bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 					//MINT
 					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -613,10 +616,15 @@ public class MessengerController {
 				estimateTime = value.intValue();
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
+				msg = "updateSequenceRoutePath successfully";
 			}
 
 	  }
-	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),"updateSequenceRoutePath successfully", "Success"));
+	  else
+	  {
+		  msg = "No update";
+	  }
+	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),msg, "Success"));
 
 	 }
 	@RequestMapping(value={"service/fulltime/auth"} ,method=RequestMethod.POST)

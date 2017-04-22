@@ -14,8 +14,8 @@ import java.util.HashMap;
 public class UtilsQuery {
 	private static final Logger logger = LoggerFactory.getLogger(UtilsQuery.class);
 
-	final static String statusConfirm = "13,14";
-	final static String status_13 = "13";
+	final static String statusConfirm = "12,13";
+	final static String status_12 = "12";
 	final static String RECEIVE_STATUS = "6";
 	final static String WAILMEAL = "2";
 	public static String checkRecallOrder(int orderID)
@@ -54,7 +54,7 @@ public class UtilsQuery {
 				sqlBuffer.append("where seqor_order_id = "+ orderID+"\n ");
 				sqlBuffer.append("and seqor_cook_status in (" + statusConfirm + ")\n ");
 				sqlBuffer.append("),'Y','N') As CHK_RECALL\n ");
-		
+				System.out.println(sql);
 				sql = sqlBuffer.toString();	
 	
 				ResultSet rec = s.executeQuery(sql);
@@ -125,12 +125,11 @@ public class UtilsQuery {
 				sqlBuffer.append("  INNER JOIN merchants m   \n ");
 				sqlBuffer.append("    ON m.mer_id = so.SEQOR_MER_ID   \n ");
 				sqlBuffer.append("WHERE seqor_order_id = " + orderID + "    \n ");
-				sqlBuffer.append("  AND seqor_cook_status = " + status_13 +" \n ");
+				sqlBuffer.append("  AND seqor_cook_status = " + status_12 +" \n ");
 
 
 				
-				sql = sqlBuffer.toString();	
-				
+				sql = sqlBuffer.toString();
 				ResultSet rec = s.executeQuery(sql);
 
 				if(rec == null)

@@ -14,14 +14,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.OrdersDao;
+import com.fooddelivery.Model.OrdersDetailDao;
+import com.fooddelivery.Model.OrdersDetailOptionDao;
 import com.fooddelivery.Model.SequenceOrders;
 import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.util.DateTime;
@@ -38,6 +45,11 @@ public class MerchantController {
 	
 	@Autowired
 	private SequenceOrdersDao sequenceOrderDao;
+	
+	@Autowired
+	private OrdersDao ordersDao;
+
+	final static int RECEIVESTATUS = 14;	
 	
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
@@ -103,5 +115,42 @@ public class MerchantController {
 		
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Confirm code from Merchant successfully", dataMap));
 	}
+	
+	@RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
+	{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String messeage = "";
+		try {
+		  int order_id = (Integer) mapRequest.get("order_id");
+		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
+		  int mer_id = (Integer) mapRequest.get("mer_id");
+		  String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
+		  String resultVerify = "";
+		  dataMap.put("isPass", "Y");
+		  dataMap.put("order_id", order_id);
+		  if(result.equals("Y"))
+		  {
+			  resultVerify = "correct confirm code";
+			  Date currentDateTime = DateTime.getCurrentDateTime();
+			  ordersDao.updateReceiveStatus(currentDateTime.toString(), RECEIVESTATUS, order_id, mer_id);
+		  }
+		  else
+		  {
+			  resultVerify = "incorrect confirm code";
+		  }
+		  dataMap.put("seqor_receive_status", resultVerify);
+		  messeage = "Call seqor confirm code successfully";
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			dataMap.put("isPass", "N");
+			messeage = "Call seqor confirm code unsuccessfully";
+			return null;
+		}
+		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
+
+	}		
 	
 }
