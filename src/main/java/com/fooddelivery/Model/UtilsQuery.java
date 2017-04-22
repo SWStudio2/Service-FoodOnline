@@ -130,6 +130,7 @@ public class UtilsQuery {
 
 				
 				sql = sqlBuffer.toString();
+
 				ResultSet rec = s.executeQuery(sql);
 
 				if(rec == null)
