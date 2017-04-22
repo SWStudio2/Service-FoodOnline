@@ -344,13 +344,13 @@ public class OrderController {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		String messeage = "";
 		try {
-		  int seqor_id = (Integer) mapRequest.get("seqor_id");
+		  int order_id = (Integer) mapRequest.get("order_id");
 		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
 		  int mer_id = (Integer) mapRequest.get("mer_id");
-		  String result = ordersDao.verifyConfirmCodeMerchant(seqor_id, mer_id, seqor_confirm_code);
+		  String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
 		  String resultVerify = "";
 		  dataMap.put("isPass", "Y");
-		  dataMap.put("seqor_id", seqor_id);
+		  dataMap.put("order_id", order_id);
 		  if(result.equals("Y"))
 		  {
 			  resultVerify = "correct confirm code";
