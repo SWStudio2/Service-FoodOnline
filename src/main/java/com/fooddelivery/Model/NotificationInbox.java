@@ -26,7 +26,7 @@ public class NotificationInbox {
 	
 	@NotNull
 	@Column(name = "noti_type")
-	private int noti_type;
+	private String noti_type;
 
 	@NotNull
 	@Column(name = "noti_message_type")
@@ -46,7 +46,7 @@ public class NotificationInbox {
 	public NotificationInbox(
 			int noti_id,
 			int noti_ref_id,
-			int noti_type,
+			String noti_type,
 			String noti_message_type,
 			String noti_message_detail,
 			int noti_read_flag
@@ -75,11 +75,11 @@ public class NotificationInbox {
 		this.noti_ref_id = noti_ref_id;
 	}
 
-	public int getNoti_type() {
+	public String getNoti_type() {
 		return noti_type;
 	}
 
-	public void setNoti_type(int noti_type) {
+	public void setNoti_type(String noti_type) {
 		this.noti_type = noti_type;
 	}
 

@@ -28,6 +28,7 @@ import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
 import com.fooddelivery.Model.NotificationInbox;
+import com.fooddelivery.Model.NotificationInboxDao;
 import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.OrdersDetailDao;
 import com.fooddelivery.Model.OrdersDetailOptionDao;
@@ -50,6 +51,9 @@ public class MerchantController {
 	
 	@Autowired
 	private FullTimeMessengerDao fullDao;
+	
+	@Autowired
+	private NotificationInboxDao notiDao;
 	
 	@Autowired
 	private OrdersDao ordersDao;
@@ -150,6 +154,15 @@ public class MerchantController {
 			  {
 				  ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
 			  }
+			  
+			  NotificationInbox noti = new NotificationInbox();
+			  noti.setNoti_message_detail(""+order_id+"+VariableText.ORDER_DELIVERING");
+			  noti.setNoti_ref_id(1);//cus id
+			  noti.setNoti_message_type("A");
+			  noti.setNoti_read_flag(0);
+			  noti.setNoti_type("Customer");
+			  
+			  notiDao.save(noti);	  
 		  }
 		  else
 		  {
