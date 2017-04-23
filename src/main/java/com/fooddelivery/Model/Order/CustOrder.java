@@ -12,7 +12,7 @@ public class CustOrder {
 	private double orderDistance;
 	private String confirmCode;
 	private String orderNo;
-	private String orderStatus;
+	private int orderStatus;
 	private String orderCreatedDateTime;
 	private int estimatedTime;
 	private List<MerchantOrder> merchantOrderList;
@@ -75,10 +75,11 @@ public class CustOrder {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public String getOrderStatus() {
+	
+	public int getOrderStatus() {
 		return orderStatus;
 	}
-	public void setOrderStatus(String orderStatus) {
+	public void setOrderStatus(int orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 	public String getOrderCreatedDateTime() {
