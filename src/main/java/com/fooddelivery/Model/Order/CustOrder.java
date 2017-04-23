@@ -1,5 +1,6 @@
 package com.fooddelivery.Model.Order;
 
+import java.util.List;
 
 public class CustOrder {
 	private String orderAddress;
@@ -14,7 +15,7 @@ public class CustOrder {
 	private String orderStatus;
 	private String orderCreatedDateTime;
 	private int estimatedTime;
-	private MerchantOrder[] merchantOrderArr;
+	private List<MerchantOrder> merchantOrderList;
 	
 	public String getOrderAddress() {
 		return orderAddress;
@@ -86,11 +87,12 @@ public class CustOrder {
 	public void setOrderCreatedDateTime(String orderCreatedDateTime) {
 		this.orderCreatedDateTime = orderCreatedDateTime;
 	}
-	public MerchantOrder[] getMerchantOrderArr() {
-		return merchantOrderArr;
+	
+	public List<MerchantOrder> getMerchantOrderList() {
+		return merchantOrderList;
 	}
-	public void setMerchantOrderArr(MerchantOrder[] merchantOrderArr) {
-		this.merchantOrderArr = merchantOrderArr;
+	public void setMerchantOrderList(List<MerchantOrder> merchantOrderList) {
+		this.merchantOrderList = merchantOrderList;
 	}
 	public int getEstimatedTime() {
 		return estimatedTime;

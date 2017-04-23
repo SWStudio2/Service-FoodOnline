@@ -38,10 +38,10 @@ public interface OrdersDetailOptionDao extends CrudRepository<OrdersDetailOption
 //	public List<OrdersDetailOption> findByOrderId(@Param("od_id") Long od_id);
 	
 
-	@Query(value="SELECT odp.order_detail_id,om.option_name,om.option_price"
+	@Query(value="SELECT distinct odp.order_detail_id,om.option_name,om.option_price"
          +" FROM orders_detail_option odp "
          +" INNER JOIN options_menu om ON om.option_id = odp.option_id"
-         +" WHERE odp.order_detail_id = :order_id" , nativeQuery = true)
-	 public List<Object[]> findByOrderId(@Param("order_id") Long order_id);
+         +" WHERE odp.order_detail_id = :order_detail_id" , nativeQuery = true)
+	 public List<Object[]> findByOrderId(@Param("order_detail_id") Long order_detail_id);
 	
 }

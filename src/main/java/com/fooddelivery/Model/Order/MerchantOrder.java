@@ -1,20 +1,22 @@
 package com.fooddelivery.Model.Order;
 
-
+import java.math.BigDecimal;
+import java.util.List;
 
 public class MerchantOrder {
-	private String merid;
+	private Integer merid;
 	private String merLatitude;
 	private String merLongitude;
-	private float merDistance;
-	private float merFoodPrice;
-	private float merDeliveryPrice;
-	private SubOrder[] subOrderList;
+	private BigDecimal merDistance;
+	private Double merFoodPrice;
+	private BigDecimal merDeliveryPrice;
+	private List<SubOrder> subOrderList;
 	
-	public String getMerid() {
+	
+	public Integer getMerid() {
 		return merid;
 	}
-	public void setMerid(String merid) {
+	public void setMerid(Integer merid) {
 		this.merid = merid;
 	}
 	public String getMerLatitude() {
@@ -29,31 +31,32 @@ public class MerchantOrder {
 	public void setMerLongitude(String merLongitude) {
 		this.merLongitude = merLongitude;
 	}
-	public float getMerDistance() {
+	
+	
+	public BigDecimal getMerDistance() {
 		return merDistance;
 	}
-	public void setMerDistance(float merDistance) {
+	public void setMerDistance(BigDecimal merDistance) {
 		this.merDistance = merDistance;
 	}
-	public float getMerFoodPrice() {
+	public Double getMerFoodPrice() {
 		return merFoodPrice;
 	}
-	public void setMerFoodPrice(float merFoodPrice) {
+	public void setMerFoodPrice(Double merFoodPrice) {
 		this.merFoodPrice = merFoodPrice;
 	}
-	public float getMerDeliveryPrice() {
+	
+	public BigDecimal getMerDeliveryPrice() {
 		return merDeliveryPrice;
 	}
-	public void setMerDeliveryPrice(float merDeliveryPrice) {
+	public void setMerDeliveryPrice(BigDecimal merDeliveryPrice) {
 		this.merDeliveryPrice = merDeliveryPrice;
 	}
-	public SubOrder[] getSubOrderList() {
+	public List<SubOrder> getSubOrderList() {
 		return subOrderList;
 	}
-	public void setSubOrderList(SubOrder[] subOrderList) {
+	public void setSubOrderList(List<SubOrder> subOrderList) {
 		this.subOrderList = subOrderList;
 	}
-	
-	
 
 }

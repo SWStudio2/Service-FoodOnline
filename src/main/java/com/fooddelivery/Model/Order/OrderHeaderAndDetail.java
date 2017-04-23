@@ -1,6 +1,7 @@
 package com.fooddelivery.Model.Order;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class OrderHeaderAndDetail {
 	
 	private Double order_distance;
 
-	private String order_status;
+	private Integer order_status;
 	
 	private Double order_food_price;
 	
@@ -54,6 +55,16 @@ public class OrderHeaderAndDetail {
 	private Double option_total_price;
 	
 	private Double menu_total_price;
+	
+	private List<MerchantOrder> merchantOrderList;
+
+	public List<MerchantOrder> getMerchantOrderList() {
+		return merchantOrderList;
+	}
+
+	public void setMerchantOrderList(List<MerchantOrder> merchantOrderList) {
+		this.merchantOrderList = merchantOrderList;
+	}
 
 	public long getOrder_id() {
 		return order_id;
@@ -135,11 +146,13 @@ public class OrderHeaderAndDetail {
 		this.order_distance = order_distance;
 	}
 
-	public String getOrder_status() {
+	
+
+	public Integer getOrder_status() {
 		return order_status;
 	}
 
-	public void setOrder_status(String order_status) {
+	public void setOrder_status(Integer order_status) {
 		this.order_status = order_status;
 	}
 

@@ -1,27 +1,32 @@
 package com.fooddelivery.Model.Order;
 
+import java.util.List;
+
 public class SubOrder {
-	private String menuId;
-	private String orderDetailAmount;
-	private String menuPrice;
+	private Integer menuId;
+	private Integer orderDetailAmount;
+	private Integer orderDetailId;
+	private Float menuPrice;
 	private String remark;
-	private SubOrderOption[] optionList;
-	public String getMenuId() {
+	private List<OrderOptionDetail> optionList;
+
+	public Integer getMenuId() {
 		return menuId;
 	}
-	public void setMenuId(String menuId) {
+	public void setMenuId(Integer menuId) {
 		this.menuId = menuId;
 	}
-	public String getOrderDetailAmount() {
+	public Integer getOrderDetailAmount() {
 		return orderDetailAmount;
 	}
-	public void setOrderDetailAmount(String orderDetailAmount) {
+	public void setOrderDetailAmount(Integer orderDetailAmount) {
 		this.orderDetailAmount = orderDetailAmount;
 	}
-	public String getMenuPrice() {
+	
+	public Float getMenuPrice() {
 		return menuPrice;
 	}
-	public void setMenuPrice(String menuPrice) {
+	public void setMenuPrice(Float menuPrice) {
 		this.menuPrice = menuPrice;
 	}
 	public String getRemark() {
@@ -30,12 +35,19 @@ public class SubOrder {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	public SubOrderOption[] getOptionList() {
+	public List<OrderOptionDetail> getOptionList() {
 		return optionList;
 	}
-	public void setOptionList(SubOrderOption[] optionList) {
+	public void setOptionList(List<OrderOptionDetail> optionList) {
 		this.optionList = optionList;
 	}
+	public Integer getOrderDetailId() {
+		return orderDetailId;
+	}
+	public void setOrderDetailId(Integer orderDetailId) {
+		this.orderDetailId = orderDetailId;
+	}
+	
 	
 	
 	

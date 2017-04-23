@@ -1,14 +1,14 @@
 package com.fooddelivery.Model.Order;
 
 public class OrderOptionDetail {
-	private String orderDetailId ;
+	private Integer orderDetailId ;
 	private String optionName;
-	private Double optionPrice;
+	private Float optionPrice;
 	
-	public String getOrderDetailId() {
+	public Integer getOrderDetailId() {
 		return orderDetailId;
 	}
-	public void setOrderDetailId(String orderDetailId) {
+	public void setOrderDetailId(Integer orderDetailId) {
 		this.orderDetailId = orderDetailId;
 	}
 	public String getOptionName() {
@@ -17,12 +17,17 @@ public class OrderOptionDetail {
 	public void setOptionName(String optionName) {
 		this.optionName = optionName;
 	}
-	public Double getOptionPrice() {
+	public Float getOptionPrice() {
 		return optionPrice;
 	}
-	public void setOptionPrice(Double optionPrice) {
+	public void setOptionPrice(Float optionPrice) {
 		this.optionPrice = optionPrice;
 	}
+	
+	
+	
+	
+	
 	
 	
 }

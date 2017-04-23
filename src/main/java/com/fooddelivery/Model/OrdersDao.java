@@ -42,6 +42,9 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	 
 	 @Query(value="select * from orders o where o.order_cus_id = :order_cus_id" , nativeQuery = true)
 	 public List<Orders> findByOrderCusId(@Param("order_cus_id") Long order_cus_id);
+	 
+	 @Query(value="select * from orders o where o.order_cus_id = :order_cus_id order by order_id desc limit 1" , nativeQuery = true)
+	 public List<Orders> findLastOrderCusId(@Param("order_cus_id") Long order_cus_id);
 
 	 
 	 @Query(value="select IF(" +

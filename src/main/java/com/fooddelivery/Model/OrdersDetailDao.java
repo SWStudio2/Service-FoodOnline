@@ -37,7 +37,7 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 	 
 	
 	 
-	 @Query(value="select "	  
+	 @Query(value="select distinct "	  
 		      +"o.*,"
 		      +"m.menu_name,"
 		      +"m.menu_price,"
@@ -56,5 +56,17 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 		  		+" where od.order_id = :order_id"
 		  		+" group by odp.order_detail_id) sop on sop.order_detail_id = od.order_detail_id"
 		    +" where od.order_id = :order_id" , nativeQuery = true)
-	 public List<Object[]> findByOrderId(@Param("order_id") Long order_id);
+	 public List<Object[]> findByOrderId(@Param("order_id") Long order_id );
+	 
+	 
+	 @Query(value="select distinct " 	  
+          +"m.menu_id,"
+          +"m.menu_price,"
+          +"od.order_detail_id,"
+          +"od.order_detail_amount,"
+          +"od.order_remark "
+          +"from order_detail od "
+          +"inner join menu m on m.menu_id = od.menu_id "
+        +"where od.order_id = :order_id and od.MER_ID = :mer_id" , nativeQuery = true)
+	 public List<Object[]> findByOrderIdAndMerId(@Param("order_id") Long order_id , @Param("mer_id") Long mer_id);
 }
