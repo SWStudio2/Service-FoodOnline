@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.fooddelivery.Model.Order.OrderMerchant;
 
 @Transactional
-public interface NotificationInboxDao extends CrudRepository<Merchants, Long> {
+public interface NotificationInboxDao extends CrudRepository<NotificationInbox, Long> {
 	
 	@Query(value = "select * "
 			+ "from notification_inbox "
