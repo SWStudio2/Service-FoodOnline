@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.management.Notification;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.NotificationInbox;
+import com.fooddelivery.Model.NotificationInboxDao;
 import com.fooddelivery.Model.OrderDetail;
 import com.fooddelivery.Model.Orders;
 import com.fooddelivery.Model.OrdersDao;
@@ -67,6 +71,9 @@ public class OrderController {
 	
 	@Autowired
 	private OrdersDetailOptionDao ordersDetailOptionsDao;
+	
+	@Autowired
+	private NotificationInboxDao notiDao;	
 
 	final static int RECEIVESTATUS = 14;
 	
@@ -389,6 +396,26 @@ public class OrderController {
 			return null;
 		}
 	}
+	
+	@RequestMapping(value="/service/orders/noti" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<List<NotificationInbox>>> noti(@RequestBody Map<String, Object> mapRequest)
+	{
+		List<NotificationInbox> notiList = new ArrayList<NotificationInbox>();
+		String messeage = "";
+		try {
+			int noti_ref_id = (Integer) mapRequest.get("noti_ref_id");
+			String noti_type = (String) mapRequest.get("noti_type");
+			
+			notiList = notiDao.findNotiNonRead(noti_ref_id, noti_type);
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+		return ResponseEntity.ok(new Response<List<NotificationInbox>>(HttpStatus.OK.value(),messeage, notiList));
+
+	}	
 	
 	
 }

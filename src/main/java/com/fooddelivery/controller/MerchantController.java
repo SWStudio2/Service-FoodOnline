@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fooddelivery.Model.DeliveryRateDao;
+import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
+import com.fooddelivery.Model.NotificationInbox;
 import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.OrdersDetailDao;
 import com.fooddelivery.Model.OrdersDetailOptionDao;
@@ -47,15 +49,16 @@ public class MerchantController {
 	private SequenceOrdersDao sequenceOrderDao;
 	
 	@Autowired
-	private OrdersDao ordersDao;
-
-	final static int RECEIVESTATUS = 14;	
+	private FullTimeMessengerDao fullDao;
 	
+	@Autowired
+	private OrdersDao ordersDao;
+	final static String COOKSTATUS = "12,13";
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
 	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername){
 		
-		
+	
 		try {
 			
 			List<Merchants> merchants = null;
@@ -123,9 +126,10 @@ public class MerchantController {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		String messeage = "";
 		try {
-		  int order_id = (Integer) mapRequest.get("order_id");
+		  long order_id = (Long) mapRequest.get("order_id");
 		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
-		  int mer_id = (Integer) mapRequest.get("mer_id");
+		  long mer_id = (Long) mapRequest.get("mer_id");
+		  long full_id = (Long) mapRequest.get("full_id");
 		  String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
 		  String resultVerify = "";
 		  dataMap.put("isPass", "Y");
@@ -133,8 +137,19 @@ public class MerchantController {
 		  if(result.equals("Y"))
 		  {
 			  resultVerify = "correct confirm code";
-			  Date currentDateTime = DateTime.getCurrentDateTime();
-			  ordersDao.updateReceiveStatus(currentDateTime.toString(), RECEIVESTATUS, order_id, mer_id);
+			  Date currentDateTime = DateTime.getCurrentDateTime();		  
+			  ordersDao.updateReceiveStatus(currentDateTime.toString(), VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
+			  result = ordersDao.chkReceiveAllMerchantForMessenger(order_id, full_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
+			  if(result.equals("Y"))
+			  {
+				  fullDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERING_STATUS);
+			  }
+			  
+			  result = ordersDao.chkReceiveAllMerchantOrder(order_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
+			  if(result.equals("Y"))
+			  {
+				  ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
+			  }
 		  }
 		  else
 		  {
