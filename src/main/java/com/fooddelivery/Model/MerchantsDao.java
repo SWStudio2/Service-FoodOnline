@@ -94,7 +94,7 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 //	           ) sm ON sm.MER_ID = so.SEQOR_MER_ID
 //	    WHERE SEQOR_ORDER_ID = orderID
 	 
-	 @Query(value = "SELECT m.MER_NAME,"
+	 @Query(value = "SELECT distinct m.MER_ID, m.MER_NAME,"
 	      +"m.MER_LATITUDE,"
 	      +"m.MER_LONGTITUDE,"
 	      +"so.SEQOR_MER_DISTANCE,"
@@ -123,7 +123,7 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 	 public List<Merchants> findByOrderId(@Param("order_id") Long order_id);
 	 
 	 
-	@Query(value = "SELECT distinct m.MER_ID, "
+	@Query(value = "SELECT distinct m.MER_ID, m.MER_NAME,"
 		      +"m.MER_LATITUDE, "
 		      +"m.MER_LONGTITUDE, "
 		      +"so.SEQOR_MER_DISTANCE, "

@@ -5,6 +5,7 @@ import java.util.List;
 
 public class MerchantOrder {
 	private Integer merid;
+	private String merName;
 	private String merLatitude;
 	private String merLongitude;
 	private BigDecimal merDistance;
@@ -13,6 +14,13 @@ public class MerchantOrder {
 	private List<SubOrder> subOrderList;
 	
 	
+	
+	public String getMerName() {
+		return merName;
+	}
+	public void setMerName(String merName) {
+		this.merName = merName;
+	}
 	public Integer getMerid() {
 		return merid;
 	}

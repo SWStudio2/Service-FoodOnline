@@ -246,18 +246,20 @@ public class OrderController {
 //						System.out.println("15");
 						result.setOrder_estimate_datetime((Date) objectArray[15]);
 //						System.out.println("16");
-						result.setMenu_name((String) objectArray[16]);
+						result.setMenu_id((Integer) objectArray[16]);
 //						System.out.println("17");
-						result.setMenu_price((Float) objectArray[17]);
+						result.setMenu_name((String) objectArray[17]);
 //						System.out.println("18");
-						result.setOrder_detail_amount((Integer) objectArray[18]);
+						result.setMenu_price((Float) objectArray[18]);
 //						System.out.println("19");
-						result.setOrder_remark((String) objectArray[19]);
+						result.setOrder_detail_amount((Integer) objectArray[19]);
 //						System.out.println("20");
-						result.setOption_total_price((Double) objectArray[20]);
+						result.setOrder_remark((String) objectArray[20]);
 //						System.out.println("21");
-						result.setMenu_total_price((Double) objectArray[21]);
+						result.setOption_total_price((Double) objectArray[21]);
 //						System.out.println("22");
+						result.setMenu_total_price((Double) objectArray[22]);
+//						System.out.println("23");
 						orderHeadAndDetList.add(result);
 					}
 				}
@@ -274,7 +276,7 @@ public class OrderController {
 				custOrder.setOrderNo(String.valueOf(orderList.get(i).getOrderId()));
 				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
 				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
-				
+				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
 				
 				List<MerchantOrder> resultOrderMerchantList = new ArrayList<MerchantOrder>();
 				for(int j=0;j<orderHeadAndDetList.size();j++){
@@ -288,15 +290,17 @@ public class OrderController {
 						
 						orderMer.setMerid(((Integer) objectArray[0]));
 //						System.out.println("-1");
-						orderMer.setMerLatitude(((String) objectArray[1]));
+						orderMer.setMerName(((String) objectArray[1]));
+//						System.out.println("-1.1");
+						orderMer.setMerLatitude(((String) objectArray[2]));
 //						System.out.println("-2");
-						orderMer.setMerLongitude(((String) objectArray[2]));
+						orderMer.setMerLongitude(((String) objectArray[3]));
 //						System.out.println("-3");
-						orderMer.setMerDistance(((BigDecimal) objectArray[3]));
+						orderMer.setMerDistance(((BigDecimal) objectArray[4]));
 //						System.out.println("-4");
-						orderMer.setMerDeliveryPrice(((BigDecimal) objectArray[4]));
+						orderMer.setMerDeliveryPrice(((BigDecimal) objectArray[5]));
 //						System.out.println("-5");
-						orderMer.setMerFoodPrice(((Double) objectArray[5]));
+						orderMer.setMerFoodPrice(((Double) objectArray[6]));
 //						System.out.println("-6");
 						
 						resultOrderMerchantList.add(orderMer);
@@ -333,14 +337,18 @@ public class OrderController {
 						SubOrder orderDet  = new SubOrder();
 						orderDet.setMenuId((Integer) objectArray[0]);
 //						System.out.println("--1");
-						orderDet.setMenuPrice((Float) objectArray[1]);
+						orderDet.setMenuName((String) objectArray[1]);
 //						System.out.println("--2");
-						orderDet.setOrderDetailId((Integer) objectArray[2]);
+						orderDet.setMenuPrice((Float) objectArray[2]);
 //						System.out.println("--3");
-						orderDet.setOrderDetailAmount((Integer) objectArray[3]);
+						orderDet.setOrderDetailId((Integer) objectArray[3]);
 //						System.out.println("--4");
-						orderDet.setRemark((String) objectArray[4]);
+						orderDet.setOrderDetailAmount((Integer) objectArray[4]);
 //						System.out.println("--5");
+						orderDet.setRemark((String) objectArray[5]);
+//						System.out.println("--6");
+						orderDet.setMenuTotalPrice((Double) objectArray[6]);
+//						System.out.println("--7");
 						
 						List<OrderOptionDetail> resultOrderOptList = new ArrayList<OrderOptionDetail>();
 						List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(orderDet.getOrderDetailId()));
@@ -350,16 +358,13 @@ public class OrderController {
 						for(Object[] objectArray2 : odOptList){
 							System.out.println("OrderOption : "+count2+" "+(Integer) objectArray2[0]);
 							count2++;
-							OrderOptionDetail orderOpt  = new OrderOptionDetail();
+							OrderOptionDetail orderOpt = new OrderOptionDetail();
 							orderOpt.setOrderDetailId(((Integer) objectArray2[0]));
 //							System.out.println("---1");
 							orderOpt.setOptionName(((String) objectArray2[1]));
 //							System.out.println("---2");
 							orderOpt.setOptionPrice(((Float) objectArray2[2]));
 //							System.out.println("---3");
-							resultOrderOptList.add(orderOpt);
-//							System.out.println("---4");
-							
 							resultOrderOptList.add(orderOpt);
 						}
 						

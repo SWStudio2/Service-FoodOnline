@@ -4,12 +4,27 @@ import java.util.List;
 
 public class SubOrder {
 	private Integer menuId;
+	private String menuName;
 	private Integer orderDetailAmount;
 	private Integer orderDetailId;
 	private Float menuPrice;
+	private Double menuTotalPrice;
 	private String remark;
 	private List<OrderOptionDetail> optionList;
-
+	
+	
+	public Double getMenuTotalPrice() {
+		return menuTotalPrice;
+	}
+	public void setMenuTotalPrice(Double menuTotalPrice) {
+		this.menuTotalPrice = menuTotalPrice;
+	}
+	public String getMenuName() {
+		return menuName;
+	}
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
 	public Integer getMenuId() {
 		return menuId;
 	}
