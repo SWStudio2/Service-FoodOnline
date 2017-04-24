@@ -88,6 +88,7 @@ public class MessengerController {
 		for(int i = 0;i<merList.length;i++)
 		{
 			listMerchant.add(merList[i]);
+			
 		}
 
 		//String bestTimeOneMessOneService = "";
@@ -474,6 +475,7 @@ public class MessengerController {
 			}
 			else if(list.size() == 3)
 			{
+				chooseWay = "1Messenger";
 				chooseTime = oneMessValue;
 				diffValue = chooseTime - twoMessValue;
 				if(diffValue > 10)
@@ -488,7 +490,7 @@ public class MessengerController {
 					}
 				}
 			}
-
+			logger.info("chooseWay." + chooseWay);
 			if(chooseWay.equals("1Messenger"))
 			{
 				Station tmpStation = routePathOneMessThreeService.getStation();
@@ -507,6 +509,7 @@ public class MessengerController {
 							int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 							if(tmpMerchant.getMerID() == seqOrderMerID)
 							{
+								logger.info("1mess. idMessenger" + idMessenger);
 								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 								fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 								runningNo++;
@@ -518,6 +521,7 @@ public class MessengerController {
 					int estimateTime = value.intValue();
 					query.updateEstimateTimeToOrder(orderId, estimateTime);
 					logger.info("esimate " + estimateTime);
+					msg = "updateSequenceRoutePath successfully";
 				}
 
 			}
@@ -542,6 +546,7 @@ public class MessengerController {
 								int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 								if(tmpMerchant.getMerID() == seqOrderMerID)
 								{
+									logger.info("2mess. idMessenger" + idMessenger);
 									query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 									fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 									runningNo++;
@@ -569,6 +574,7 @@ public class MessengerController {
 									int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 									if(tmpMerchant.getMerID() == seqOrderMerID)
 									{
+										logger.info("3mess. idMessenger" + idMessenger);
 										query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 										fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 										runningNo++;
@@ -584,6 +590,7 @@ public class MessengerController {
 				estimateTime = value.intValue();
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
+				msg = "updateSequenceRoutePath successfully";
 			}
 			else if(chooseWay.equals("3Messenger"))
 			{
