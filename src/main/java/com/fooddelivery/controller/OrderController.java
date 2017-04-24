@@ -188,215 +188,226 @@ public class OrderController {
 		return result;
 	}
 	
-	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
-		Long cusId = Long.valueOf(json.get("cusId"));
-		String isCurrentOrder = json.get("isCurrentOrder");
-		
-//		Map<String, Object> dataMap = new HashMap<String, Object>();
-		try {
-			//final output
-			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
-			
-			List<Orders> orderList = new ArrayList<Orders>();
-			if(isCurrentOrder.equalsIgnoreCase("Y")){
-				orderList = ordersDao.findLastOrderCusId(cusId);
-			}else{
-				orderList = ordersDao.findByOrderCusId(cusId);
-			}
-			
-			System.out.println("Size of orders : "+orderList.size());
-			//Loop orderList
-			for(int i=0;i<orderList.size();i++){
-				System.out.println("============= order : "+i+" : "+orderList.get(i).getOrderId()+"============================");
-				CustOrder custOrder = new CustOrder();
-				
-				List<Object[]> odList = new ArrayList<Object[]>();
-				
-					odList = orderDetailDao.findByOrderId(orderList.get(i).getOrderId());
-				
-				//convert List<Object[]> to List<OrderHeaderAndDetail>
-				List<OrderHeaderAndDetail> orderHeadAndDetList = new ArrayList<OrderHeaderAndDetail>();
-				if(odList != null){
-					for(Object[] objectArray : odList){
-						OrderHeaderAndDetail result = new OrderHeaderAndDetail();
-						result.setOrder_id(((Integer) objectArray[0]).longValue());
-//						System.out.println("1");
-						result.setOrder_cus_id(((Integer) objectArray[1]).longValue());
-//						System.out.println("2");
-						result.setOrder_address((String) objectArray[2]);
-//						System.out.println("3");
-						result.setOrder_address_latitude((String) objectArray[3]);
-//						System.out.println("4");
-						result.setOrder_address_longtitude((String) objectArray[4]);
-//						System.out.println("5");
-						result.setOrder_created_datetime((Date) objectArray[5]);
-//						System.out.println("6");
-						result.setOrder_receive_datetime((Date) objectArray[6]);
-//						System.out.println("7");
-						result.setOrder_delivery_rate((Integer) objectArray[7]);
-//						System.out.println("8");
-						result.setOrder_total_price((Double) objectArray[8]);
-//						System.out.println("9");
-						result.setOrder_distance((Double) objectArray[9]);
-//						System.out.println("10");
-						result.setOrder_status((Integer) objectArray[10]);
-//						System.out.println("11");
-						result.setOrder_food_price((Double) objectArray[11]);
-//						System.out.println("12");
-						result.setOrder_delivery_price((Double) objectArray[12]);
-//						System.out.println("13");
-						result.setOrder_confirm_code((String) objectArray[13]);
-//						System.out.println("14");
-						result.setOrder_estimate_time((Integer) objectArray[14]);
-//						System.out.println("15");
-						result.setOrder_estimate_datetime((Date) objectArray[15]);
-//						System.out.println("16");
-						result.setMenu_id((Integer) objectArray[16]);
-//						System.out.println("17");
-						result.setMenu_name((String) objectArray[17]);
-//						System.out.println("18");
-						result.setMenu_price((Float) objectArray[18]);
-//						System.out.println("19");
-						result.setOrder_detail_amount((Integer) objectArray[19]);
-//						System.out.println("20");
-						result.setOrder_remark((String) objectArray[20]);
-//						System.out.println("21");
-						result.setOption_total_price((Double) objectArray[21]);
-//						System.out.println("22");
-						result.setMenu_total_price((Double) objectArray[22]);
-//						System.out.println("23");
-						orderHeadAndDetList.add(result);
-					}
-				}
-				
-				custOrder.setConfirmCode(orderList.get(i).getOrderConfirmCode());
-				custOrder.setEstimatedTime(orderList.get(i).getOrderEstimateTime());
-				custOrder.setOrderAddress(orderList.get(i).getOrderAddress());
-				custOrder.setOrderAddressLatitude(orderList.get(i).getOrderAddressLatitude());
-				custOrder.setOrderAddressLongitude(orderList.get(i).getOrderAddressLongtitude());
-				custOrder.setOrderCreatedDateTime(orderList.get(i).getOrderCreatedDatetime().toString());
-				custOrder.setOrderDeliveryPrice(orderList.get(i).getOrderDeliveryPrice());
-				custOrder.setOrderDistance(orderList.get(i).getOrderDistance());
-				custOrder.setOrderFoodPrice(orderList.get(i).getOrderFoodPrice());
-				custOrder.setOrderNo(String.valueOf(orderList.get(i).getOrderId()));
-				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
-				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
-				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
-				
-				List<MerchantOrder> resultOrderMerchantList = new ArrayList<MerchantOrder>();
-				for(int j=0;j<orderHeadAndDetList.size();j++){
-					System.out.println("orderDetail : "+j+" "+orderHeadAndDetList.get(j).getOrder_id());
-					
-					List<Object[]> merchantList = merchantsDao.findSpecialByOrderId(orderHeadAndDetList.get(j).getOrder_id());
-					
-					//convert List<Object[]> to List<OrderHeaderAndDetail>
-					MerchantOrder orderMer  = new MerchantOrder();
-					for(Object[] objectArray : merchantList){
-						
-						orderMer.setMerid(((Integer) objectArray[0]));
-//						System.out.println("-1");
-						orderMer.setMerName(((String) objectArray[1]));
-//						System.out.println("-1.1");
-						orderMer.setMerLatitude(((String) objectArray[2]));
-//						System.out.println("-2");
-						orderMer.setMerLongitude(((String) objectArray[3]));
-//						System.out.println("-3");
-						orderMer.setMerDistance(((BigDecimal) objectArray[4]));
-//						System.out.println("-4");
-						orderMer.setMerDeliveryPrice(((BigDecimal) objectArray[5]));
-//						System.out.println("-5");
-						orderMer.setMerFoodPrice(((Double) objectArray[6]));
-//						System.out.println("-6");
-						
-						resultOrderMerchantList.add(orderMer);
-						
-						
-					}
-					
-					
-				List<MerchantOrder> resultOrderMerchantListClone = new ArrayList<MerchantOrder>();
-				List<Integer> merIdTempList = new ArrayList<Integer>();
-				for(int m=0;m<resultOrderMerchantList.size();m++){
-					if(m==0){			
-						merIdTempList.add(resultOrderMerchantList.get(m).getMerid());
-						resultOrderMerchantListClone.add(resultOrderMerchantList.get(m));
-					}else{
-						if(! merIdTempList.contains(resultOrderMerchantList.get(m).getMerid())){
-							merIdTempList.add(resultOrderMerchantList.get(m).getMerid());
-							resultOrderMerchantListClone.add(resultOrderMerchantList.get(m));
-						}
-					}
-				}
-				
-				
-				List<SubOrder> resultOrderDetList = new ArrayList<SubOrder>();	
-				for(int k=0;k<resultOrderMerchantListClone.size();k++){	
-					System.out.println("Merchant : "+k+" "+resultOrderMerchantListClone.get(k).getMerid());
-					List<Object[]> odDetList = orderDetailDao.findByOrderIdAndMerId(orderList.get(i).getOrderId(),Long.valueOf(resultOrderMerchantList.get(k).getMerid()));
-					
-					//convert List<Object[]> 
-					int count =0;
-					for(Object[] objectArray : odDetList){
-						System.out.println("OrderDetail : "+count+" "+(Integer) objectArray[0]);
-						count++;
-						SubOrder orderDet  = new SubOrder();
-						orderDet.setMenuId((Integer) objectArray[0]);
-//						System.out.println("--1");
-						orderDet.setMenuName((String) objectArray[1]);
-//						System.out.println("--2");
-						orderDet.setMenuPrice((Float) objectArray[2]);
-//						System.out.println("--3");
-						orderDet.setOrderDetailId((Integer) objectArray[3]);
-//						System.out.println("--4");
-						orderDet.setOrderDetailAmount((Integer) objectArray[4]);
-//						System.out.println("--5");
-						orderDet.setRemark((String) objectArray[5]);
-//						System.out.println("--6");
-						orderDet.setMenuTotalPrice((Double) objectArray[6]);
-//						System.out.println("--7");
-						
-						List<OrderOptionDetail> resultOrderOptList = new ArrayList<OrderOptionDetail>();
-						List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(orderDet.getOrderDetailId()));
-						
-						//convert List<Object[]> 
-						int count2 = 0;
-						for(Object[] objectArray2 : odOptList){
-							System.out.println("OrderOption : "+count2+" "+(Integer) objectArray2[0]);
-							count2++;
-							OrderOptionDetail orderOpt = new OrderOptionDetail();
-							orderOpt.setOrderDetailId(((Integer) objectArray2[0]));
-//							System.out.println("---1");
-							orderOpt.setOptionName(((String) objectArray2[1]));
-//							System.out.println("---2");
-							orderOpt.setOptionPrice(((Float) objectArray2[2]));
-//							System.out.println("---3");
-							resultOrderOptList.add(orderOpt);
-						}
-						
-						orderDet.setOptionList(resultOrderOptList);
-						resultOrderDetList.add(orderDet);
-					}
-					resultOrderMerchantListClone.get(k).setSubOrderList(resultOrderDetList);
-				}
-				
-				custOrder.setMerchantOrderList(resultOrderMerchantListClone);	
-				
-
-			}
-				
-			custOrderList.add(custOrder);
-			logger.info(String.valueOf(custOrderList.size()));
-		}
-			
-			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
-		}catch (Exception e){
-			System.out.println(e.getMessage());
-			return null;
-		}
-	}
+//	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+//	@ResponseBody
+//	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
+//		Long cusId = Long.valueOf(json.get("cusId"));
+//		String isCurrentOrder = json.get("isCurrentOrder");
+//		
+////		Map<String, Object> dataMap = new HashMap<String, Object>();
+//		try {
+//			//final output
+//			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
+//			
+//			List<Orders> orderList = new ArrayList<Orders>();
+//			if(isCurrentOrder.equalsIgnoreCase("Y")){
+//				orderList = ordersDao.findLastOrderCusId(cusId);
+//			}else{
+//				orderList = ordersDao.findByOrderCusId(cusId);
+//			}
+//			
+//			System.out.println("Size of orders : "+orderList.size());
+//			//Loop orderList
+//			for(int i=0;i<orderList.size();i++){
+//				System.out.println("============= order : "+i+" : "+orderList.get(i).getOrderId()+"============================");
+//				CustOrder custOrder = new CustOrder();
+//				
+//				List<Object[]> odList = new ArrayList<Object[]>();
+//				
+//				odList = orderDetailDao.findByOrderId(orderList.get(i).getOrderId());
+//				
+//				//convert List<Object[]> to List<OrderHeaderAndDetail>
+//				List<OrderHeaderAndDetail> orderHeadAndDetList = new ArrayList<OrderHeaderAndDetail>();
+//					
+//				if(odList != null){
+//					for(Object[] objectArray : odList){
+//						OrderHeaderAndDetail result = new OrderHeaderAndDetail();
+//						result.setOrder_id(((Integer) objectArray[0]).longValue());
+////						System.out.println("1");
+//						result.setOrder_cus_id(((Integer) objectArray[1]).longValue());
+////						System.out.println("2");
+//						result.setOrder_address((String) objectArray[2]);
+////						System.out.println("3");
+//						result.setOrder_address_latitude((String) objectArray[3]);
+////						System.out.println("4");
+//						result.setOrder_address_longtitude((String) objectArray[4]);
+////						System.out.println("5");
+//						result.setOrder_created_datetime((Date) objectArray[5]);
+////						System.out.println("6");
+//						result.setOrder_receive_datetime((Date) objectArray[6]);
+////						System.out.println("7");
+//						result.setOrder_delivery_rate((Integer) objectArray[7]);
+////						System.out.println("8");
+//						result.setOrder_total_price((Double) objectArray[8]);
+////						System.out.println("9");
+//						result.setOrder_distance((Double) objectArray[9]);
+////						System.out.println("10");
+//						result.setOrder_status((Integer) objectArray[10]);
+////						System.out.println("11");
+//						result.setOrder_food_price((Double) objectArray[11]);
+////						System.out.println("12");
+//						result.setOrder_delivery_price((Double) objectArray[12]);
+////						System.out.println("13");
+//						result.setOrder_confirm_code((String) objectArray[13]);
+////						System.out.println("14");
+//						result.setOrder_estimate_time((Integer) objectArray[14]);
+////						System.out.println("15");
+//						result.setOrder_estimate_datetime((Date) objectArray[15]);
+////						System.out.println("16");
+//						result.setMenu_id((Integer) objectArray[16]);
+////						System.out.println("17");
+//						result.setMenu_name((String) objectArray[17]);
+////						System.out.println("18");
+//						result.setMenu_price((Float) objectArray[18]);
+////						System.out.println("19");
+//						result.setOrder_detail_amount((Integer) objectArray[19]);
+////						System.out.println("20");
+//						result.setOrder_remark((String) objectArray[20]);
+////						System.out.println("21");
+//						result.setOption_total_price((Double) objectArray[21]);
+////						System.out.println("22");
+//						result.setMenu_total_price((Double) objectArray[22]);
+////						System.out.println("23");
+//						orderHeadAndDetList.add(result);
+//					}
+//				}
+//				
+//				custOrder.setConfirmCode(orderList.get(i).getOrderConfirmCode());
+//				custOrder.setEstimatedTime(orderList.get(i).getOrderEstimateTime());
+//				custOrder.setOrderAddress(orderList.get(i).getOrderAddress());
+//				custOrder.setOrderAddressLatitude(orderList.get(i).getOrderAddressLatitude());
+//				custOrder.setOrderAddressLongitude(orderList.get(i).getOrderAddressLongtitude());
+//				custOrder.setOrderCreatedDateTime(orderList.get(i).getOrderCreatedDatetime().toString());
+//				custOrder.setOrderDeliveryPrice(orderList.get(i).getOrderDeliveryPrice());
+//				custOrder.setOrderDistance(orderList.get(i).getOrderDistance());
+//				custOrder.setOrderFoodPrice(orderList.get(i).getOrderFoodPrice());
+//				custOrder.setOrderNo(String.valueOf(orderList.get(i).getOrderId()));
+//				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
+//				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
+//				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
+//				
+//			if(orderList.get(i).getOrderId() == 522){
+//				List<MerchantOrder> resultOrderMerchantList = new ArrayList<MerchantOrder>();
+//				for(int j=0;j<orderHeadAndDetList.size();j++){
+//					System.out.println("orderDetail : "+j+" "+orderHeadAndDetList.get(j).getOrder_id());
+//					
+//					List<Object[]> merchantList = merchantsDao.findSpecialByOrderId(orderHeadAndDetList.get(j).getOrder_id());
+//					
+//					//convert List<Object[]> to List<OrderHeaderAndDetail>
+//					
+//					for(Object[] objectArray : merchantList){
+//						System.out.println("ชื่อร้าน : "+(String) objectArray[1]);
+//						System.out.println("Merchant ID: "+(Integer) objectArray[0]);
+//						
+//						MerchantOrder orderMer  = new MerchantOrder();
+//						orderMer.setMerid(((Integer) objectArray[0]));
+////						System.out.println("-1");
+//						orderMer.setMerName(((String) objectArray[1]));
+////						System.out.println("-1.1");
+//						orderMer.setMerLatitude(((String) objectArray[2]));
+////						System.out.println("-2");
+//						orderMer.setMerLongitude(((String) objectArray[3]));
+////						System.out.println("-3");
+//						orderMer.setMerDistance(((BigDecimal) objectArray[4]));
+////						System.out.println("-4");
+//						orderMer.setMerDeliveryPrice(((BigDecimal) objectArray[5]));
+////						System.out.println("-5");
+//						orderMer.setMerFoodPrice(((Double) objectArray[6]));
+////						System.out.println("-6");
+//						
+//						resultOrderMerchantList.add(orderMer);
+//					}
+//					
+//					System.out.println("Merchants size : "+resultOrderMerchantList.size());
+//					
+//					HashMap<Integer, MerchantOrder> resultOrderMercHashMap = new HashMap<Integer, MerchantOrder>();
+//					
+//					for(int n=0;n<resultOrderMerchantList.size();n++){
+//						resultOrderMercHashMap.put(resultOrderMerchantList.get(n).getMerid(), resultOrderMerchantList.get(n));
+//					}
+//				
+//					List<MerchantOrder> resultOrderMerchantListClone = new ArrayList<MerchantOrder>();
+//					for(int m=0;m<resultOrderMerchantList.size();m++){
+//						if(m == 0){			
+//							resultOrderMercHashMap.put(resultOrderMerchantList.get(m).getMerid(), resultOrderMerchantList.get(m));
+//							resultOrderMerchantListClone.add(resultOrderMerchantList.get(m));
+//						}else{
+//							if(resultOrderMercHashMap.get(resultOrderMerchantList.get(m)) == null) {
+//								System.out.println("not contain*********");
+//								resultOrderMercHashMap.put(resultOrderMerchantList.get(m).getMerid(), resultOrderMerchantList.get(m));
+//								resultOrderMerchantListClone.add(resultOrderMerchantList.get(m));
+//							}
+//						}
+//					}
+//					
+//					System.out.println("MerchantsClone size : "+resultOrderMerchantListClone.size());
+//					
+//					List<SubOrder> resultOrderDetList = new ArrayList<SubOrder>();	
+//					for(int k=0;k<resultOrderMerchantList.size();k++){	
+//						
+//						List<Object[]> odDetList = orderDetailDao.findByOrderIdAndMerId(orderList.get(i).getOrderId(),Long.valueOf(resultOrderMerchantList.get(k).getMerid()));
+//						
+//						//convert List<Object[]> 
+//						int count =0;
+//						for(Object[] objectArray : odDetList){
+//							System.out.println("OrderDetail : "+count+" "+(Integer) objectArray[0]);
+//							count++;
+//							SubOrder orderDet  = new SubOrder();
+//							orderDet.setMenuId((Integer) objectArray[0]);
+//	//						System.out.println("--1");
+//							orderDet.setMenuName((String) objectArray[1]);
+//	//						System.out.println("--2");
+//							orderDet.setMenuPrice((Float) objectArray[2]);
+//	//						System.out.println("--3");
+//							orderDet.setOrderDetailId((Integer) objectArray[3]);
+//	//						System.out.println("--4");
+//							orderDet.setOrderDetailAmount((Integer) objectArray[4]);
+//	//						System.out.println("--5");
+//							orderDet.setRemark((String) objectArray[5]);
+//	//						System.out.println("--6");
+//							orderDet.setMenuTotalPrice((Double) objectArray[6]);
+//	//						System.out.println("--7");
+//							
+//							List<OrderOptionDetail> resultOrderOptList = new ArrayList<OrderOptionDetail>();
+//							List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(orderDet.getOrderDetailId()));
+//							
+//							//convert List<Object[]> 
+//							int count2 = 0;
+//							for(Object[] objectArray2 : odOptList){
+//								System.out.println("OrderOption : "+count2+" "+(Integer) objectArray2[0]);
+//								count2++;
+//								OrderOptionDetail orderOpt = new OrderOptionDetail();
+//								orderOpt.setOrderDetailId(((Integer) objectArray2[0]));
+//	//							System.out.println("---1");
+//								orderOpt.setOptionName(((String) objectArray2[1]));
+//	//							System.out.println("---2");
+//								orderOpt.setOptionPrice(((Float) objectArray2[2]));
+//	//							System.out.println("---3");
+//								resultOrderOptList.add(orderOpt);
+//							}
+//							
+//							orderDet.setOptionList(resultOrderOptList);
+//							resultOrderDetList.add(orderDet);
+//						}
+//						resultOrderMerchantList.get(k).setSubOrderList(resultOrderDetList);
+//					}
+//					
+//					custOrder.setMerchantOrderList(resultOrderMerchantList);	
+//				
+//				}
+//			}// end for test
+//			custOrderList.add(custOrder);
+//			logger.info(String.valueOf(custOrderList.size()));
+//		}
+//			
+//			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
+//		}catch (Exception e){
+//			System.out.println(e.getMessage());
+//			return null;
+//		}
+//	}
 	
+
 	@RequestMapping(value="/service/orders/noti" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<List<NotificationInbox>>> noti(@RequestBody Map<String, Object> mapRequest)
@@ -417,5 +428,153 @@ public class OrderController {
 
 	}	
 	
+
+	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
+		Long cusId = Long.valueOf(json.get("cusId"));
+		String isCurrentOrder = json.get("isCurrentOrder");
+		
+		try {
+			//final output
+			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
+			
+			List<Orders> orderList = new ArrayList<Orders>();
+			if(isCurrentOrder.equalsIgnoreCase("Y")){
+				orderList = ordersDao.findLastOrderCusId(cusId);
+			}else{
+				orderList = ordersDao.findByOrderCusId(cusId);
+			}
+			
+			System.out.println("Size of orders : "+orderList.size());
+			//Loop orderList
+			for(int i=0;i<orderList.size();i++){
+				System.out.println("============= order : "+i+" : "+orderList.get(i).getOrderId()+"============================");
+				CustOrder custOrder = new CustOrder();
+				
+				List<Object[]> odList = new ArrayList<Object[]>();
+				
+				odList = orderDetailDao.findByOrderId(orderList.get(i).getOrderId());
+				
+				//convert List<Object[]> to List<OrderHeaderAndDetail>
+				List<OrderHeaderAndDetail> orderHeadAndDetList = new ArrayList<OrderHeaderAndDetail>();
+					
+				if(odList != null){
+					for(Object[] objectArray : odList){
+						OrderHeaderAndDetail result = new OrderHeaderAndDetail();
+						result.setOrder_id(((Integer) objectArray[0]).longValue());
+						result.setOrder_cus_id(((Integer) objectArray[1]).longValue());
+						result.setOrder_address((String) objectArray[2]);
+						result.setOrder_address_latitude((String) objectArray[3]);
+						result.setOrder_address_longtitude((String) objectArray[4]);
+						result.setOrder_created_datetime((Date) objectArray[5]);
+						result.setOrder_receive_datetime((Date) objectArray[6]);
+						result.setOrder_delivery_rate((Integer) objectArray[7]);
+						result.setOrder_total_price((Double) objectArray[8]);
+						result.setOrder_distance((Double) objectArray[9]);
+						result.setOrder_status((Integer) objectArray[10]);
+						result.setOrder_food_price((Double) objectArray[11]);
+						result.setOrder_delivery_price((Double) objectArray[12]);
+						result.setOrder_confirm_code((String) objectArray[13]);
+						result.setOrder_estimate_time((Integer) objectArray[14]);
+						result.setOrder_estimate_datetime((Date) objectArray[15]);
+						result.setMenu_id((Integer) objectArray[16]);
+						result.setMenu_name((String) objectArray[17]);
+						result.setMenu_price((Float) objectArray[18]);
+						result.setOrder_detail_amount((Integer) objectArray[19]);
+						result.setOrder_remark((String) objectArray[20]);
+						result.setOption_total_price((Double) objectArray[21]);
+						result.setMenu_total_price((Double) objectArray[22]);
+						orderHeadAndDetList.add(result);
+					}
+				}
+				
+				custOrder.setConfirmCode(orderList.get(i).getOrderConfirmCode());
+				custOrder.setEstimatedTime(orderList.get(i).getOrderEstimateTime());
+				custOrder.setOrderAddress(orderList.get(i).getOrderAddress());
+				custOrder.setOrderAddressLatitude(orderList.get(i).getOrderAddressLatitude());
+				custOrder.setOrderAddressLongitude(orderList.get(i).getOrderAddressLongtitude());
+				custOrder.setOrderCreatedDateTime(orderList.get(i).getOrderCreatedDatetime().toString());
+				custOrder.setOrderDeliveryPrice(orderList.get(i).getOrderDeliveryPrice());
+				custOrder.setOrderDistance(orderList.get(i).getOrderDistance());
+				custOrder.setOrderFoodPrice(orderList.get(i).getOrderFoodPrice());
+				custOrder.setOrderNo(String.valueOf(orderList.get(i).getOrderId()));
+				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
+				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
+				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
+				
+				//Loop orderHeadAndDetList For get Merchant List
+				for(int j=0;j<orderHeadAndDetList.size();j++){
+//					System.out.println("orderDetail : "+j+" "+orderHeadAndDetList.get(j).getOrder_id());
+					List<Object[]> merchantList = merchantsDao.findSpecialByOrderId(orderHeadAndDetList.get(j).getOrder_id());
+					
+					//convert List<Object[]> to List<OrderHeaderAndDetail>
+					List<MerchantOrder> orderMerList = new ArrayList<MerchantOrder>();
+					for(Object[] objectArray : merchantList){
+//						System.out.println("Merchant ID: "+(Integer) objectArray[0]);
+//						System.out.println("ชื่อร้าน : "+(String) objectArray[1]);
+						
+						MerchantOrder orderMer  = new MerchantOrder();
+						orderMer.setMerid(((Integer) objectArray[0]));
+						orderMer.setMerName(((String) objectArray[1]));
+						orderMer.setMerLatitude(((String) objectArray[2]));
+						orderMer.setMerLongitude(((String) objectArray[3]));
+						orderMer.setMerDistance(((BigDecimal) objectArray[4]));
+						orderMer.setMerDeliveryPrice(((BigDecimal) objectArray[5]));
+						orderMer.setMerFoodPrice(((Double) objectArray[6]));
+						orderMerList.add(orderMer);
+					}
+					
+					for(int k=0;k<orderMerList.size();k++){
+						List<Object[]> odDetList = orderDetailDao.findByOrderIdAndMerId(orderList.get(i).getOrderId(),Long.valueOf(orderMerList.get(k).getMerid()));
+						//convert List<Object[]> 
+						int count =0;
+						
+						List<SubOrder> subOrderList  = new ArrayList<SubOrder>();
+						for(Object[] objectArray : odDetList){
+//							System.out.println("OrderDetail : "+count+" "+(Integer) objectArray[0]);
+							count++;
+							SubOrder subOrder  = new SubOrder();
+							subOrder.setMenuId((Integer) objectArray[0]);
+							subOrder.setMenuName((String) objectArray[1]);
+							subOrder.setMenuPrice((Float) objectArray[2]);
+							subOrder.setOrderDetailId((Integer) objectArray[3]);
+							subOrder.setOrderDetailAmount((Integer) objectArray[4]);
+							subOrder.setRemark((String) objectArray[5]);
+							subOrder.setMenuTotalPrice((Double) objectArray[6]);
+							
+							List<OrderOptionDetail> orderOptList = new ArrayList<OrderOptionDetail>();
+							List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(subOrder.getOrderDetailId()));
+							//convert List<Object[]> 
+							for(Object[] objectArray2 : odOptList){
+								OrderOptionDetail orderOpt = new OrderOptionDetail();
+								orderOpt.setOrderDetailId(((Integer) objectArray2[0]));
+								orderOpt.setOptionName(((String) objectArray2[1]));
+								orderOpt.setOptionPrice(((Float) objectArray2[2]));
+								orderOptList.add(orderOpt);
+							}
+							subOrder.setOptionList(orderOptList);
+							
+							
+							
+							subOrderList.add(subOrder);
+						}
+						orderMerList.get(k).setSubOrderList(subOrderList);
+					}
+					
+					
+					custOrder.setMerchantOrderList(orderMerList);
+				}
+				
+				custOrderList.add(custOrder);
+			}
+			
+			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
+		}catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+	}
+
 	
 }
