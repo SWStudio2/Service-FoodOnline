@@ -2,8 +2,6 @@ package com.fooddelivery.controller;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -16,13 +14,15 @@ import com.fooddelivery.Model.FullTimeMessengerQuery;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
 import com.fooddelivery.Model.MerchantsQuery;
+import com.fooddelivery.Model.OrderDetail;
+import com.fooddelivery.Model.Orders;
+import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.SequenceOrders;
 import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.Model.Station;
 import com.fooddelivery.Model.StationQuery;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
-import com.fooddelivery.Model.User;
 import com.fooddelivery.Model.UtilsQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,19 +30,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 import com.fooddelivery.service.durationpath.OneMessengerOneMerchantService;
 import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
 import com.fooddelivery.util.GroupPathDetail;
-import com.fooddelivery.util.NodeDetail;
 import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.Response;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.Utils;
-import com.google.api.client.json.Json;
+import com.fooddelivery.util.VariableText;
 
 @RestController
 public class MessengerController {
@@ -56,6 +53,8 @@ public class MessengerController {
 	
 	@Autowired
 	private SequenceOrdersDao seqOrderDao;
+	@Autowired
+	private OrdersDao ordersDao;
 
 
 	@RequestMapping(value="/service/getestimatedtime", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -88,6 +87,7 @@ public class MessengerController {
 		for(int i = 0;i<merList.length;i++)
 		{
 			listMerchant.add(merList[i]);
+			
 		}
 
 		//String bestTimeOneMessOneService = "";
@@ -474,6 +474,7 @@ public class MessengerController {
 			}
 			else if(list.size() == 3)
 			{
+				chooseWay = "1Messenger";
 				chooseTime = oneMessValue;
 				diffValue = chooseTime - twoMessValue;
 				if(diffValue > 10)
@@ -488,7 +489,7 @@ public class MessengerController {
 					}
 				}
 			}
-
+			logger.info("chooseWay." + chooseWay);
 			if(chooseWay.equals("1Messenger"))
 			{
 				Station tmpStation = routePathOneMessThreeService.getStation();
@@ -507,6 +508,7 @@ public class MessengerController {
 							int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 							if(tmpMerchant.getMerID() == seqOrderMerID)
 							{
+								logger.info("1mess. idMessenger" + idMessenger);
 								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 								fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 								runningNo++;
@@ -518,6 +520,7 @@ public class MessengerController {
 					int estimateTime = value.intValue();
 					query.updateEstimateTimeToOrder(orderId, estimateTime);
 					logger.info("esimate " + estimateTime);
+					msg = "updateSequenceRoutePath successfully";
 				}
 
 			}
@@ -542,6 +545,7 @@ public class MessengerController {
 								int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 								if(tmpMerchant.getMerID() == seqOrderMerID)
 								{
+									logger.info("2mess. idMessenger" + idMessenger);
 									query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 									fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 									runningNo++;
@@ -569,6 +573,7 @@ public class MessengerController {
 									int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
 									if(tmpMerchant.getMerID() == seqOrderMerID)
 									{
+										logger.info("3mess. idMessenger" + idMessenger);
 										query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
 										fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 										runningNo++;
@@ -584,6 +589,7 @@ public class MessengerController {
 				estimateTime = value.intValue();
 				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
+				msg = "updateSequenceRoutePath successfully";
 			}
 			else if(chooseWay.equals("3Messenger"))
 			{
@@ -605,6 +611,7 @@ public class MessengerController {
 							if(tmpMerchant.getMerID() == seqOrderMerID)
 							{
 								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+								fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
 								//runningNo++;
 								break;
 							}
@@ -740,36 +747,102 @@ public class MessengerController {
 	}
 	
 	@RequestMapping(value={"service/fulltime/{fullId}"} ,method=RequestMethod.GET)
-	public ResponseEntity<Response<HashMap>> getOrderByFullTimeMessenger(@PathVariable("fullId") String fullId){
+	public ResponseEntity<Response<com.fooddelivery.Model.Order.fulltimemessenger.Orders>> 
+	getOrderByFullTimeMessenger(@PathVariable("fullId") String fullId){
 		try {
+			long fullTimeMessengerId = Long.parseLong(fullId);
 			
-			String temp = fullId.substring(1);
-			temp = temp.substring(0,temp.length()-1);
-			long fullTimeMessengerId = Long.parseLong(temp);
+			List<SequenceOrders> seqOrdersList = seqOrderDao.getSequenceOrderByMessId(fullTimeMessengerId,
+					 VariableText.ORDER_COOKING_STATUS);
 			
-			List<FullTimeMessenger> fullTimes = fullMessDao.findAll();
-			for (int i=0; i<fullTimes.size(); i++) {
-				System.out.println("FullId: " + fullTimes.get(i).getFullId());
+			Orders order = new Orders();
+			com.fooddelivery.Model.Order.fulltimemessenger.Orders ordersResult = new 
+					com.fooddelivery.Model.Order.fulltimemessenger.Orders();
+			com.fooddelivery.Model.Order.fulltimemessenger.Customer customerResult = new
+					com.fooddelivery.Model.Order.fulltimemessenger.Customer();
+			List<com.fooddelivery.Model.Order.fulltimemessenger.SequenceOrders> sequenceOrdersList = new 
+					ArrayList<com.fooddelivery.Model.Order.fulltimemessenger.SequenceOrders>();
+			List<com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail> orderDetailList = new 
+					ArrayList<com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail>();
+			/*List<com.fooddelivery.Model.Order.fulltimemessenger.Merchants> merchantResult = new 
+					ArrayList<com.fooddelivery.Model.Order.fulltimemessenger.Merchants>();*/
+			/*com.fooddelivery.Model.Order.fulltimemessenger.FullTimeMessenger fullTimeMessengerResult = new 
+			com.fooddelivery.Model.Order.fulltimemessenger.FullTimeMessenger();*/
+			if (seqOrdersList != null) {
+				long seqOrderId = seqOrdersList.get(0).getSequenceOrderId();
+				List<Long> merchantIds = setMerchantsIdsList(seqOrdersList);
+				//map sequenceOrders
+				for (int i=0; i<seqOrdersList.size(); i++) {
+					com.fooddelivery.Model.Order.fulltimemessenger.SequenceOrders sequenceOrder = new 
+							com.fooddelivery.Model.Order.fulltimemessenger.SequenceOrders();
+					sequenceOrder.mapping(seqOrdersList.get(i));
+					sequenceOrdersList.add(sequenceOrder);
+				}
+				//map fullTimeMessenger
+				/*FullTimeMessenger fullTimeMessenger = seqOrdersList.get(0).getFullTimeMessenger();
+				fullTimeMessengerResult.mapping(fullTimeMessenger);
+				*/
+				
+				order = ordersDao.getOrderByOrderId(seqOrderId);
+				if (order != null) {
+					//map orderDetail & merchant
+					List<OrderDetail> orderDetail = order.getOrderDetails();
+					orderDetailList = mappingOrderDetailOfFullTimeMessenger(orderDetail, merchantIds);
+					
+					//mapping customer
+					Customer customer = order.getCustomer();
+					customerResult.mapping(customer);
+					
+					ordersResult.mapping(order);
+					ordersResult.setCustomer(customerResult);
+					ordersResult.setSequenceOrders(sequenceOrdersList);
+					ordersResult.setOrderDetails(orderDetailList);
+				}
 			}
 			
-			List<SequenceOrders> seqOrderss = seqOrderDao.findAll(); 
-			for (int i=0; i<fullTimes.size(); i++) {
-				System.out.println("seqOrderssIddd: " + seqOrderss.get(i).getSequenceId());
-				System.out.println("seqOrderssMess: " + seqOrderss.get(i).getSequenceMessengerId());
-			}
-			
-			
-			//SequenceOrders seqOrders = seqOrderDao.getSequenceOrderByMessId(fullTimeMessengerId);
-			
-			//System.out.println(seqOrders.getSequenceMessengerId());
-			
-			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),"Get data successfully",null));
+			return ResponseEntity.ok(new Response<com.fooddelivery.Model.Order.fulltimemessenger.Orders>
+			(HttpStatus.OK.value(),"Get data successfully",ordersResult));
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			logger.info(ex.getMessage());
 			return null;
 		}
+	}
+	
+	private List<Long> setMerchantsIdsList(List<SequenceOrders> seqOrdersList) {
+		List<Long> result = new ArrayList<Long>();
+		for (int i=0; i<seqOrdersList.size(); i++) {
+			result.add(seqOrdersList.get(i).getSequenceOrderMerchantId());
+		}
+		return result;
+	}
+	
+	private List<com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail> mappingOrderDetailOfFullTimeMessenger(
+			List<OrderDetail> orderDetails, List<Long> merchantIds) {
+		List<com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail> result = 
+				new ArrayList<com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail>();
+		
+		for (int i=0; i<orderDetails.size(); i++) {
+			for (int j=0; j<merchantIds.size(); j++) {
+				if (orderDetails.get(i).getMerId() == merchantIds.get(j)) {
+					//map merchant
+					com.fooddelivery.Model.Order.fulltimemessenger.Merchants merchant = new
+							com.fooddelivery.Model.Order.fulltimemessenger.Merchants();
+					merchant.mapping(orderDetails.get(i).getMerchant());
+					
+					//map orderDetail
+					com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail orderDetail = new 
+							com.fooddelivery.Model.Order.fulltimemessenger.OrderDetail();
+					orderDetail.mapping(orderDetails.get(i));
+					
+					orderDetail.setMerchant(merchant);
+					result.add(orderDetail);
+				}
+			}
+		}
+		
+		return result;
 	}
 	
 }
