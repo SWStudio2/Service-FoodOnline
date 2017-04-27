@@ -3,15 +3,20 @@ package com.fooddelivery.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.CascadeType;
 import org.springframework.data.annotation.Transient;
 
 
@@ -45,6 +50,9 @@ public class Customer {
 	@Column(name = "cus_created_date")
 	private Date cus_created_date;
 	
+	//--------------RELATION----------------
+	@OneToOne(mappedBy="customers")
+	private Orders orders;
 	
 	public Customer() { }
 
@@ -116,7 +124,10 @@ public class Customer {
 		this.cus_created_date = cusCreatedDate;
 	}
 	
-	
+	//--------------RELATION----------------
+	public Orders getOrders() {
+		return orders;
+	}
 	
 	
 }

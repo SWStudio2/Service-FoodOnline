@@ -13,11 +13,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -70,13 +74,14 @@ public class SequenceOrders {
 	private Date seqor_receive_datetime;
 	
 	//--------------RELATION----------------
-	//@OneToOne(cascade=CascadeType.ALL,targetEntity=FullTimeMessenger.class,fetch=FetchType.LAZY)
-	/*@OneToOne(cascade = CascadeType.ALL)
-	@JoinTable(
-			name="SEQORDER_FULLTIME",
-			joinColumns = @JoinColumn(name="full_id")
-	)
-	private FullTimeMessenger fullTimeMessenger;*/
+	@OneToOne
+	@JoinColumn(name="seqor_mess_id", insertable = false, updatable = false)
+	@NotFound(action=NotFoundAction.IGNORE)  
+	private FullTimeMessenger fullTimeMessenger;
+	
+	/*@ManyToOne
+	@JoinColumn(name="seqor_order_id", insertable = false, updatable = false)
+	private List<Orders> orders;*/
 		
 	public SequenceOrders() {}
 	
@@ -197,5 +202,14 @@ public class SequenceOrders {
 	public Date getSequenceReceiveDatetime() {
 		return seqor_receive_datetime;
 	}
+	
+	//--------------RELATION----------------
+	public FullTimeMessenger getFullTimeMessenger() {
+		return fullTimeMessenger;
+	}
+	
+	/*public List<Orders> getOrders() {
+		return orders;
+	}*/
 	
 }

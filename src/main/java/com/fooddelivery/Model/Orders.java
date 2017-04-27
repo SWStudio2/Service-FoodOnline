@@ -13,11 +13,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -96,8 +100,12 @@ public class Orders {
 	@OneToMany(mappedBy="order_id",targetEntity=OrderDetail.class,fetch=FetchType.LAZY) //EAGER
 	private List<OrderDetail> orderDetails;
 	
-	/*@OneToOne(cascade=CascadeType.ALL,targetEntity=Customer.class,fetch=FetchType.LAZY)
-	private Customer customers;*/
+	/*@OneToMany(mappedBy="orders")
+	private List<SequenceOrders> sequenceOrders;*/
+	
+	@OneToOne
+	@JoinColumn(name="order_cus_id", insertable = false, updatable = false)
+	private Customer customers;
 	
 	public Orders() {}
 	
@@ -267,6 +275,14 @@ public class Orders {
 	//-------------RELATION--------------
 	public List<OrderDetail> getOrderDetails(){
 		return orderDetails;
+	}
+	
+	/*public List<SequenceOrders> getSequenceOrders() {
+		return sequenceOrders;
+	}*/
+	
+	public Customer getCustomer() {
+		return customers;
 	}
 	
 	@Override

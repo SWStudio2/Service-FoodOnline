@@ -1,6 +1,8 @@
 package com.fooddelivery.Model;
 
 
+import java.util.List;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -9,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -47,6 +50,11 @@ public class OrderDetail {
 	@NotNull
 	@Column(name = "mer_id")
 	private long mer_id;
+	
+	//--------------RELATION----------------
+	@OneToOne
+	@JoinColumn(name="mer_id", insertable = false, updatable = false)
+	private Merchants merchants;
 		
 	public OrderDetail() {}
 	
@@ -115,6 +123,11 @@ public class OrderDetail {
 	
 	public long getMerId() {
 		return mer_id;
+	}
+	
+	//-------------RELATION--------------
+	public Merchants getMerchant(){
+		return merchants;
 	}
 	
 	@Override

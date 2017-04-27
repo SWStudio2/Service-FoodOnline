@@ -1,66 +1,21 @@
-package com.fooddelivery.Model;
+package com.fooddelivery.Model.Order.fulltimemessenger;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Entity
-@Table(name = "merchants")
 public class Merchants {
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name = "MER_ID")
+
 	private int merID;
-	
-	@Column(name = "MER_NAME")
+
 	private String merName;
-	
-	@Column(name = "MER_ADDRESS")
 	private String merAddress;
-	
-	@Column(name = "MER_LATITUDE")
 	private String merLatitude;
-	
-	@Column(name = "MER_LONGTITUDE") 
 	private String merLongtitude;
-	
-	@Column(name = "MER_CONTACT_NUMBER")
 	private String merContactNumber;
-	
-	@Column(name = "MER_PERCENT_SHARE")
 	private Double merPercentShare;
-	
-	@Column(name = "MER_OPEN_STATUS")
 	private String merOpenStatus;
-	
-	@Column(name = "MER_USERNAME")
 	private String merUserName;
-	
-	@Column(name = "MER_PASSWORD")
 	private String merPassword;
-	
-	@Column(name = "MER_REGIS_FLAG")
 	private Integer merRegisFlag;
-	
-	@Column(name = "MER_PIC_NAME")
 	private String merPicName;
-	
-	@Column(name = "MER_COOKTIME")
 	private Integer cookingTime;
-	
-	//--------------RELATION----------------
-	@OneToOne(mappedBy="customers")
-	private Orders orders;
 
 	public int getCookingTime() {
 		return cookingTime;
@@ -169,16 +124,21 @@ public class Merchants {
 	public void setCookingTime(Integer cookingTime) {
 		this.cookingTime = cookingTime;
 	}
-
-	@Override
-	public String toString() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "ERROR";
-		}
-	}
 	
+	//----------MAP MODEL---------------
+	public void mapping(com.fooddelivery.Model.Merchants merchant) {
+		this.merID = merchant.getMerID();
+		this.merName = merchant.getMerName();
+		this.merAddress = merchant.getMerAddress();
+		this.merLatitude = merchant.getMerLatitude();
+		this.merLongtitude = merchant.getMerLongtitude();
+		this.merContactNumber = merchant.getMerContactNumber();
+		this.merPercentShare = merchant.getMerPercentShare();
+		this.merOpenStatus = merchant.getMerOpenStatus();
+		this.merUserName = merchant.getMerUserName();
+		this.merPassword = merchant.getMerPassword();
+		this.merRegisFlag = merchant.getMerRegisFlag();
+		this.merPicName = merchant.getMerPicName();
+		this.cookingTime = merchant.getCookingTime();
+	}
 }
