@@ -85,7 +85,7 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	 public String chkReceiveAllMerchantOrder(@Param("seqorder") long order_id,
 			 @Param("receive_status") int receive_status,
 			 @Param("seqor_cook_status") String seqor_cook_status);	
-	 
+
 	 //SQL A4
 	 @Modifying
 	 @Query(value="UPDATE orders" +

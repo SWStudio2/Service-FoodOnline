@@ -39,6 +39,7 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 	 
 	 @Query(value="select distinct "	  
 		      +"o.*,"
+		      +"m.menu_id,"
 		      +"m.menu_name,"
 		      +"m.menu_price,"
 		      +"od.order_detail_amount,"
@@ -60,13 +61,19 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 	 
 	 
 	 @Query(value="select distinct " 	  
-          +"m.menu_id,"
+          +"m.menu_id,m.menu_name,"
           +"m.menu_price,"
           +"od.order_detail_id,"
           +"od.order_detail_amount,"
-          +"od.order_remark "
-          +"from order_detail od "
-          +"inner join menu m on m.menu_id = od.menu_id "
-        +"where od.order_id = :order_id and od.MER_ID = :mer_id" , nativeQuery = true)
+          +"od.order_remark, "
+          +"((m.menu_price * od.order_detail_amount) +  IFNULL(sop.sum_option,0) ) as menu_total_price"
+          +" from order_detail od"
+          +" inner join menu m on m.menu_id = od.menu_id"
+          +" Left join ( select odp.order_detail_id,sum(om.option_price) as sum_option"
+          +" from order_detail od"
+  			+" inner join orders_detail_option odp  ON odp.order_detail_id = od.order_detail_id "
+  				+" inner join options_menu om on om.option_id = odp.option_id where od.order_id = :order_id"
+  				+" group by odp.order_detail_id) sop on sop.order_detail_id = od.order_detail_id where od.order_id = :order_id"
+        +" and od.order_id = :order_id and od.MER_ID = :mer_id" , nativeQuery = true)
 	 public List<Object[]> findByOrderIdAndMerId(@Param("order_id") Long order_id , @Param("mer_id") Long mer_id);
 }

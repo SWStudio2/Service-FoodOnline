@@ -15,8 +15,15 @@ public class CustOrder {
 	private int orderStatus;
 	private String orderCreatedDateTime;
 	private int estimatedTime;
+	private String estimatedDateTime;
 	private List<MerchantOrder> merchantOrderList;
 	
+	public String getEstimatedDateTime() {
+		return estimatedDateTime;
+	}
+	public void setEstimatedDateTime(String estimatedDateTime) {
+		this.estimatedDateTime = estimatedDateTime;
+	}
 	public String getOrderAddress() {
 		return orderAddress;
 	}

@@ -1,6 +1,8 @@
 package com.fooddelivery.Model;
 
 import com.fooddelivery.controller.UserController;
+import com.fooddelivery.util.VariableText;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +17,6 @@ import java.util.HashMap;
 public class FullTimeMessengerQuery {
 	private static final Logger logger = LoggerFactory.getLogger(FullTimeMessengerQuery.class);
 	final static String statusID = "9,10";
-	final static String FULL_STATUS_ID = "5";
 	public static Merchants[] queryMerChantByID(String mersIdString)
 	  {
 		  Connection connect = null;
@@ -182,7 +183,7 @@ public class FullTimeMessengerQuery {
 				  
 				sqlBuffer.append("UPDATE fulltime_messenger     \n ");
 				sqlBuffer.append(" SET FULL_ORDER_ID = " + orderId +",  \n ");
-				sqlBuffer.append(" FULL_STATUS_ID = " + FULL_STATUS_ID + "  \n ");
+				sqlBuffer.append(" FULL_STATUS_ID = " + VariableText.MESSENGER_WAITING_CONFIRM_STATUS + "  \n ");
 				sqlBuffer.append("  WHERE FULL_ID = " + idMessenger + " \n ");
 
 

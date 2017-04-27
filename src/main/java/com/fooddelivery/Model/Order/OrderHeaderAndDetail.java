@@ -44,6 +44,8 @@ public class OrderHeaderAndDetail {
 	
 	private Date order_estimate_datetime;
 	
+	private Integer menu_id;
+	
 	private String menu_name;
 	
 	private Float menu_price;
@@ -57,6 +59,17 @@ public class OrderHeaderAndDetail {
 	private Double menu_total_price;
 	
 	private List<MerchantOrder> merchantOrderList;
+	
+	
+	
+
+	public Integer getMenu_id() {
+		return menu_id;
+	}
+
+	public void setMenu_id(Integer menu_id) {
+		this.menu_id = menu_id;
+	}
 
 	public List<MerchantOrder> getMerchantOrderList() {
 		return merchantOrderList;
