@@ -47,7 +47,7 @@ public class MessengerController {
 	@Autowired
 	private FullTimeMessengerDao fullMessDao;
 	@Autowired
-	private BikeStationDao bikeDao;
+	private BikeStationDao bikeStationDao;
 	@Autowired
 	private MerchantsDao merchantsDao;
 	
@@ -81,7 +81,7 @@ public class MessengerController {
 		MerchantsQuery merDao = new MerchantsQuery();
 		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
 
-		List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
+		List<BikeStation> listStation = bikeStationDao.getBikeStationAvailable();
 
 		List<Merchants> listMerchant = new ArrayList<Merchants>();
 		for(int i = 0;i<merList.length;i++)
@@ -329,7 +329,7 @@ public class MessengerController {
 			//Merchants[] merList = merQuery.queryMerChantByID(merIdAdjust);
 			System.out.println(""+list);
 			List<Merchants> merList = merchantsDao.getMerchantsByMerIds(list);
-			List<BikeStation> listStation = bikeDao.getBikeStationAvailable();
+			List<BikeStation> listStation = bikeStationDao.getBikeStationAvailable();
 
 			List<Merchants> listMerchant = new ArrayList<Merchants>();
 			for(int i = 0;i<merList.size();i++)
@@ -843,6 +843,56 @@ public class MessengerController {
 		}
 		
 		return result;
+	}
+	
+	//************คำนวณหาจุดจอดใหม่***********************
+	/*
+	 * ให้เอาที่อยู่ลูกค้าสุดท้าย มาคิดหาระยะทางกับจุดจอดทั้งหมด 
+	 * แล้วเปรียบเทียบกับ 5 กิโลเมตร
+	 * ภายในจุดจอดที่อยู่ใน 5 กิโล ให้ดูที่ จน. แมสว่ามีน้อยไหม
+	 * ถ้าเท่ากัน ก็เลือกระยะที่อยู่น้อยที่สุด
+	 * แต่ถ้าระยะทางห่างเกิน 5 กิโล ก็ไม่ต้องเข้าข้างบน 
+	 * ให้หาจุดจอดที่ใกล้ที่สุด
+	 * update messenger ด้วย
+	 * return station 
+	 * - station id
+	 * - latitude
+	 * - long
+	 * - station name
+	 */
+	public BikeStation calculateNewStation(String lastestLatitude, String latestLongtitude) {
+		//สมมติค่า lastestLatitude , latestLongtitude
+		lastestLatitude = "13.9038336";
+		latestLongtitude = "100.621662";
+		
+		//คำนวณจุดจอดใกล้-ไกล
+		HomeController homeController = new HomeController();
+		List<BikeStation> bikeStationList = bikeStationDao.getBikeStationAll();
+		HashMap<String, String[]> bikeStationDistanceHash = new HashMap<String, String[]>();
+		for(int i=0; i<bikeStationList.size(); i++) {
+			BikeStation bikeStation = bikeStationList.get(i);
+			try {
+				Thread.sleep(600);
+				String[] detailArray = (String[]) homeController.getDistanceDuration(
+						lastestLatitude,
+						latestLongtitude, 
+						bikeStation.getBikeStationLatitude(), 
+						bikeStation.getBikeStationLongitude());
+				List<Object[]> fullTimeMessengerInStation = fullMessDao.getNumberOfMessengerInStation();
+				for (int j=0; j<fullTimeMessengerInStation.size(); j++) {
+					System.out.println("station: " + fullTimeMessengerInStation.get(j)[0] + 
+							" available: " + fullTimeMessengerInStation.get(j)[1]);
+				}
+				//bikeStationDistanceHash.put(key, value)
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//
+		
+		return new BikeStation();
 	}
 	
 }

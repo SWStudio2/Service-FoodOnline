@@ -4,6 +4,7 @@ public class Station {
 	private int stationId;
 	private String stationLantitude;
 	private String stationLongtitude;
+	
 	public int getStationId() {
 		return stationId;
 	}
