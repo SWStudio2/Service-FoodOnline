@@ -20,7 +20,7 @@ public class DateTime {
 	}
 	
 	public static Date getDateTime(String dateTimeString) throws ParseException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		dateFormat.setLenient(false);
 		date = dateFormat.parse(dateTimeString.toString());
 		return date;
@@ -31,5 +31,5 @@ public class DateTime {
 		logger.info(getDateTime("2017/04/08 23:21:44"));
 	}*/
 
-
+	
 }

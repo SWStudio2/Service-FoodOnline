@@ -1,5 +1,6 @@
 package com.fooddelivery.controller;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,7 +63,7 @@ public class MerchantController {
 	@ResponseBody
 	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername){
 		
-	
+		
 		try {
 			
 			List<Merchants> merchants = null;
@@ -91,6 +92,7 @@ public class MerchantController {
 	    }
 		
 	}
+	
 	
 	@RequestMapping(value="/service/merchant/confirmcode" , method = RequestMethod.POST)
 	@ResponseBody

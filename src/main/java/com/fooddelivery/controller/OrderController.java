@@ -562,7 +562,6 @@ public class OrderController {
 						orderMerList.get(k).setSubOrderList(subOrderList);
 					}
 					
-					
 					custOrder.setMerchantOrderList(orderMerList);
 				}
 				
