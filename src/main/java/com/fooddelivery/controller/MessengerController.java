@@ -860,15 +860,30 @@ public class MessengerController {
 	 * - long
 	 * - station name
 	 */
-	public BikeStation calculateNewStation(String lastestLatitude, String latestLongtitude) {
+	/*@RequestMapping(value={"service/fulltime/calculateNewStation/{lastestLatitude}"}, method=RequestMethod.GET)*/
+	//public ResponseEntity<Response<BikeStation>> calculateNewStation(@PathVariable("lastestLatitude") 
+	public BikeStation calculateNewStation(
+		String lastestLatitude, String latestLongtitude) {
 		//สมมติค่า lastestLatitude , latestLongtitude
-		lastestLatitude = "13.9038336";
-		latestLongtitude = "100.621662";
+		//lastestLatitude = "13.7324056";//"13.9038336";
+		//latestLongtitude = "100.5304452";//"100.621662";
+		BikeStation result = new BikeStation();
+		
 		
 		//คำนวณจุดจอดใกล้-ไกล
 		HomeController homeController = new HomeController();
 		List<BikeStation> bikeStationList = bikeStationDao.getBikeStationAll();
-		HashMap<String, String[]> bikeStationDistanceHash = new HashMap<String, String[]>();
+		HashMap<String, BikeStation> bikeStationHashMap = new HashMap<String, BikeStation>();
+		bikeStationHashMap = convertBikeStationListToHashMap(bikeStationList);
+		//HashMap<String, String[]> bikeStationDistanceHash = new HashMap<String, String[]>();
+		List<Object[]> fullTimeMessengerInStation = fullMessDao.getNumberOfMessengerInStation();
+		/*for (int j=0; j<fullTimeMessengerInStation.size(); j++) {
+			System.out.println("station: " + fullTimeMessengerInStation.get(j)[0] + 
+					" available: " + fullTimeMessengerInStation.get(j)[1]);
+		}*/
+		List<double[]> bikeStationDistanceList = new ArrayList<double[]>();
+		HashMap<String, String[]> numberFullTimeAvailableInStationHash = convertNumberMessengerInStationListToHashMap(
+				fullTimeMessengerInStation);
 		for(int i=0; i<bikeStationList.size(); i++) {
 			BikeStation bikeStation = bikeStationList.get(i);
 			try {
@@ -878,21 +893,102 @@ public class MessengerController {
 						latestLongtitude, 
 						bikeStation.getBikeStationLatitude(), 
 						bikeStation.getBikeStationLongitude());
-				List<Object[]> fullTimeMessengerInStation = fullMessDao.getNumberOfMessengerInStation();
-				for (int j=0; j<fullTimeMessengerInStation.size(); j++) {
-					System.out.println("station: " + fullTimeMessengerInStation.get(j)[0] + 
-							" available: " + fullTimeMessengerInStation.get(j)[1]);
+				Double numberFullTimeInStation = Double.valueOf(numberFullTimeAvailableInStationHash.get(String.valueOf(
+						bikeStation.getBikeStationId()))[1]);
+				//bikeStationDistanceHash = sortBikeStationDistanceHash();
+				if (numberFullTimeInStation != 0) {
+					bikeStationDistanceList.add(new double[] { bikeStation.getBikeStationId(), 
+						Double.valueOf(detailArray[0]),
+						numberFullTimeInStation});
+					/*bikeStationDistanceHash.put(String.valueOf(bikeStation.getBikeStationId()), 
+							new String[]{detailArray[0], String.valueOf(numberFullTimeInStation)});*/
 				}
-				//bikeStationDistanceHash.put(key, value)
+				else {
+					bikeStationDistanceList.add(new double[] { bikeStation.getBikeStationId(), 
+							Double.valueOf(detailArray[0]),
+							100});
+					/*bikeStationDistanceHash.put(String.valueOf(bikeStation.getBikeStationId()), 
+							new String[]{"100","100"});*/
+				}
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		//sort List
+		List<double[]> bikeStationDistanceSortedList = sortBikeStationDistanceHash(bikeStationDistanceList);
+		for (int i=0; i<bikeStationDistanceSortedList.size(); i++) {
+			System.out.println("Station ID: " + bikeStationDistanceSortedList.get(i)[0] +
+					" | distance: " + bikeStationDistanceSortedList.get(i)[1] +
+					" | number: " + bikeStationDistanceSortedList.get(i)[2]);
+		}
 		
-		//
-		
-		return new BikeStation();
+		if ((double) bikeStationDistanceSortedList.get(0)[1] < 5.00) {
+			for (int i=0; i<bikeStationDistanceSortedList.size(); i++) {
+				if (bikeStationDistanceSortedList.get(i)[1] > 5.00) {
+					bikeStationDistanceSortedList.remove(i);
+				}
+			}
+			//หา ระยะทางน้อยที่สุดที่มี messenger น้อยที่สุดเช่นกัน
+			double[] temp = bikeStationDistanceSortedList.get(0);
+			int initialNumberOfMessenger = (int) temp[2];
+			if (bikeStationDistanceSortedList.size() > 1) {
+				for (int i=1; i<bikeStationDistanceSortedList.size(); i++) {
+					if (initialNumberOfMessenger > (int) bikeStationDistanceSortedList.get(i)[2]) {
+						initialNumberOfMessenger = (int) bikeStationDistanceSortedList.get(i)[2];
+						temp = bikeStationDistanceSortedList.get(i);
+					}
+				}
+				result = bikeStationHashMap.get(String.valueOf( (int) temp[0] ) );
+			}
+			else {
+				result = bikeStationHashMap.get(String.valueOf( (int) bikeStationDistanceSortedList.get(0)[0] ) );
+			}
+		}
+		else {
+			result = bikeStationHashMap.get(String.valueOf( (int) bikeStationDistanceSortedList.get(0)[0] ) );
+		}
+		/*return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(),"Get data successfully",
+				result));*/
+		return result;
+	}
+	
+	private HashMap<String, String[]> convertNumberMessengerInStationListToHashMap(List<Object[]> numberMessengerInStation) {
+		HashMap<String, String[]> result = new HashMap<String, String[]>();
+		for (int i=0; i<numberMessengerInStation.size(); i++) {
+			String[] intArray = new String[]{numberMessengerInStation.get(i)[0] + "", 
+					numberMessengerInStation.get(i)[1] + ""};
+			result.put(String.valueOf(numberMessengerInStation.get(i)[0]), intArray);
+		}
+		return result;
+	}
+	
+	private HashMap<String, BikeStation> convertBikeStationListToHashMap(List<BikeStation> bikeStationList) {
+		HashMap<String, BikeStation> result = new HashMap<String, BikeStation>();
+		for (int i=0; i<bikeStationList.size(); i++) {
+			result.put(String.valueOf(bikeStationList.get(i).getBikeStationId()), bikeStationList.get(i));
+		}
+		return result;
+	}
+	
+	private List<double[]> sortBikeStationDistanceHash(List<double[]> bikeStationDistance) {
+		Collections.sort(bikeStationDistance, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Double distance1 = Double.valueOf(((double[]) o1)[1]);
+				Double distance2 = Double.valueOf(((double[]) o2)[1]);
+				double sComp = distance1.compareTo(distance2);
+				
+				if (sComp != 0) {
+					return (int) sComp;
+				}
+				else {
+					Double number1 = Double.valueOf(((double[]) o1)[2]);
+					Double number2 = Double.valueOf(((double[]) o2)[2]);
+					return number1.compareTo(number2);
+				}
+			}
+		});
+		return bikeStationDistance;
 	}
 	
 }
