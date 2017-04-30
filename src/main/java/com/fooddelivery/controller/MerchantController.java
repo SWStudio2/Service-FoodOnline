@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
@@ -58,6 +59,10 @@ public class MerchantController {
 	
 	@Autowired
 	private OrdersDao ordersDao;
+	
+	@Autowired
+	private CustomerDao custDao;
+	
 	final static String COOKSTATUS = "12,13";
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
@@ -157,9 +162,10 @@ public class MerchantController {
 				  ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
 			  }
 			  
+			  int cus_id = custDao.getCustomerIdByOrderId(order_id);
 			  NotificationInbox noti = new NotificationInbox();
-			  noti.setNoti_message_detail(""+order_id+"+VariableText.ORDER_DELIVERING");
-			  noti.setNoti_ref_id(1);//cus id
+			  noti.setNoti_message_detail("ออร์เดอร์รหัส "+order_id+"+VariableText.ORDER_DELIVERING");
+			  noti.setNoti_ref_id(cus_id);//cus id
 			  noti.setNoti_message_type("A");
 			  noti.setNoti_read_flag(0);
 			  noti.setNoti_type("Customer");

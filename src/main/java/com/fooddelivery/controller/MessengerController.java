@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fooddelivery.service.durationpath.OneMessengerOneMerchantService;
 import com.fooddelivery.service.durationpath.TwoMessThreeMercService;
+import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.GroupPathDetail;
 import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.Response;
@@ -402,7 +403,7 @@ public class MessengerController {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 					//YUI
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-					//bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 					//MINT
 					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -518,7 +519,13 @@ public class MessengerController {
 					}
 					BigDecimal value = new BigDecimal(routePathOneMessThreeService.getDuration());
 					int estimateTime = value.intValue();
-					query.updateEstimateTimeToOrder(orderId, estimateTime);
+					estimateTime = value.intValue();
+					Date currentDateTime = DateTime.getCurrentDateTime();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(currentDateTime);
+					cal.add(Calendar.MINUTE, estimateTime);
+					currentDateTime = cal.getTime();
+					query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
 					logger.info("esimate " + estimateTime);
 					msg = "updateSequenceRoutePath successfully";
 				}
@@ -587,7 +594,12 @@ public class MessengerController {
 				int estimateTime = 99;
 				BigDecimal value = new BigDecimal(bestTimeTwoMessTwoService.getTotalDuration());
 				estimateTime = value.intValue();
-				query.updateEstimateTimeToOrder(orderId, estimateTime);
+				Date currentDateTime = DateTime.getCurrentDateTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(currentDateTime);
+				cal.add(Calendar.MINUTE, estimateTime);
+				currentDateTime = cal.getTime();
+				query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
 				logger.info("esimate " + estimateTime);
 				msg = "updateSequenceRoutePath successfully";
 			}
@@ -621,7 +633,12 @@ public class MessengerController {
 				int estimateTime = 99;
 				BigDecimal value = new BigDecimal(threeMessValue);
 				estimateTime = value.intValue();
-				query.updateEstimateTimeToOrder(orderId, estimateTime);
+				Date currentDateTime = DateTime.getCurrentDateTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(currentDateTime);
+				cal.add(Calendar.MINUTE, estimateTime);
+				currentDateTime = cal.getTime();
+				query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
 				logger.info("esimate " + estimateTime);
 				msg = "updateSequenceRoutePath successfully";
 			}

@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.Response;
+import com.fooddelivery.util.VariableText;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
 import com.fooddelivery.Model.Merchants;
+import com.fooddelivery.Model.NotificationInbox;
+import com.fooddelivery.Model.NotificationInboxDao;
 
 @RequestMapping(value={"/service/customer"})
 @RestController
@@ -35,6 +39,14 @@ public class CustomerController {
 	private CustomerDao customerDao;
 	@Autowired
 	private DeliveryRateDao delvDao;
+
+	@Autowired
+	private CustomerDao custDao;
+
+	@Autowired
+	private NotificationInboxDao notiDao;
+	
+	
 
 	@RequestMapping(value={"/auth"} ,method=RequestMethod.POST)
 	public ResponseEntity<Response<HashMap>> authen(@RequestBody Customer cus){
@@ -97,10 +109,23 @@ public class CustomerController {
 	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
 	{
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		int order_id = (Integer) mapRequest.get("order_id");
-		String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");	
+		long order_id = (Long) mapRequest.get("order_id");
+		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
+		long full_id = (Long) mapRequest.get("full_id");
+		long[] merList = (long[])mapRequest.get("mer_id");
 		
 		String messeage = "";
+		String result = customerDao.verifyConfirmCodeCustomer(order_id, confirm_code);
+		if(result.equals("Y"))
+		{
+			Date currentDateTime = DateTime.getCurrentDateTime();
+			customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
+			
+		  int cus_id = custDao.getCustomerIdByOrderId(order_id);
+		  
+		  //Wait query update fulltime , order
+			
+		}
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
 
 	}		

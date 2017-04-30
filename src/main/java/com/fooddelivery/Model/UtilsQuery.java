@@ -3,12 +3,15 @@ package com.fooddelivery.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fooddelivery.util.DateTime;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class UtilsQuery {
@@ -296,7 +299,7 @@ public class UtilsQuery {
 		  return resultText;
 	}
 	
-	public static String updateEstimateTimeToOrder(int orderId,int estimateTime)
+	public static String updateEstimateTimeToOrder(int orderId,int estimateTime,Date dateTime)
 	{
 		  Connection connect = null;
 			Statement s = null;
@@ -322,9 +325,10 @@ public class UtilsQuery {
 				StringBuffer sqlBuffer = new StringBuffer();  
 				sqlBuffer.append("UPDATE orders     \n ");
 				sqlBuffer.append("  SET ORDER_STATUS  = "+ WAILMEAL + ",  \n ");
-				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + "   \n ");
+				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + ",   \n ");
+				sqlBuffer.append("  ORDER_ESTIMATE_DATETIME =  " +dateTime + "   \n ");
 				sqlBuffer.append("  WHERE ORDER_ID = "+ orderId+"  \n ");
-
+				
 				sql = sqlBuffer.toString();	
 				
 				boolean result = s.execute(sql);

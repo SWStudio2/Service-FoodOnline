@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -419,12 +420,33 @@ public class OrderController {
 			String noti_type = (String) mapRequest.get("noti_type");
 			
 			notiList = notiDao.findNotiNonRead(noti_ref_id, noti_type);
+			messeage = "Get notification successfully";
 		}
 		catch (Exception e) {
 			logger.info(e.getMessage());
+			messeage = "Get notification Failed";
 			return null;
 		}
 		return ResponseEntity.ok(new Response<List<NotificationInbox>>(HttpStatus.OK.value(),messeage, notiList));
+
+	}	
+	
+	@RequestMapping(value="/service/orders/noti/accept/{notiId}" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiId") int notiId)
+	{
+
+		String messeage = "";
+		try {
+
+			messeage = "Get notification successfully";
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			messeage = "Get notification Failed";
+			return null;
+		}
+		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),messeage, messeage));
 
 	}	
 	
