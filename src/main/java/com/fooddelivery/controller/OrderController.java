@@ -58,27 +58,27 @@ public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	@Autowired
 	private OrdersDao ordersDao;
-	
+
 	@Autowired
 	private MerchantsDao merchantsDao;
-	
+
 	@Autowired
 	private DeliveryRateDao deliveryRateDao;
-	
+
 	@Autowired
 	private OrdersDetailDao orderDetailDao;
-	
+
 	@Autowired
 	private SequenceOrdersDao sequenceOrdersDao;
-	
+
 	@Autowired
 	private OrdersDetailOptionDao ordersDetailOptionsDao;
-	
+
 	@Autowired
-	private NotificationInboxDao notiDao;	
+	private NotificationInboxDao notiDao;
 
 	final static int RECEIVESTATUS = 14;
-	
+
 	@RequestMapping(value="/service/orders/inserorders" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<Map<String, Object>>> insertOrders(@RequestBody PlaceOrder placeOrder
@@ -92,7 +92,7 @@ public class OrderController {
 			Date date = new Date();*/
 			Date currentDateTime = DateTime.getCurrentDateTime();
 			allOrder allorder = placeOrder.getAllOrder();
-			
+
 			List<DeliveryRate> deliveryRateList = deliveryRateDao.findAllDeliveryRate();
 			int deliveryRate;
 			if (deliveryRateList != null) {
@@ -101,7 +101,7 @@ public class OrderController {
 			else {
 				deliveryRate = 0;
 			}
-			
+
 			Orders orders = new Orders();
 			orders.setOrderCusId(placeOrder.getCusId());
 			orders.setOrderAddress(allorder.getOrderAddress());
@@ -116,21 +116,22 @@ public class OrderController {
 			orders.setOrderEstimateTime(allorder.getOrderEstimateTime());
 			orders.setOrderEstimateDatetime(DateTime.getDateTime(allorder.getOrderEstimateDateTime()));
 			orders.setOrderStatus(VariableText.ORDER_WAITING_RESPONSE_STATUS);
+			orders.setOrderPaymentType(allorder.getOrderPaymentType());
 			//confirm code
 			String confirmOrderCode = generateOrderConfirmCode();
 			orders.setOrderConfirmCode(confirmOrderCode);
 			ordersDao.save(orders);
-			
+
 			//logger.info("id: " + orders.getOrderId());
-			
+
 			//orderDetail & sequenceOrderDetail
 			List<merchant> merchants = allorder.getMerchant();
 			for (int i=0; i<merchants.size(); i++) {
 				merchant merchant = merchants.get(i);
 				List<order> orderList = merchant.getOrder();
-				
+
 				HashMap<String, String> merchantIds = new HashMap<String, String>();
-				
+
 				for (int j=0; j<orderList.size(); j++) {
 					order order = orderList.get(j);
 					OrderDetail orderDetail = new OrderDetail();
@@ -140,7 +141,7 @@ public class OrderController {
 					orderDetail.setMenuId(order.getMenuId());
 					orderDetail.setMerId(merchant.getMerId());
 					orderDetailDao.save(orderDetail);
-					
+
 					if (order.getOption() != null) {
 						for (int k=0; k<order.getOption().size(); k++) {
 							option option = order.getOption().get(k);
@@ -150,13 +151,14 @@ public class OrderController {
 							ordersDetailOptionsDao.save(orderDetailOptions);
 						}
 					}
-					
+
 					if (merchantIds.get(String.valueOf(merchant.getMerId())) == null) {
 						SequenceOrders sequenceOrders = new SequenceOrders();
 						sequenceOrders.setSequenceOrderId(orders.getOrderId());
 						sequenceOrders.setSequenceOrderMerchantId(merchant.getMerId());
 						sequenceOrders.setSequenceCookStatus(VariableText.MERCHANT_WAITING_CONFIRM_STATUS);
 						sequenceOrders.setSequenceMerDistance(Double.valueOf(merchant.getMerDistance()));
+						sequenceOrders.setSequenceReceiveStatus(VariableText.MESSENGER_WAITING_CONFIRM_STATUS);
 						String confirmSequenceOrderCode = generateOrderConfirmCode();
 						sequenceOrders.setSequenceConfirmCode(confirmSequenceOrderCode);
 						sequenceOrdersDao.save(sequenceOrders);
@@ -170,12 +172,12 @@ public class OrderController {
 								VariableText.NOTIFICATION_MSG_DETAIL_CREATE_ORDER + " " + orders.getOrderId());
 						notificationInbox.setNoti_created_date(currentDateTime);
 						notiDao.save(notificationInbox);
-						
+
 						merchantIds.put(String.valueOf(merchant.getMerId()), String.valueOf(merchant.getMerId()));
 					}
 				}
 			}
-			
+
 			dataMap.put("orderNo",orders.getOrderId());
 			dataMap.put("orderConfirmCode", confirmOrderCode);
 			dataMap.put("orderStatus", orders.getOrderStatus());
@@ -187,7 +189,7 @@ public class OrderController {
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Inserted order sucessfully", dataMap));
 
 	}
-	
+
 	private String generateOrderConfirmCode() {
 		String result = "";
 		Random rand = new Random();
@@ -195,43 +197,43 @@ public class OrderController {
 		int val2 = rand.nextInt(9);
 		int val3 = rand.nextInt(9);
 		int val4 = rand.nextInt(9);
-		
+
 		result = String.valueOf(val1) + String.valueOf(val2) + String.valueOf(val3) + String.valueOf(val4);
-		
+
 		return result;
 	}
-	
+
 //	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 //	@ResponseBody
 //	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
 //		Long cusId = Long.valueOf(json.get("cusId"));
 //		String isCurrentOrder = json.get("isCurrentOrder");
-//		
+//
 ////		Map<String, Object> dataMap = new HashMap<String, Object>();
 //		try {
 //			//final output
 //			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
-//			
+//
 //			List<Orders> orderList = new ArrayList<Orders>();
 //			if(isCurrentOrder.equalsIgnoreCase("Y")){
 //				orderList = ordersDao.findLastOrderCusId(cusId);
 //			}else{
 //				orderList = ordersDao.findByOrderCusId(cusId);
 //			}
-//			
+//
 //			System.out.println("Size of orders : "+orderList.size());
 //			//Loop orderList
 //			for(int i=0;i<orderList.size();i++){
 //				System.out.println("============= order : "+i+" : "+orderList.get(i).getOrderId()+"============================");
 //				CustOrder custOrder = new CustOrder();
-//				
+//
 //				List<Object[]> odList = new ArrayList<Object[]>();
-//				
+//
 //				odList = orderDetailDao.findByOrderId(orderList.get(i).getOrderId());
-//				
+//
 //				//convert List<Object[]> to List<OrderHeaderAndDetail>
 //				List<OrderHeaderAndDetail> orderHeadAndDetList = new ArrayList<OrderHeaderAndDetail>();
-//					
+//
 //				if(odList != null){
 //					for(Object[] objectArray : odList){
 //						OrderHeaderAndDetail result = new OrderHeaderAndDetail();
@@ -284,7 +286,7 @@ public class OrderController {
 //						orderHeadAndDetList.add(result);
 //					}
 //				}
-//				
+//
 //				custOrder.setConfirmCode(orderList.get(i).getOrderConfirmCode());
 //				custOrder.setEstimatedTime(orderList.get(i).getOrderEstimateTime());
 //				custOrder.setOrderAddress(orderList.get(i).getOrderAddress());
@@ -298,20 +300,20 @@ public class OrderController {
 //				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
 //				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
 //				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
-//				
+//
 //			if(orderList.get(i).getOrderId() == 522){
 //				List<MerchantOrder> resultOrderMerchantList = new ArrayList<MerchantOrder>();
 //				for(int j=0;j<orderHeadAndDetList.size();j++){
 //					System.out.println("orderDetail : "+j+" "+orderHeadAndDetList.get(j).getOrder_id());
-//					
+//
 //					List<Object[]> merchantList = merchantsDao.findSpecialByOrderId(orderHeadAndDetList.get(j).getOrder_id());
-//					
+//
 //					//convert List<Object[]> to List<OrderHeaderAndDetail>
-//					
+//
 //					for(Object[] objectArray : merchantList){
-//						System.out.println("ชื่อร้าน : "+(String) objectArray[1]);
+//						System.out.println("à¸à¸·à¹à¸­à¸£à¹à¸²à¸ : "+(String) objectArray[1]);
 //						System.out.println("Merchant ID: "+(Integer) objectArray[0]);
-//						
+//
 //						MerchantOrder orderMer  = new MerchantOrder();
 //						orderMer.setMerid(((Integer) objectArray[0]));
 ////						System.out.println("-1");
@@ -327,21 +329,21 @@ public class OrderController {
 ////						System.out.println("-5");
 //						orderMer.setMerFoodPrice(((Double) objectArray[6]));
 ////						System.out.println("-6");
-//						
+//
 //						resultOrderMerchantList.add(orderMer);
 //					}
-//					
+//
 //					System.out.println("Merchants size : "+resultOrderMerchantList.size());
-//					
+//
 //					HashMap<Integer, MerchantOrder> resultOrderMercHashMap = new HashMap<Integer, MerchantOrder>();
-//					
+//
 //					for(int n=0;n<resultOrderMerchantList.size();n++){
 //						resultOrderMercHashMap.put(resultOrderMerchantList.get(n).getMerid(), resultOrderMerchantList.get(n));
 //					}
-//				
+//
 //					List<MerchantOrder> resultOrderMerchantListClone = new ArrayList<MerchantOrder>();
 //					for(int m=0;m<resultOrderMerchantList.size();m++){
-//						if(m == 0){			
+//						if(m == 0){
 //							resultOrderMercHashMap.put(resultOrderMerchantList.get(m).getMerid(), resultOrderMerchantList.get(m));
 //							resultOrderMerchantListClone.add(resultOrderMerchantList.get(m));
 //						}else{
@@ -352,15 +354,15 @@ public class OrderController {
 //							}
 //						}
 //					}
-//					
+//
 //					System.out.println("MerchantsClone size : "+resultOrderMerchantListClone.size());
-//					
-//					List<SubOrder> resultOrderDetList = new ArrayList<SubOrder>();	
-//					for(int k=0;k<resultOrderMerchantList.size();k++){	
-//						
+//
+//					List<SubOrder> resultOrderDetList = new ArrayList<SubOrder>();
+//					for(int k=0;k<resultOrderMerchantList.size();k++){
+//
 //						List<Object[]> odDetList = orderDetailDao.findByOrderIdAndMerId(orderList.get(i).getOrderId(),Long.valueOf(resultOrderMerchantList.get(k).getMerid()));
-//						
-//						//convert List<Object[]> 
+//
+//						//convert List<Object[]>
 //						int count =0;
 //						for(Object[] objectArray : odDetList){
 //							System.out.println("OrderDetail : "+count+" "+(Integer) objectArray[0]);
@@ -380,11 +382,11 @@ public class OrderController {
 //	//						System.out.println("--6");
 //							orderDet.setMenuTotalPrice((Double) objectArray[6]);
 //	//						System.out.println("--7");
-//							
+//
 //							List<OrderOptionDetail> resultOrderOptList = new ArrayList<OrderOptionDetail>();
 //							List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(orderDet.getOrderDetailId()));
-//							
-//							//convert List<Object[]> 
+//
+//							//convert List<Object[]>
 //							int count2 = 0;
 //							for(Object[] objectArray2 : odOptList){
 //								System.out.println("OrderOption : "+count2+" "+(Integer) objectArray2[0]);
@@ -398,28 +400,28 @@ public class OrderController {
 //	//							System.out.println("---3");
 //								resultOrderOptList.add(orderOpt);
 //							}
-//							
+//
 //							orderDet.setOptionList(resultOrderOptList);
 //							resultOrderDetList.add(orderDet);
 //						}
 //						resultOrderMerchantList.get(k).setSubOrderList(resultOrderDetList);
 //					}
-//					
-//					custOrder.setMerchantOrderList(resultOrderMerchantList);	
-//				
+//
+//					custOrder.setMerchantOrderList(resultOrderMerchantList);
+//
 //				}
 //			}// end for test
 //			custOrderList.add(custOrder);
 //			logger.info(String.valueOf(custOrderList.size()));
 //		}
-//			
+//
 //			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
 //		}catch (Exception e){
 //			System.out.println(e.getMessage());
 //			return null;
 //		}
 //	}
-	
+
 
 	@RequestMapping(value="/service/orders/noti" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -430,7 +432,7 @@ public class OrderController {
 		try {
 			int noti_ref_id = (Integer) mapRequest.get("noti_ref_id");
 			String noti_type = (String) mapRequest.get("noti_type");
-			
+
 			notiList = notiDao.findNotiNonRead(noti_ref_id, noti_type);
 			messeage = "Get notification successfully";
 		}
@@ -441,8 +443,8 @@ public class OrderController {
 		}
 		return ResponseEntity.ok(new Response<List<NotificationInbox>>(HttpStatus.OK.value(),messeage, notiList));
 
-	}	
-	
+	}
+
 	@RequestMapping(value="/service/orders/noti/accept/{notiId}" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiid") int noti_id)
@@ -450,7 +452,7 @@ public class OrderController {
 
 		String messeage = "";
 		try {
-			
+
 			notiDao.updateNotiReadFlagByNotiId(noti_id);
 			messeage = "Acknowledge noti successfully";
 		}
@@ -461,39 +463,39 @@ public class OrderController {
 		}
 		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),messeage, messeage));
 
-	}	
-	
+	}
+
 
 	@RequestMapping(value="/service/orders/getOrderDetail" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
 		Long cusId = Long.valueOf(json.get("cusId"));
 		String isCurrentOrder = json.get("isCurrentOrder");
-		
+
 		try {
 			//final output
 			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
-			
+
 			List<Orders> orderList = new ArrayList<Orders>();
 			if(isCurrentOrder.equalsIgnoreCase("Y")){
 				orderList = ordersDao.findLastOrderCusId(cusId);
 			}else{
 				orderList = ordersDao.findByOrderCusId(cusId);
 			}
-			
+
 			System.out.println("Size of orders : "+orderList.size());
 			//Loop orderList
 			for(int i=0;i<orderList.size();i++){
 				System.out.println("============= order : "+i+" : "+orderList.get(i).getOrderId()+"============================");
 				CustOrder custOrder = new CustOrder();
-				
+
 				List<Object[]> odList = new ArrayList<Object[]>();
-				
+
 				odList = orderDetailDao.findByOrderId(orderList.get(i).getOrderId());
-				
+
 				//convert List<Object[]> to List<OrderHeaderAndDetail>
 				List<OrderHeaderAndDetail> orderHeadAndDetList = new ArrayList<OrderHeaderAndDetail>();
-					
+
 				if(odList != null){
 					for(Object[] objectArray : odList){
 						OrderHeaderAndDetail result = new OrderHeaderAndDetail();
@@ -523,7 +525,7 @@ public class OrderController {
 						orderHeadAndDetList.add(result);
 					}
 				}
-				
+
 				custOrder.setConfirmCode(orderList.get(i).getOrderConfirmCode());
 				custOrder.setEstimatedTime(orderList.get(i).getOrderEstimateTime());
 				custOrder.setOrderAddress(orderList.get(i).getOrderAddress());
@@ -537,18 +539,18 @@ public class OrderController {
 				custOrder.setOrderStatus(orderList.get(i).getOrderStatus());
 				custOrder.setOrderTotalPrice(orderList.get(i).getOrderTotalPrice());
 				custOrder.setEstimatedDateTime(orderList.get(i).getOrderEstimateDatetime().toString());
-				
+
 				//Loop orderHeadAndDetList For get Merchant List
 				for(int j=0;j<orderHeadAndDetList.size();j++){
 //					System.out.println("orderDetail : "+j+" "+orderHeadAndDetList.get(j).getOrder_id());
 					List<Object[]> merchantList = merchantsDao.findSpecialByOrderId(orderHeadAndDetList.get(j).getOrder_id());
-					
+
 					//convert List<Object[]> to List<OrderHeaderAndDetail>
 					List<MerchantOrder> orderMerList = new ArrayList<MerchantOrder>();
 					for(Object[] objectArray : merchantList){
 //						System.out.println("Merchant ID: "+(Integer) objectArray[0]);
-//						System.out.println("ชื่อร้าน : "+(String) objectArray[1]);
-						
+//						System.out.println("à¸à¸·à¹à¸­à¸£à¹à¸²à¸ : "+(String) objectArray[1]);
+
 						MerchantOrder orderMer  = new MerchantOrder();
 						orderMer.setMerid(((Integer) objectArray[0]));
 						orderMer.setMerName(((String) objectArray[1]));
@@ -559,12 +561,12 @@ public class OrderController {
 						orderMer.setMerFoodPrice(((Double) objectArray[6]));
 						orderMerList.add(orderMer);
 					}
-					
+
 					for(int k=0;k<orderMerList.size();k++){
 						List<Object[]> odDetList = orderDetailDao.findByOrderIdAndMerId(orderList.get(i).getOrderId(),Long.valueOf(orderMerList.get(k).getMerid()));
-						//convert List<Object[]> 
+						//convert List<Object[]>
 						int count =0;
-						
+
 						List<SubOrder> subOrderList  = new ArrayList<SubOrder>();
 						for(Object[] objectArray : odDetList){
 //							System.out.println("OrderDetail : "+count+" "+(Integer) objectArray[0]);
@@ -577,10 +579,10 @@ public class OrderController {
 							subOrder.setOrderDetailAmount((Integer) objectArray[4]);
 							subOrder.setRemark((String) objectArray[5]);
 							subOrder.setMenuTotalPrice((Double) objectArray[6]);
-							
+
 							List<OrderOptionDetail> orderOptList = new ArrayList<OrderOptionDetail>();
 							List<Object[]> odOptList = ordersDetailOptionsDao.findByOrderId(Long.valueOf(subOrder.getOrderDetailId()));
-							//convert List<Object[]> 
+							//convert List<Object[]>
 							for(Object[] objectArray2 : odOptList){
 								OrderOptionDetail orderOpt = new OrderOptionDetail();
 								orderOpt.setOrderDetailId(((Integer) objectArray2[0]));
@@ -589,20 +591,20 @@ public class OrderController {
 								orderOptList.add(orderOpt);
 							}
 							subOrder.setOptionList(orderOptList);
-							
-							
-							
+
+
+
 							subOrderList.add(subOrder);
 						}
 						orderMerList.get(k).setSubOrderList(subOrderList);
 					}
-					
+
 					custOrder.setMerchantOrderList(orderMerList);
 				}
-				
+
 				custOrderList.add(custOrder);
 			}
-			
+
 			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
 		}catch (Exception e) {
 			logger.info(e.getMessage());
@@ -610,5 +612,41 @@ public class OrderController {
 		}
 	}
 
-	
+	@RequestMapping(value = "/service/orders/getorder", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<List<Orders>>> getOrderTracking(@RequestBody Map<String, String> json) {
+		Long cusId = Long.valueOf(json.get("cusId"));
+		String isCurrentOrder = json.get("isCurrentOrder");
+		logger.info("isCurrent "+isCurrentOrder);
+		try {
+			if (isCurrentOrder.equals("Y")) {
+				List<Orders> orderList = ordersDao.getCurrentOrderByCusId(cusId);
+				logger.info("orderList.size "+orderList.size());
+				if (orderList.size() > 0 ) {
+
+					List<SequenceOrders> seqOrdersList = orderList.get(0).getSequenceOrders();
+					List<SequenceOrders> mappedSeqOrdersList = new ArrayList<SequenceOrders>();
+					logger.info("seqOrdersList.size "+seqOrdersList.size());
+					List<OrderDetail> orderDetails = orderList.get(0).getOrderDetails();
+					for (SequenceOrders seq : seqOrdersList) {
+						for (OrderDetail detail : orderDetails) {
+							if (detail.getMerId() == seq.getMerchants().getMerID()) {
+								seq.getOrderDetails().add(detail);
+							}
+						}
+						mappedSeqOrdersList.add(seq);
+					}
+					orderList.get(0).setSequenceOrders(mappedSeqOrdersList);
+				}
+				return ResponseEntity.ok(new Response<List<Orders>>(HttpStatus.OK.value(), "Query order sucessfully", orderList));
+			}else{
+				List<Orders> orderList = ordersDao.getHistoryOrderByCusId(cusId);
+				return ResponseEntity.ok(new Response<List<Orders>>(HttpStatus.OK.value(), "Query order sucessfully", orderList));
+			}
+		}catch(Exception e){
+			logger.info(e.getMessage());
+			return null;
+		}
+	}
+
 }

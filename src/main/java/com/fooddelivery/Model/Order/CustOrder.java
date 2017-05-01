@@ -16,8 +16,9 @@ public class CustOrder {
 	private String orderCreatedDateTime;
 	private int estimatedTime;
 	private String estimatedDateTime;
+	private String orderPaymentType;
 	private List<MerchantOrder> merchantOrderList;
-	
+
 	public String getEstimatedDateTime() {
 		return estimatedDateTime;
 	}
@@ -60,7 +61,7 @@ public class CustOrder {
 	public void setOrderDeliveryPrice(double orderDeliveryPrice) {
 		this.orderDeliveryPrice = orderDeliveryPrice;
 	}
-	
+
 	public double getOrderDistance() {
 		return orderDistance;
 	}
@@ -82,7 +83,7 @@ public class CustOrder {
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	
+
 	public int getOrderStatus() {
 		return orderStatus;
 	}
@@ -95,7 +96,7 @@ public class CustOrder {
 	public void setOrderCreatedDateTime(String orderCreatedDateTime) {
 		this.orderCreatedDateTime = orderCreatedDateTime;
 	}
-	
+
 	public List<MerchantOrder> getMerchantOrderList() {
 		return merchantOrderList;
 	}
@@ -108,5 +109,17 @@ public class CustOrder {
 	public void setEstimatedTime(int estimatedTime) {
 		this.estimatedTime = estimatedTime;
 	}
-	
+	public String getOrderPaymentType() {
+		return orderPaymentType;
+	}
+
+	public void setOrderPaymentType(String orderPaymentType) {
+		this.orderPaymentType = orderPaymentType;
+	}
+
+
+
+
+
+
 }

@@ -224,7 +224,7 @@ public class Orders {
 		this.orderAddress = order.getOrderAddress();
 		this.orderAddressLatitude = order.getOrderAddressLatitude();
 		this.orderAddressLongtitude = order.getOrderAddressLongtitude();
-		this.orderCreatedDatetime = order.getOderCreatedDatetime();
+		this.orderCreatedDatetime = order.getOrderCreatedDatetime();
 		this.orderReceiveDatetime = order.getOrderReceiveDatetime();
 		this.orderDeliveryRate = order.getOrderDeliveryRate();
 		this.orderTotalPrice = order.getOrderTotalPrice();
