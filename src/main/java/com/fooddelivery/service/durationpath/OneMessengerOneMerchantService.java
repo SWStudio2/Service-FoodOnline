@@ -44,7 +44,8 @@ public class OneMessengerOneMerchantService {
 	
 	public List<NodeDetailVer2> oneMessengerForOneMerchants(
 			List<BikeStation> stationList,
-			List<Merchants> merchantsList) {
+			List<Merchants> merchantsList,
+			HashMap<Integer, Double> hashMerCookingTime) {
 		List<NodeDetailVer2> result = new ArrayList<NodeDetailVer2>();
 		
 		HashMap<String, Merchants> merchantsHash = convertMerchantsListToHashMap(merchantsList);
@@ -107,6 +108,10 @@ public class OneMessengerOneMerchantService {
 			Double durationPath1 = Double.valueOf(0);
 			if ( merchant != null) {
 				Double durationCookTime = Double.valueOf(merchant.getCookingTime());
+				if (hashMerCookingTime != null) {
+					durationCookTime = hashMerCookingTime.get(merchant.getMerID());
+				}
+				//Double durationCookTime = Double.valueOf(merchant.getCookingTime());
 				if (durationStationToMerchant > durationCookTime)
 					durationPath1 = durationStationToMerchant;
 				else durationPath1 = durationCookTime;

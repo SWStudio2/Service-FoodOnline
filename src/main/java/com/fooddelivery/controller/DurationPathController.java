@@ -70,7 +70,7 @@ public class DurationPathController {
 			 * Algorithm choose
 			 * */
 			OneMessengerOneMerchantService durationPathService = new OneMessengerOneMerchantService(merchantsId, latCustomer, longCustomer, null, null, null);
-			List<NodeDetailVer2> result = durationPathService.oneMessengerForOneMerchants(stationList, merchantsList);
+			List<NodeDetailVer2> result = durationPathService.oneMessengerForOneMerchants(stationList, merchantsList, null);
 
 			logger.info("**************************************");
 			logger.info("***************RESULT*****************");

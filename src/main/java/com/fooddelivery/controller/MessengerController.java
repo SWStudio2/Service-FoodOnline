@@ -364,7 +364,8 @@ public class MessengerController {
 				List<Station> stations = getStationAvailable();
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
 						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
-				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(
+						listStation, listMerchant, hashMerCookingTime);
 				double time = 99;
 				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
 				{
@@ -384,7 +385,8 @@ public class MessengerController {
 				List<Station> stations = getStationAvailable();
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
 						cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
-				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+				bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(
+						listStation, listMerchant, hashMerCookingTime);
 				double time = 99;
 				for(int i = 0;i<bestTimeOneMessOneService.size();i++)
 				{
@@ -418,7 +420,8 @@ public class MessengerController {
 					List<Station> stations = getStationAvailable();
 					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService(merIDList, 
 							cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
-					bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(listStation, listMerchant);
+					bestTimeOneMessOneService = (List<NodeDetailVer2>)oneMess.oneMessengerForOneMerchants(
+							listStation, listMerchant, hashMerCookingTime);
 					double time = 99;
 					for(int i = 0;i<bestTimeOneMessOneService.size();i++)
 					{
