@@ -310,10 +310,13 @@ public class MessengerController {
 
 		  	List<Integer> list = new ArrayList<Integer>();
 		  	System.out.println("SIZE : " + seqOrderAndMerchant.size());
+		  	HashMap<Integer, Double> hashMerCookingTime = new HashMap<Integer, Double>();
 		  	for(int i = 0;i<seqOrderAndMerchant.size();i++)
 		  	{
 		  		HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
 		  		list.add((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"));
+		  		Double cookingTime = (Double)tmpHashSeqOrder.get("SEQOR_COOK_TIME");
+		  		hashMerCookingTime.put((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"), cookingTime);
 		  	}
 
 			int[] merIDList = new int[list.size()];
