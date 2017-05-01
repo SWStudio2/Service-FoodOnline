@@ -2,7 +2,7 @@ package com.fooddelivery.util;
 
 import java.util.ArrayList;
 
-public class GroupPathDetail {
+public class GroupPathDetail implements Comparable{
 	private ArrayList<RoutePathDetail> allRoutePath = new ArrayList<RoutePathDetail>();
 	private String totalDuration;
 	private String totalDistance;
@@ -31,4 +31,33 @@ public class GroupPathDetail {
 		this.totalDistance = totalDistance;
 	}
 	
+//	public int compareDistTo(GroupPathDetail compareGP) {
+//
+//		int compareTTDist = Integer.valueOf(compareGP.getTotalDistance());
+//
+//		//ascending order
+//		return Integer.valueOf(this.totalDistance) - compareTTDist;
+//
+//		//descending order
+//		//return compareQuantity - this.quantity;
+//
+//	}
+
+	@Override
+	public int compareTo(Object o) {
+		
+		if(o instanceof GroupPathDetail){
+			GroupPathDetail oGP = (GroupPathDetail) o;
+			int compareTTDura = Integer.valueOf(oGP.getTotalDuration());
+
+			//ascending order
+			return Integer.valueOf(this.totalDuration) - compareTTDura;
+		}else{
+			return 2;
+		}
+
+		//descending order
+		//return compareQuantity - this.quantity;
+	}
+
 }

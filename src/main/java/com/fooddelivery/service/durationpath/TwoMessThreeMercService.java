@@ -1,13 +1,13 @@
 package com.fooddelivery.service.durationpath;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.fooddelivery.Model.*;
 import com.fooddelivery.controller.HomeController;
-import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.GroupPathDetail;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.Utils;
@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,9 +28,15 @@ public class TwoMessThreeMercService {
 	@Autowired
 	private BikePathDao bikePathDao;
 	
+	@Autowired
+	private FullTimeMessengerDao fullTimeMessDao;
+	
+	@Autowired
+	private StationDao stationDao;
+	
 	private HashMap<Integer, Double[]> mapMercDistDura = new HashMap<Integer, Double[]>();
-	
-	
+	private List<Station> stationList = new ArrayList<Station>();
+	private HashMap<Integer, Integer> amtFTMap = new HashMap<Integer, Integer>();
 	
 	@RequestMapping(value="/service/TwoMessThreeMercService", method=RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
 	public GroupPathDetail twoMessThreeMercService(@RequestBody Map<String, Object> mapRequest) throws InterruptedException {	
@@ -102,23 +109,13 @@ public class TwoMessThreeMercService {
 		//[[a,b,c],[b,c,a],[a,c,b],...] ==> [ "a,b,c", "b,c,a", "a,c,b"]
 		ArrayList<GroupPathDetail> groupPathList = new ArrayList<GroupPathDetail>();
 		
-		//get duration and distance each path
-//		String mer1Lat = merList[0].getMerLatitude();
-//		String mer1Lng = merList[0].getMerLongtitude();
-//		String mer2Lat = merList[1].getMerLatitude();
-//		String mer2Lng = merList[1].getMerLongtitude();
-//		String mer3Lat = merList[2].getMerLatitude();
-//		String mer3Lng = merList[2].getMerLongtitude();
-//		for(int i=0;i<staList.length;i++){
-//			
-//		}
-//		
-//		callGoogleMap(latOri, lngOri, latDes, lngDes);
+		//get amount fulltime each station
+		stationList = getStationFreeMess();
 		
 		//Loop resultSet and station for set value to GroupPathDetail
 		for(int i = 0;i<resultSet.length;i++)
 		{
-			for(int j=0;j<staList.length;j++){
+			for(int j=0;j<stationList.size();j++){
 				String tmpValue = resultSet[i].toString();
 				tmpValue = tmpValue.replace("[", "");
 				tmpValue = tmpValue.replace("]", "");
@@ -145,14 +142,14 @@ public class TwoMessThreeMercService {
 				//set RoutePathDetail of 2 Merchant
 				RoutePathDetail routePath1 = new RoutePathDetail();
 				routePath1.setMerList(mercList1);
-				routePath1.setStation(staList[j]);
+				routePath1.setStation(stationList.get(j));
 				routePath1.setLatitudeDelivery(cus_Latitude);
 				routePath1.setLongtitudeDelivery(cus_Longtitude);
 				
 				//set RoutePathDetail of 1 Merchant
 				RoutePathDetail routePath2 = new RoutePathDetail();
 				routePath2.setMerList(mercList2);
-				routePath2.setStation(staList[j]);
+				routePath2.setStation(stationList.get(j));
 				routePath2.setLatitudeDelivery(cus_Latitude);
 				routePath2.setLongtitudeDelivery(cus_Longtitude);
 				
@@ -164,9 +161,52 @@ public class TwoMessThreeMercService {
 				//add groupPath into GroupPathList
 				groupPathList.add(groupPath);
 			}
-			
-			
-			
+//			for(int j=0;j<staList.length;j++){
+//				String tmpValue = resultSet[i].toString();
+//				tmpValue = tmpValue.replace("[", "");
+//				tmpValue = tmpValue.replace("]", "");
+//				
+//				//{"0","1","2"}
+//				String[] result =  tmpValue.split(",");
+//				int indexMer0 = Integer.valueOf(result[0].trim());
+//				int indexMer1 = Integer.valueOf(result[1].trim());
+//				int indexMer2 = Integer.valueOf(result[2].trim());
+//				
+//				Merchants merc0 = merList[indexMer0];
+//				Merchants merc1 = merList[indexMer1];
+//				Merchants merc2 = merList[indexMer2];
+//				
+//				//set Merchants List size 2
+//				ArrayList<Merchants> mercList1 = new ArrayList<Merchants>();
+//				mercList1.add(merc0);
+//				mercList1.add(merc1);
+//				
+//				//set Merchants List size 1
+//				ArrayList<Merchants> mercList2 = new ArrayList<Merchants>();
+//				mercList2.add(merc2);
+//				
+//				//set RoutePathDetail of 2 Merchant
+//				RoutePathDetail routePath1 = new RoutePathDetail();
+//				routePath1.setMerList(mercList1);
+//				routePath1.setStation(staList[j]);
+//				routePath1.setLatitudeDelivery(cus_Latitude);
+//				routePath1.setLongtitudeDelivery(cus_Longtitude);
+//				
+//				//set RoutePathDetail of 1 Merchant
+//				RoutePathDetail routePath2 = new RoutePathDetail();
+//				routePath2.setMerList(mercList2);
+//				routePath2.setStation(staList[j]);
+//				routePath2.setLatitudeDelivery(cus_Latitude);
+//				routePath2.setLongtitudeDelivery(cus_Longtitude);
+//				
+//				//set 2 RoutePathDetail into GroupPathDetail
+//				GroupPathDetail groupPath = new GroupPathDetail();
+//				groupPath.addRoutePathDetail(routePath1);
+//				groupPath.addRoutePathDetail(routePath2);
+//				
+//				//add groupPath into GroupPathList
+//				groupPathList.add(groupPath);
+//			}
  		}
 		
 		// set total distance and total duration of each GroupPath
@@ -221,12 +261,30 @@ public class TwoMessThreeMercService {
 			//get Best Case
 			BestGroupPath = getBestGroupPath(groupPathList);
 			
+			//sort duration of each groupPath
+//			Collections.sort(groupPathList);
+			
+//			checkFreeFT(groupPathList.get(0));
 		}
 		
 		//return best node's time estimate
 		return BestGroupPath;
 	}
 	
+	private void idSameStation(GroupPathDetail gpDetail) {
+		int idR1 = gpDetail.getAllRoutePath().get(0).getStation().getStationId();
+		int idR2 = gpDetail.getAllRoutePath().get(1).getStation().getStationId();
+		
+		if(idR1 == idR2){
+			if(amtFTMap.get(idR1) >= 2){
+				//do nothing
+			}else{
+				//find next best GroupPath that use other station
+			}
+		}
+
+	}
+
 	/**
 	 * cal duration and distance of each routePathDetail
 	 * @param routePathList
@@ -374,6 +432,8 @@ public class TwoMessThreeMercService {
 		GroupPathDetail bestDistGroupPath = null;
 		GroupPathDetail bestDuraGroupPath = null;
 		
+		List<GroupPathDetail> groupPathDetList = new ArrayList<GroupPathDetail>();
+		
 		for(int i=0;i<groupPathList.size();i++){
 			double dist = Double.valueOf(groupPathList.get(i).getTotalDistance());
 			double dura = Double.valueOf(groupPathList.get(i).getTotalDuration());
@@ -390,6 +450,30 @@ public class TwoMessThreeMercService {
 		
 		return bestDuraGroupPath;
 	}
+	
+	public List<Station> getStationFreeMess(){
+		List<Station> stationList = new ArrayList<Station>();
+		
+		//query amount of free FullTime Messenger each station 
+		List<Object[]> freeFTAmtList = fullTimeMessDao.getNumberOfMessengerInStation();
+		BigInteger minFreeFT = new BigInteger("2");
+		
+		if(freeFTAmtList != null){
+			for(Object[] freeFT : freeFTAmtList){
+				BigInteger bigIntAmt = (BigInteger) freeFT[1];
+				Integer i1 =  bigIntAmt.intValue();
+				if(i1 >= 2){
+//					System.out.println("count_fulltime Integer : "+i1);
+					Station sta = stationDao.findByID(i1);
+					stationList.add(sta);
+					amtFTMap.put(sta.getStationId(), i1);
+				}
+			}
+		}
+		System.out.println("Size of station that have free FT : "+stationList.size());
+		return stationList;
+	}
+	
 	
 //	public static void main(String[] args) throws InterruptedException{
 //		
