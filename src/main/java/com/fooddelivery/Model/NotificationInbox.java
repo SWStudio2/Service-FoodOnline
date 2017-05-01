@@ -24,7 +24,7 @@ public class NotificationInbox {
 	
 	@NotNull
 	@Column(name = "noti_ref_id")
-	private int noti_ref_id; //id ร้านค้า
+	private int noti_ref_id;
 	
 	@NotNull
 	@Column(name = "noti_order_id")
@@ -32,15 +32,15 @@ public class NotificationInbox {
 	
 	@NotNull
 	@Column(name = "noti_type")
-	private String noti_type; //"merchant"
+	private String noti_type;
 
 	@NotNull
 	@Column(name = "noti_message_type")
-	private String noti_message_type; //"acknowledge"
+	private String noti_message_type;
 
 	@NotNull
 	@Column(name = "noti_message_detail")
-	private String noti_message_detail; //"ท่านมีออร์เดอรใหม่ 1 รายการ หมายเลขออร์เดอร์ ..." พีี่โบ๊ทไม่ได้ใช้อยู่ดี
+	private String noti_message_detail;
 
 	@Column(name = "noti_read_flag")
 	private int noti_read_flag;
