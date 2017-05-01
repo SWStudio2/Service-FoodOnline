@@ -44,5 +44,7 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 	 		+ "group by FULL_BIKE_STATION_NOW"
 	 		, nativeQuery = true)
 	 public List<Object[]> getNumberOfMessengerInStation();
+	 
+	 
 
 }

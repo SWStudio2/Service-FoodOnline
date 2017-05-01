@@ -433,17 +433,18 @@ public class OrderController {
 	
 	@RequestMapping(value="/service/orders/noti/accept/{notiId}" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiId") int notiId)
+	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiid") int noti_id)
 	{
 
 		String messeage = "";
 		try {
-
-			messeage = "Get notification successfully";
+			
+			notiDao.updateNotiReadFlagByNotiId(noti_id);
+			messeage = "Acknowledge noti successfully";
 		}
 		catch (Exception e) {
 			logger.info(e.getMessage());
-			messeage = "Get notification Failed";
+			messeage = "Acknowledge noti Failed";
 			return null;
 		}
 		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),messeage, messeage));

@@ -106,7 +106,7 @@ public class CustomerController {
 	
 	@RequestMapping(value="/service/orders/confirmcode/customer" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
+	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		long order_id = (Long) mapRequest.get("order_id");

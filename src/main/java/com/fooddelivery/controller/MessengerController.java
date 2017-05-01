@@ -14,6 +14,8 @@ import com.fooddelivery.Model.FullTimeMessengerQuery;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
 import com.fooddelivery.Model.MerchantsQuery;
+import com.fooddelivery.Model.NotificationInbox;
+import com.fooddelivery.Model.NotificationInboxDao;
 import com.fooddelivery.Model.OrderDetail;
 import com.fooddelivery.Model.Orders;
 import com.fooddelivery.Model.OrdersDao;
@@ -51,6 +53,9 @@ public class MessengerController {
 	private BikeStationDao bikeStationDao;
 	@Autowired
 	private MerchantsDao merchantsDao;
+
+	@Autowired
+	private NotificationInboxDao notiDao;
 	
 	@Autowired
 	private SequenceOrdersDao seqOrderDao;
@@ -1007,6 +1012,36 @@ public class MessengerController {
 		});
 		return bikeStationDistance;
 	}
+	
+	@RequestMapping(value="/service/fulltime/accept" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Response<String>> acceptOrderMessenger(@RequestBody Map<String, Object> mapRequest)
+	{
+		String messeage = "";
+		try {
+			int noti_id = (Integer) mapRequest.get("noti_id");
+			int full_id = (Integer) mapRequest.get("full_id");
+			String isAccept = (String)mapRequest.get("isAccept");
+			if(isAccept.equals("Y"))
+			{
+				long full_id_L = full_id;
+				fullMessDao.updateFullTimeStatus(full_id_L, VariableText.MESSENGER_RECEIVING_STATUS);
+				notiDao.updateNotiReadFlagByNotiId(noti_id);
+				messeage = "Messenger accept successfully";
+			}
+			else
+			{
+				messeage = "is accept not Y";
+			}
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			messeage = "Messenger accept Failed";
+			return null;
+		}
+		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),messeage, messeage));
+
+	}	
 	
 }
 
