@@ -17,7 +17,7 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 	private String longtitudeDelivery;
 	private String duration;
 	private String distance;
-	
+	private int ftID;
 
 	public String getDuration() {
 		return duration;
@@ -55,7 +55,12 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 	public void setLongtitudeDelivery(String longtitudeDelivery) {
 		this.longtitudeDelivery = longtitudeDelivery;
 	}
-	
+	public int getFtID() {
+		return ftID;
+	}
+	public void setFtID(int ftID) {
+		this.ftID = ftID;
+	}
 	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode,TimeAndDistanceDetail[] timeDistance) throws InterruptedException
 	{
 		RoutePathDetail tmpNode;

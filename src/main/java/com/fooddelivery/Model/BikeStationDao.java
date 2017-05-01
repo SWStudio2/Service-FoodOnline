@@ -21,5 +21,6 @@ public interface BikeStationDao extends CrudRepository<BikeStation, Long> {
 	@Query(value = "SELECT * FROM bike_station "
 	  		, nativeQuery = true)
 	 public List<BikeStation> getBikeStationAll();	
+	
 	 
 }
