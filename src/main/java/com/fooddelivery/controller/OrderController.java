@@ -48,6 +48,7 @@ import com.fooddelivery.json.model.placeorder.option;
 import com.fooddelivery.json.model.placeorder.order;
 import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.Response;
+import com.fooddelivery.util.Utils;
 import com.fooddelivery.util.VariableText;
 
 
@@ -159,6 +160,17 @@ public class OrderController {
 						String confirmSequenceOrderCode = generateOrderConfirmCode();
 						sequenceOrders.setSequenceConfirmCode(confirmSequenceOrderCode);
 						sequenceOrdersDao.save(sequenceOrders);
+						//insert noti
+						NotificationInbox notificationInbox = new NotificationInbox();
+						notificationInbox.setNoti_ref_id(Utils.toIntExact(merchant.getMerId()));
+						notificationInbox.setNoti_type(VariableText.NOTIFICATION_TYPE_MERCHANT);
+						notificationInbox.setNoti_order_id(Utils.toIntExact(orders.getOrderId()));
+						notificationInbox.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_ACKNOWLEDGE);
+						notificationInbox.setNoti_message_detail(
+								VariableText.NOTIFICATION_MSG_DETAIL_CREATE_ORDER + " " + orders.getOrderId());
+						notificationInbox.setNoti_created_date(currentDateTime);
+						notiDao.save(notificationInbox);
+						
 						merchantIds.put(String.valueOf(merchant.getMerId()), String.valueOf(merchant.getMerId()));
 					}
 				}

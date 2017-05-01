@@ -20,5 +20,11 @@ public class VariableText {
 	public static int MERCHANT_RECEIVED_STATUS			= 14; //รับอาหารแล้ว
 	
 	public static String BIKE_PATH_TYPE = "bike";
+	public static String MERCHANT_PATH_TYPE = "merchant";
+	
+	public static String NOTIFICATION_TYPE_MERCHANT = "merchant";
+	public static String NOTIFICATION_MSG_TYPE_ACKNOWLEDGE = "acknowledge";
+	
+	public static String NOTIFICATION_MSG_DETAIL_CREATE_ORDER = "ท่านมีออร์เดอรใหม่ 1 รายการ หมายเลขออร์เดอร์ ";
 
 }
