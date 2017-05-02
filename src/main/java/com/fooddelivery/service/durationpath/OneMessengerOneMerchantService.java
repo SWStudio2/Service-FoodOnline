@@ -6,7 +6,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fooddelivery.Model.BikeStation;
+import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.Station;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
@@ -16,7 +20,11 @@ import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.VariableText;
 
+@RestController
 public class OneMessengerOneMerchantService {
+	
+	@Autowired
+	FullTimeMessengerDao fullTimeMessengerDao;
 	
 	int[] merchantsId;
 	String latitudeCustomer;
@@ -145,7 +153,9 @@ public class OneMessengerOneMerchantService {
 		return result;
 	}
 	
-	public GroupPathDetail oneMessengerForOneMerchants(List<BikeStation> stations) {
+	public GroupPathDetail oneMessengerForOneMerchants(
+			List<BikeStation> stations,
+			HashMap<Integer, Double> hashMerCookingTime) {
 		GroupPathDetail result = new GroupPathDetail();
 		HomeController homeController = new HomeController();
 		HashMap<String, Merchants> merchantsHash = convertMerchantsListToHashMap(this.merchants);
@@ -218,6 +228,10 @@ public class OneMessengerOneMerchantService {
 			Double durationPath1 = Double.valueOf(0);
 			if ( merchant != null) {
 				Double durationCookTime = Double.valueOf(merchant.getCookingTime());
+				if (hashMerCookingTime != null) {
+					durationCookTime = hashMerCookingTime.get(merchant.getMerID());
+				}
+				
 				if (durationStationToMerchant > durationCookTime)
 					durationPath1 = durationStationToMerchant;
 				else durationPath1 = durationCookTime;
@@ -234,12 +248,18 @@ public class OneMessengerOneMerchantService {
 			Double distance = distancePath1 + distancePath2;
 			
 			RoutePathDetail routPathDetail = new RoutePathDetail();
+			boolean fulltimeAdded = false;
+			while(!fulltimeAdded) {
+				
+			}
 			if (stationsHash.get(stationId) != null) {
 				routPathDetail.setStation(stationsHash.get(stationId));
 				routPathDetail.setLatitudeDelivery(latitudeCustomer);
 				routPathDetail.setLongtitudeDelivery(longtitudeCustomer);
 				routPathDetail.setDuration(String.valueOf(duration));
 				routPathDetail.setDistance(String.valueOf(distance));
+				//*****************ADD FtID********************************
+				
 				ArrayList<Merchants> mercList = new ArrayList<Merchants>();
 				mercList.add(merchant);
 				routPathDetail.setMerList(mercList);
