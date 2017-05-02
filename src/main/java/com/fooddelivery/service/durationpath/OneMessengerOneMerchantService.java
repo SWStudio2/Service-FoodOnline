@@ -249,9 +249,9 @@ public class OneMessengerOneMerchantService {
 			
 			RoutePathDetail routPathDetail = new RoutePathDetail();
 			boolean fulltimeAdded = false;
-			while(!fulltimeAdded) {
+			/*while(!fulltimeAdded) {
 				
-			}
+			}*/
 			if (stationsHash.get(stationId) != null) {
 				routPathDetail.setStation(stationsHash.get(stationId));
 				routPathDetail.setLatitudeDelivery(latitudeCustomer);
