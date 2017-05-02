@@ -110,7 +110,7 @@ public class MessengerController {
 					cus_Latitude, cus_Longtitude, timeAndDistanceDetail, merchants, stations);
 			bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation, null);		
 		}
-		else if(list.size() == 2)
+		else if(list.size() == 2) 
 		{
 			try {
 				//Mint
