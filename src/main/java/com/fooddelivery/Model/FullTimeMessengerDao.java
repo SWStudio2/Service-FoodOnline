@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, Long> {
-	
+
 	@Query(value = "select distinct(full_bike_station_now) from fulltime_messenger", nativeQuery = true)
 	public List<Integer> getAllStation();
 
@@ -20,31 +20,36 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 			+ "where full_email = :email and full_password = :pass"
 			, nativeQuery = true)
 	public List<FullTimeMessenger> findByFullEmail(@Param("email") String email , @Param("pass") String pass);
-	
+
 	@Query(value = "select * from fulltime_messenger "
 			+ "where full_id = :full_id"
 			, nativeQuery = true)
 	public FullTimeMessenger findById(@Param("full_id") long fullId);
-	
+
 	@Query(value = "select * from fulltime_messenger "
 			, nativeQuery = true)
 	public List<FullTimeMessenger> findAll();
-	
-	 @Modifying
-	 @Query(value="UPDATE fulltime_messenger" +
-	"SET FULL_STATUS_ID = :status_id"
-	+ "WHERE FULL_ID = :full_id", 
-	nativeQuery = true)
-	 public void updateFullTimeStatus(@Param("full_id") long full_id,
-			 @Param("status_id") int status_id); 	
-	 
-	 @Query(value = "select FULL_BIKE_STATION_NOW, count(full_id) as count_fulltime "
-	 		+ "from fulltime_messenger "
-	 		+ "where FULL_STATUS_ID in (9,10) "
-	 		+ "group by FULL_BIKE_STATION_NOW"
-	 		, nativeQuery = true)
-	 public List<Object[]> getNumberOfMessengerInStation();
-	 
-	 
+
+	@Modifying
+	@Query(value="UPDATE fulltime_messenger" +
+			"SET FULL_STATUS_ID = :status_id"
+			+ "WHERE FULL_ID = :full_id",
+			nativeQuery = true)
+	public void updateFullTimeStatus(@Param("full_id") long full_id,
+									 @Param("status_id") int status_id);
+
+	@Query(value = "select FULL_BIKE_STATION_NOW, count(full_id) as count_fulltime "
+			+ "from fulltime_messenger "
+			+ "where FULL_STATUS_ID in (9,10) "
+			+ "group by FULL_BIKE_STATION_NOW"
+			, nativeQuery = true)
+	public List<Object[]> getNumberOfMessengerInStation();
+
+
+	@Query(value = "select * from fulltime_messenger where full_id = :fullId"
+			, nativeQuery = true)
+	public FullTimeMessenger getFullTimeByFullId(@Param("fullId") long fullId);
+
+
 
 }

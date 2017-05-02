@@ -123,7 +123,6 @@ public class MessengerController {
 				//P'YUI
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -131,7 +130,6 @@ public class MessengerController {
 		{
 			try {
 				//Mike
-
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				//YUI
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
@@ -292,33 +290,33 @@ public class MessengerController {
 	//Service P'Boat
 	@RequestMapping(value="/service/updateSequenceRoutePath/{orderId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 
-	 public ResponseEntity<Response<String>> updateSequenceRoutePath(
-			 @PathVariable("orderId") int orderId) {
+	public ResponseEntity<Response<String>> updateSequenceRoutePath(
+			@PathVariable("orderId") int orderId) {
 
-	  UtilsQuery query = new UtilsQuery();
-	  ArrayList<HashMap<String, Object>> seqOrderAndMerchant = new ArrayList<HashMap<String,Object>>();
-	  // Return response
-	  String isRecall = "N";
-	  isRecall = query.checkRecallOrder(orderId);
-	  HashMap<String, String> lantAndLong = new HashMap<String, String>();
-	  FullTimeMessengerQuery fullQuery = new FullTimeMessengerQuery();
-	  String msg = "";
-	  if(isRecall.equals("Y"))
-	  {
-		  
-		  seqOrderAndMerchant = query.getMerchantAndOrderSeqByOrderId(orderId);
-		  lantAndLong = query.getLatitudeAndLongtitudeByOrderId(orderId);
+		UtilsQuery query = new UtilsQuery();
+		ArrayList<HashMap<String, Object>> seqOrderAndMerchant = new ArrayList<HashMap<String,Object>>();
+		// Return response
+		String isRecall = "N";
+		isRecall = query.checkRecallOrder(orderId);
+		HashMap<String, String> lantAndLong = new HashMap<String, String>();
+		FullTimeMessengerQuery fullQuery = new FullTimeMessengerQuery();
+		String msg = "";
+		if(isRecall.equals("Y"))
+		{
 
-		  	List<Integer> list = new ArrayList<Integer>();
-		  	System.out.println("SIZE : " + seqOrderAndMerchant.size());
-		  	HashMap<Integer, Double> hashMerCookingTime = new HashMap<Integer, Double>();
-		  	for(int i = 0;i<seqOrderAndMerchant.size();i++)
-		  	{
-		  		HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
-		  		list.add((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"));
-		  		Double cookingTime = (Double)tmpHashSeqOrder.get("SEQOR_COOK_TIME");
-		  		hashMerCookingTime.put((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"), cookingTime);
-		  	}
+			seqOrderAndMerchant = query.getMerchantAndOrderSeqByOrderId(orderId);
+			lantAndLong = query.getLatitudeAndLongtitudeByOrderId(orderId);
+
+			List<Integer> list = new ArrayList<Integer>();
+			System.out.println("SIZE : " + seqOrderAndMerchant.size());
+			HashMap<Integer, Double> hashMerCookingTime = new HashMap<Integer, Double>();
+			for(int i = 0;i<seqOrderAndMerchant.size();i++)
+			{
+				HashMap<String, Object> tmpHashSeqOrder = seqOrderAndMerchant.get(i);
+				list.add((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"));
+				Double cookingTime = (Double)tmpHashSeqOrder.get("SEQOR_COOK_TIME");
+				hashMerCookingTime.put((Integer) tmpHashSeqOrder.get("SEQOR_MER_ID"), cookingTime);
+			}
 
 			int[] merIDList = new int[list.size()];
 			for(int i = 0;i<list.size();i++)
@@ -614,7 +612,6 @@ public class MessengerController {
 			msg = "No update";
 		}
 		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),msg, "Success"));
-
 	}
 	@RequestMapping(value={"service/fulltime/auth"} ,method=RequestMethod.POST)
 	public ResponseEntity<Response<HashMap>> authen(@RequestBody FullTimeMessenger full){
@@ -773,6 +770,7 @@ public class MessengerController {
 			return null;
 		}
 	}
+	
 	/*
 	private List<Long> setMerchantsIdsList(List<SequenceOrders> seqOrdersList) {
 		List<Long> result = new ArrayList<Long>();
@@ -811,14 +809,7 @@ public class MessengerController {
 
 	//************คำนวณหาจุดจอดใหม่***********************
 	/*
-	 * ให้เอาที่อยู่ลูกค้าสุดท้าย มาคิดหาระยะทางกับจุดจอดทั้งหมด 
-	 * แล้วเปรียบเทียบกับ 5 กิโลเมตร
-	 * ภายในจุดจอดที่อยู่ใน 5 กิโล ให้ดูที่ จน. แมสว่ามีน้อยไหม
-	 * ถ้าเท่ากัน ก็เลือกระยะที่อยู่น้อยที่สุด
-	 * แต่ถ้าระยะทางห่างเกิน 5 กิโล ก็ไม่ต้องเข้าข้างบน 
-	 * ให้หาจุดจอดที่ใกล้ที่สุด
-	 * update messenger ด้วย
-	 * return station 
+	 * return station
 	 * - station id
 	 * - latitude
 	 * - long
@@ -827,12 +818,10 @@ public class MessengerController {
 	/*@RequestMapping(value={"service/fulltime/calculateNewStation/{lastestLatitude}"}, method=RequestMethod.GET)*/
 	//public ResponseEntity<Response<BikeStation>> calculateNewStation(@PathVariable("lastestLatitude")
 	public BikeStation calculateNewStation(
-		String lastestLatitude, String latestLongtitude) {
-		//สมมติค่า lastestLatitude , latestLongtitude
+			String lastestLatitude, String latestLongtitude) {
 		//lastestLatitude = "13.7324056";//"13.9038336";
 		//latestLongtitude = "100.5304452";//"100.621662";
 		BikeStation result = new BikeStation();
-
 		//คำนวณจุดจอดใกล้-ไกล
 		HomeController homeController = new HomeController();
 		List<BikeStation> bikeStationList = bikeStationDao.getBikeStationAll();
@@ -881,7 +870,7 @@ public class MessengerController {
 		//sort List
 		List<double[]> bikeStationDistanceSortedList = sortBikeStationDistanceHash(bikeStationDistanceList);
 		for (int i=0; i<bikeStationDistanceSortedList.size(); i++) {
-			System.out.println("Station ID: " + bikeStationDistanceSortedList.get(i)[0] +
+			logger.info("Station ID: " + bikeStationDistanceSortedList.get(i)[0] +
 					" | distance: " + bikeStationDistanceSortedList.get(i)[1] +
 					" | number: " + bikeStationDistanceSortedList.get(i)[2]);
 		}
@@ -892,7 +881,6 @@ public class MessengerController {
 					bikeStationDistanceSortedList.remove(i);
 				}
 			}
-			//หา ระยะทางน้อยที่สุดที่มี messenger น้อยที่สุดเช่นกัน
 			double[] temp = bikeStationDistanceSortedList.get(0);
 			int initialNumberOfMessenger = (int) temp[2];
 			if (bikeStationDistanceSortedList.size() > 1) {

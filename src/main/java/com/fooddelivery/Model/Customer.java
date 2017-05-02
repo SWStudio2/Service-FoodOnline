@@ -1,5 +1,6 @@
 package com.fooddelivery.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Transient;
 
 
@@ -29,53 +31,51 @@ public class Customer {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "cus_id")
 	private long cus_id;
-	
+
 	@NotNull
 	@Column(name = "cus_name")
 	private String cus_name;
-	
+
 	@NotNull
 	@Column(name = "cus_username")
 	private String cus_username;
-	
+
 	@NotNull
 	@Column(name = "cus_password")
 	private String cus_password;
-	
+
 	@NotNull
 	@Column(name = "cus_contact_number")
 	private String cus_contact_number;
-	
+
 	@NotNull
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "cus_created_date")
 	private Date cus_created_date;
-	
+
 	//--------------RELATION----------------
-	@OneToOne(mappedBy="customers")
-	private Orders orders;
-	
+
 	public Customer() { }
 
-	public Customer(long cusId) { 
-	   this.cus_id = cusId;
+	public Customer(long cusId) {
+		this.cus_id = cusId;
 	}
-	  
+
 	public Customer
-	(	
-			String cusEmail, 
-			String cusName, 
-			String cusUserName, 
-			String cusPassword,
-			String cusContactNumber,
-			Date cusCreatedDate
-	) {
-	  this.cus_name = cusName;
-	  this.cus_username = cusUserName;
-	  this.cus_password = cusPassword;
-	  this.cus_contact_number = cusContactNumber;
-	  this.cus_created_date = cusCreatedDate;
+			(
+					String cusName,
+					String cusUserName,
+					String cusPassword,
+					String cusContactNumber,
+					Date cusCreatedDate
+			) {
+		this.cus_name = cusName;
+		this.cus_username = cusUserName;
+		this.cus_password = cusPassword;
+		this.cus_contact_number = cusContactNumber;
+		this.cus_created_date = cusCreatedDate;
 	}
-	
+
 	public long getCusId() {
 		return cus_id;
 	}
@@ -84,21 +84,21 @@ public class Customer {
 		this.cus_id = cusId;
 	}
 
-	public String getCusName() { 
-		return cus_name; 
+	public String getCusName() {
+		return cus_name;
 	}
 
 	public void setCusName(String cusName) {
 		this.cus_name = cusName;
 	}
-	
+
 	public String getCusUserName() {
 		return cus_username;
 	}
-	
+
 	public void setCusUserName(String cusUserName) {
 		this.cus_username = cusUserName;
-	} 
+	}
 
 	public String getCusPassword() {
 		return cus_password;
@@ -107,27 +107,21 @@ public class Customer {
 	public void setCusPassword(String cusPassword) {
 		this.cus_password = cusPassword;
 	}
-	
+
 	public String getCusContactNumber() {
 		return cus_contact_number;
 	}
-	
+
 	public void setCusContactNumber(String cusContactNumber) {
 		this.cus_contact_number = cusContactNumber;
 	}
-	
+
 	public Date getCusCreatedDate() {
 		return cus_created_date;
 	}
-	
+
 	public void setCusCreatedDate(Date cusCreatedDate) {
 		this.cus_created_date = cusCreatedDate;
 	}
-	
-	//--------------RELATION----------------
-	public Orders getOrders() {
-		return orders;
-	}
-	
-	
+
 }
