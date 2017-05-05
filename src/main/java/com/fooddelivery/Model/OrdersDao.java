@@ -53,8 +53,8 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			+ " and seqor_confirm_code = :confirmcode"
 			+ "),'Y','N') As CHK_CONFIRM" ,
 			nativeQuery = true)
-	public String verifyConfirmCodeMerchant(@Param("seqorder") long order_id,
-											@Param("merid") long mer_id,
+	public String verifyConfirmCodeMerchant(@Param("seqorder") int order_id,
+											@Param("merid") int mer_id,
 											@Param("confirmcode") String confirm_code);
 
 	//SQL A2
@@ -66,8 +66,8 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			+ "And SEQOR_MER_ID = :mer_id" ,
 			nativeQuery = true)
 	public void updateReceiveStatus(@Param("confirmDateTime") String confirmDateTime,
-									@Param("receive_status") int receive_status,@Param("order_id") long order_id,
-									@Param("mer_id") long mer_id);
+									@Param("receive_status") int receive_status,@Param("order_id") int order_id,
+									@Param("mer_id") int mer_id);
 
 	//SQL A3
 	@Query(value="select IF(" +
@@ -111,8 +111,8 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			"and seqor_cook_status in (:seqor_cook_status)"+
 			"),'Y','N') As CHK_RECALL" ,
 			nativeQuery = true)
-	public String chkReceiveAllMerchantForMessenger(@Param("order_id") long order_id,
-													@Param("fulltime_id") long fulltime_id,
+	public String chkReceiveAllMerchantForMessenger(@Param("order_id") int order_id,
+													@Param("fulltime_id") int fulltime_id,
 													@Param("receive_status") int receive_status,
 													@Param("seqor_cook_status") String seqor_cook_status);
 

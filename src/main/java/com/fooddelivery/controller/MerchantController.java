@@ -137,10 +137,10 @@ public class MerchantController {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		String messeage = "";
 		try {
-		  long order_id = (Long) mapRequest.get("order_id");
+		  int order_id = (Integer) mapRequest.get("order_id");
 		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
-		  long mer_id = (Long) mapRequest.get("mer_id");
-		  long full_id = (Long) mapRequest.get("full_id");
+		  int mer_id = (Integer) mapRequest.get("mer_id");
+		  int full_id = (Integer) mapRequest.get("full_id");
 		  String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
 		  String resultVerify = "";
 		  dataMap.put("isPass", "Y");
