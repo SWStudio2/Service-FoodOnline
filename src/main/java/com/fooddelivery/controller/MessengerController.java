@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.*;
 
 
+import com.fooddelivery.Model.BikePathDao;
 import com.fooddelivery.Model.BikeStation;
 import com.fooddelivery.Model.BikeStationDao;
 import com.fooddelivery.Model.Customer;
@@ -21,6 +22,7 @@ import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.SequenceOrders;
 import com.fooddelivery.Model.SequenceOrdersDao;
 import com.fooddelivery.Model.Station;
+import com.fooddelivery.Model.StationDao;
 import com.fooddelivery.Model.StationQuery;
 import com.fooddelivery.Model.TimeAndDistanceDetail;
 import com.fooddelivery.Model.TimeAndDistanceDetailDao;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,6 +67,12 @@ public class MessengerController {
 	
 	@Autowired
 	private FullTimeMessengerDao fullTimeMessengerDao;
+	
+	@Autowired 
+	private StationDao staDao;
+	
+	@Autowired
+	private BikePathDao bikePathDao;
 
 
 	@RequestMapping(value="/service/getestimatedtime", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -148,7 +157,8 @@ public class MessengerController {
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				//YUI
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-				bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+				bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude, fullMessDao
+					      ,staDao,merchantsDao,bikePathDao);
 				//MINT
 				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -422,7 +432,8 @@ public class MessengerController {
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 					//YUI
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude, fullMessDao
+						      ,staDao,merchantsDao,bikePathDao);
 					//MINT
 					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -1013,6 +1024,29 @@ public class MessengerController {
 		}
 		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),messeage, messeage));
 
+	}
+	
+	@Transactional
+	@RequestMapping(value={"service/fulltime/backtostation/{fullId}"}, method=RequestMethod.GET)
+	public ResponseEntity<Response<String>> backToStation(@PathVariable("fullId") long fullId) {
+		String message = "";
+		try {
+			FullTimeMessenger fullTimeMessenger = fullTimeMessengerDao.findById(fullId);
+			if (fullTimeMessenger != null) {
+				fullTimeMessenger.setFullStatusId(VariableText.MESSENGER_STATION_STATUS);
+				fullTimeMessengerDao.save(fullTimeMessenger);
+				message = "Back to station successfully";
+			}
+			else {
+				message = "No update";
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			return null;
+		}
+		
+		return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(), message, null));
 	}
 
 }

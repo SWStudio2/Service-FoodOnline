@@ -58,11 +58,11 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	@Query(value = "select IF( "
 			+ "( select count(seqor_id) "
 			+ "from sequence_orders "
-			+ "where seqor_order_id = order_id "
+			+ "where seqor_order_id = :order_id "
 			+ "and SEQOR_RECEIVE_STATUS = 9 "
 			+ ") = ( select count(seqor_id) "
 			+ "from sequence_orders "
-			+ "where seqor_order_id = order_id "
+			+ "where seqor_order_id = :order_id "
 			+ "and seqor_cook_status = 12 "
 			+ "),'Y','N') As CHK_RECALL"
 			, nativeQuery = true)

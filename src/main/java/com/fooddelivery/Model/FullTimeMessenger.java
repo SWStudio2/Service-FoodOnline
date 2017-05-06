@@ -21,23 +21,18 @@ public class FullTimeMessenger {
 	@Column(name = "full_id")
 	private long full_id;
 
-	@NotNull
 	@Column(name = "full_name")
 	private String full_name;
 
-	@NotNull
 	@Column(name = "full_contact_number")
 	private String full_contact_number;
 
-	@NotNull
 	@Column(name = "full_email")
 	private String full_email;
 
-	@NotNull
 	@Column(name = "full_password")
 	private String full_password;
 
-	@NotNull
 	@Column(name = "full_status_id")
 	private int full_status_id;
 
