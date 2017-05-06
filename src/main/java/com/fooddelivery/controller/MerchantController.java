@@ -132,71 +132,77 @@ public class MerchantController {
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),"Confirm code from Merchant successfully", dataMap));
 	}
 	
-	@RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
-	{
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		String messeage = "";
-		try {
-		  int order_id = (Integer) mapRequest.get("order_id");
-		  String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
-		  int mer_id = (Integer) mapRequest.get("mer_id");
-		  int full_id = (Integer) mapRequest.get("full_id");
-		  String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
-		  String resultVerify = "";
-		  dataMap.put("isPass", "Y");
-		  dataMap.put("order_id", order_id);
-		  if(result.equals("Y"))
-		  {
-			  resultVerify = "correct confirm code";
-			  Date currentDateTime = DateTime.getCurrentDateTime();	
-			  List<SequenceOrders> seqOrderList = sequenceOrderDao.getSequenceOrderForUpdateStatus(order_id, mer_id);
-			  for(int i = 0;i<seqOrderList.size();i++)
-			  {
-				  SequenceOrders tmpSeqOrder = seqOrderList.get(i);
-				  tmpSeqOrder.setSequenceReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS);//A2
-				  tmpSeqOrder.setSequenceReceiveDatetime(new Date());
-				  sequenceOrderDao.save(tmpSeqOrder);
-			  }
-			  
-			  //ordersDao.updateReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
-			  result = ordersDao.chkReceiveAllMerchantForMessenger(order_id, full_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
-			  if(result.equals("Y"))
-			  {
-				  fullDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERING_STATUS);
-			  }
-			  result = ordersDao.chkReceiveAllMerchantOrder(order_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
-			  if(result.equals("Y"))
-			  {
-				  ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
-			  }
-			  int cus_id = custDao.getCustomerIdByOrderId(order_id);
-			  com.fooddelivery.Model.Orders tmpOrder = ordersDao.getOrderByOrderId(order_id);
-			  NotificationInbox noti = new NotificationInbox();
-			  noti.setNoti_message_detail("ออร์เดอร์รหัส "+order_id+ tmpOrder.getStatusConfig().getStatus_name());
-			  noti.setNoti_ref_id(cus_id);//cus id
-			  noti.setNoti_message_type("A");
-			  noti.setNoti_read_flag(0);
-			  noti.setNoti_type("Customer");
-			  noti.setNoti_created_date(new Date());
-			  notiDao.save(noti);
-		  }
-		  else
-		  {
-			  resultVerify = "incorrect confirm code";
-		  }
-		  dataMap.put("seqor_receive_status", resultVerify);
-		  messeage = "Call seqor confirm code successfully";
-		}
-		catch (Exception e) {
-			logger.info(e.getMessage());
-			dataMap.put("isPass", "N");
-			messeage = "Call seqor confirm code unsuccessfully";
-			return null;
-		}
-		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
-
-	}		
+    @RequestMapping(value="/service/orders/confirmcode/merchant" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCodeMerchant(@RequestBody Map<String, Object> mapRequest)
+    {
+        Map<String, Object> dataMap = new HashMap<String, Object>();
+        String messeage = "";
+        try {
+            int order_id = (Integer) mapRequest.get("order_id");
+            String seqor_confirm_code = (String) mapRequest.get("seqor_confirm_code");
+            int mer_id = (Integer) mapRequest.get("mer_id");
+            int full_id = (Integer) mapRequest.get("full_id");
+            String result = ordersDao.verifyConfirmCodeMerchant(order_id, mer_id, seqor_confirm_code);
+            String resultVerify = "";
+            
+            dataMap.put("order_id", order_id);
+            if(result.equals("Y"))
+            {
+                dataMap.put("isPass", "Y");
+                resultVerify = "correct confirm code";
+                Date currentDateTime = DateTime.getCurrentDateTime();
+                List<SequenceOrders> seqOrderList = sequenceOrderDao.getSequenceOrderForUpdateStatus(order_id, mer_id);
+                for(int i = 0;i<seqOrderList.size();i++)
+                {
+                    SequenceOrders tmpSeqOrder = seqOrderList.get(i);
+                    tmpSeqOrder.setSequenceReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS);//A2
+                    tmpSeqOrder.setSequenceReceiveDatetime(new Date());
+                    sequenceOrderDao.save(tmpSeqOrder);
+                }
+                
+                //ordersDao.updateReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
+                String resultPerMess = ordersDao.chkReceiveAllMerchantForMessenger(order_id, full_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
+                logger.info("resultPerMess {}",resultPerMess);
+                if(resultPerMess.equals("Y"))
+                {
+                    fullDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERING_STATUS);
+                }
+                String resultAllMerchant = ordersDao.chkReceiveAllMerchantOrder(order_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
+                logger.info("resultAllMerchant {}",resultAllMerchant);
+                if(resultAllMerchant.equals("Y"))
+                {
+                    ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
+                    int cus_id = custDao.getCustomerIdByOrderId(order_id);
+                    com.fooddelivery.Model.Orders tmpOrder = ordersDao.getOrderByOrderId(order_id);
+                    NotificationInbox noti = new NotificationInbox();
+                    noti.setNoti_message_detail("ออร์เดอร์รหัส "+order_id+ tmpOrder.getStatusConfig().getStatus_name());
+                    noti.setNoti_ref_id(cus_id);//cus id
+                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_ACKNOWLEDGE);
+                    noti.setNoti_read_flag(0);
+                    noti.setNoti_type("Customer");
+                    noti.setNoti_order_id(order_id);
+                    noti.setNoti_created_date(new Date());
+                    notiDao.save(noti);
+                }
+                
+            }
+            else
+            {
+                dataMap.put("isPass", "N");
+                resultVerify = "incorrect confirm code";
+            }
+            dataMap.put("seqor_receive_status", resultVerify);
+            messeage = "Call seqor confirm code successfully";
+        }
+        catch (Exception e) {
+            logger.info(e.getMessage());
+            dataMap.put("isPass", "N");
+            messeage = "Call seqor confirm code unsuccessfully";
+            return null;
+        }
+        return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
+        
+    }	}		
 	
 }
