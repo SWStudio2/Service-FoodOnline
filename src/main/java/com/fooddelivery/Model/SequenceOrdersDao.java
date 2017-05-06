@@ -38,4 +38,8 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	@Query(value = "select * from sequence_orders"
 			, nativeQuery = true)
 	public List<SequenceOrders> findAll();
+	
+	@Query(value = "select * from sequence_orders where SEQOR_ORDER_ID = :order_id and SEQOR_MER_ID = :mer_id"
+			, nativeQuery = true)
+	public List<SequenceOrders> getSequenceOrderForUpdateStatus(@Param("order_id") int order_id,@Param("mer_id") int mer_id);	
 }

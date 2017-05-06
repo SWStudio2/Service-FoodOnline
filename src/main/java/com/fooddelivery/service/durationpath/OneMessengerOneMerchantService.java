@@ -20,7 +20,7 @@ import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.VariableText;
 
-@RestController
+
 public class OneMessengerOneMerchantService {
 	
 	@Autowired

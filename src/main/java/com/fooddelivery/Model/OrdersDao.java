@@ -60,27 +60,26 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	//SQL A2
 	@Modifying
 	@Query(value="UPDATE sequence_orders SET" +
-			"SEQOR_RECEIVE_DATETIME = :confirmDateTime"
+			"SEQOR_RECEIVE_DATETIME = NOW(),"
 			+ "SEQOR_RECEIVE_STATUS = :receive_status"
 			+ "where SEQOR_ORDER_ID = :order_id"
-			+ "And SEQOR_MER_ID = :mer_id" ,
+			+ "and SEQOR_MER_ID = :mer_id" ,
 			nativeQuery = true)
-	public void updateReceiveStatus(@Param("confirmDateTime") String confirmDateTime,
-									@Param("receive_status") int receive_status,@Param("order_id") int order_id,
+	public void updateReceiveStatus(@Param("receive_status") int receive_status,@Param("order_id") int order_id,
 									@Param("mer_id") int mer_id);
 
 	//SQL A3
 	@Query(value="select IF(" +
-			"(select count(seqor_id)" +
-			"from sequence_orders" +
-			"where seqor_order_id = :seqorder" +
-			"and SEQOR_RECEIVE_STATUS = :receive_status" +
-			") =  ("+
-			"select count(seqor_id)"+
-			"from sequence_orders" +
-			"where seqor_order_id = :seqorder" +
-			"and seqor_cook_status in (:seqor_cook_status)" +
-			"),'Y','N') As CHK_RECALL" ,
+			" (select count(seqor_id)" +
+			" from sequence_orders" +
+			" where seqor_order_id = :seqorder" +
+			" and SEQOR_RECEIVE_STATUS = :receive_status" +
+			" ) =  ("+
+			" select count(seqor_id)"+
+			" from sequence_orders" +
+			" where seqor_order_id = :seqorder" +
+			" and seqor_cook_status in (:seqor_cook_status)" +
+			" ),'Y','N') As CHK_RECALL" ,
 			nativeQuery = true)
 	public String chkReceiveAllMerchantOrder(@Param("seqorder") long order_id,
 											 @Param("receive_status") int receive_status,
@@ -89,8 +88,8 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	//SQL A4
 	@Modifying
 	@Query(value="UPDATE orders" +
-			"SET"
-			+ "ORDER_STATUS = :orderStatus"
+			" SET"
+			+ " ORDER_STATUS = :orderStatus"
 			+ " where ORDER_ID = :order_id",
 			nativeQuery = true)
 	public void updateOrderStatus(@Param("orderStatus") int orderStatus,
@@ -98,23 +97,23 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 
 	//SQL A5
 	@Query(value="select IF(" +
-			"(select count(seqor_id)"+
-			"from sequence_orders"+
-			"where seqor_order_id = :order_id"+
-			"and seqor_full_id = :fulltime_id"+
-			"and SEQOR_RECEIVE_STATUS = :receive_status"+
-			") = ("+
-			"select count(seqor_id)"+
-			"from sequence_orders"+
-			"where seqor_order_id = :order_id"+
-			"and seqor_full_id = :fulltime_id"+
-			"and seqor_cook_status in (:seqor_cook_status)"+
-			"),'Y','N') As CHK_RECALL" ,
+			" (select count(seqor_id)"+
+			" from sequence_orders"+
+			" where seqor_order_id = :seqorder "+
+			" and seqor_mess_id = :fulltimeid "+
+			" and SEQOR_RECEIVE_STATUS = :receivestatus "+
+			" ) = ("+
+			" select count(seqor_id)"+
+			" from sequence_orders"+
+			" where seqor_order_id = :seqorder "+
+			" and seqor_mess_id = :fulltimeid "+
+			" and seqor_cook_status in (:seqorcookstatus )"+
+			" ),'Y','N') As CHK_RECALL" ,
 			nativeQuery = true)
-	public String chkReceiveAllMerchantForMessenger(@Param("order_id") int order_id,
-													@Param("fulltime_id") int fulltime_id,
-													@Param("receive_status") int receive_status,
-													@Param("seqor_cook_status") String seqor_cook_status);
+	public String chkReceiveAllMerchantForMessenger(@Param("seqorder") int seqorder,
+													@Param("fulltimeid") int fulltimeid,
+													@Param("receivestatus") int receivestatus,
+													@Param("seqorcookstatus") String seqorcookstatus);
 
 	@Query(value = "select * from orders "
 			+ "where order_id = :orderId"

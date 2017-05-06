@@ -36,6 +36,7 @@ import com.fooddelivery.Model.OrdersDetailDao;
 import com.fooddelivery.Model.OrdersDetailOptionDao;
 import com.fooddelivery.Model.SequenceOrders;
 import com.fooddelivery.Model.SequenceOrdersDao;
+import com.fooddelivery.Model.Order.fulltimemessenger.Orders;
 import com.fooddelivery.util.DateTime;
 import com.fooddelivery.util.Response;
 import com.fooddelivery.util.VariableText;
@@ -62,6 +63,7 @@ public class MerchantController {
 	
 	@Autowired
 	private CustomerDao custDao;
+
 	
 	final static String COOKSTATUS = "12,13";
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
@@ -148,29 +150,37 @@ public class MerchantController {
 		  if(result.equals("Y"))
 		  {
 			  resultVerify = "correct confirm code";
-			  Date currentDateTime = DateTime.getCurrentDateTime();		  
-			  ordersDao.updateReceiveStatus(currentDateTime.toString(), VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
+			  Date currentDateTime = DateTime.getCurrentDateTime();	
+			  List<SequenceOrders> seqOrderList = sequenceOrderDao.getSequenceOrderForUpdateStatus(order_id, mer_id);
+			  for(int i = 0;i<seqOrderList.size();i++)
+			  {
+				  SequenceOrders tmpSeqOrder = seqOrderList.get(i);
+				  tmpSeqOrder.setSequenceReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS);//A2
+				  tmpSeqOrder.setSequenceReceiveDatetime(new Date());
+				  sequenceOrderDao.save(tmpSeqOrder);
+			  }
+			  
+			  //ordersDao.updateReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
 			  result = ordersDao.chkReceiveAllMerchantForMessenger(order_id, full_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
 			  if(result.equals("Y"))
 			  {
 				  fullDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERING_STATUS);
 			  }
-			  
 			  result = ordersDao.chkReceiveAllMerchantOrder(order_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
 			  if(result.equals("Y"))
 			  {
 				  ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
 			  }
-			  
 			  int cus_id = custDao.getCustomerIdByOrderId(order_id);
+			  com.fooddelivery.Model.Orders tmpOrder = ordersDao.getOrderByOrderId(order_id);
 			  NotificationInbox noti = new NotificationInbox();
-			  noti.setNoti_message_detail("ออร์เดอร์รหัส "+order_id+"+VariableText.ORDER_DELIVERING");
+			  noti.setNoti_message_detail("ออร์เดอร์รหัส "+order_id+ tmpOrder.getStatusConfig().getStatus_name());
 			  noti.setNoti_ref_id(cus_id);//cus id
 			  noti.setNoti_message_type("A");
 			  noti.setNoti_read_flag(0);
 			  noti.setNoti_type("Customer");
-			  
-			  notiDao.save(noti);	  
+			  noti.setNoti_created_date(new Date());
+			  notiDao.save(noti);
 		  }
 		  else
 		  {
