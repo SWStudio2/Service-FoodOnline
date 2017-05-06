@@ -34,6 +34,9 @@ public class TwoMessThreeMercService {
 	@Autowired
 	private StationDao stationDao;
 	
+	@Autowired
+	private MerchantsDao merchantDao;
+	
 	private HashMap<Integer, Double[]> mapMercDistDura = new HashMap<Integer, Double[]>();
 	private List<Station> stationList = new ArrayList<Station>();
 	private HashMap<Integer, Integer> amtFTMap = new HashMap<Integer, Integer>();
@@ -477,6 +480,10 @@ public class TwoMessThreeMercService {
 				String merTwoLat = routePathListClone.get(i).getMerList().get(1).getMerLatitude();
 				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
 				
+				//query cooking time
+				int merOneCookTime = merchantDao.findMerCookTime(merOneId);
+				int merTwoCookTime = merchantDao.findMerCookTime(merTwoId);
+				
 				//For set distance and duration of three path
 				Double[] duraDistFirstPath = new Double[2];
 				Double[] duraDistSecPath = new Double[2];
@@ -497,7 +504,12 @@ public class TwoMessThreeMercService {
 					newBikePath.setBike_path_destination_id(merOneId);
 					newBikePath.setBike_path_type("bike");
 					newBikePath.setBike_path_distance(Double.valueOf(duraDistFirstPathStr[0]));
-					newBikePath.setBike_path_duration(Double.valueOf(duraDistFirstPathStr[1]));
+					if(Double.valueOf(duraDistFirstPathStr[1]) > merOneCookTime){
+						newBikePath.setBike_path_duration(Double.valueOf(duraDistFirstPathStr[1]));
+					}else{
+						newBikePath.setBike_path_duration(merOneCookTime);
+					}
+					
 					bikePathDao.save(newBikePath);
 					System.out.println("firduraDistFirstPath[Google] "+duraDistFirstPath);
 				}
@@ -516,22 +528,40 @@ public class TwoMessThreeMercService {
 					newBikePath.setBike_path_destination_id(merTwoId);
 					newBikePath.setBike_path_type("merchant");
 					newBikePath.setBike_path_distance(Double.valueOf(duraDistSecPathStr[0]));
-					newBikePath.setBike_path_duration(Double.valueOf(duraDistSecPathStr[1]));
+					if(Double.valueOf(duraDistSecPathStr[1]) > merTwoCookTime){
+						newBikePath.setBike_path_duration(Double.valueOf(duraDistSecPathStr[1]));
+					}else{
+						newBikePath.setBike_path_duration(merTwoCookTime);
+					}
+					
 					bikePathDao.save(newBikePath);
 				}
 				
 				//cal Last Path 
 				duraDistLastPath = mapMercDistDura.get(merTwoId);
-				
 				double distFirst = Double.valueOf(duraDistFirstPath[0]);
 				double distSec = Double.valueOf(duraDistSecPath[0]);
 				double distLast = Double.valueOf(duraDistLastPath[0]);
-				double duraFirst = Double.valueOf(duraDistFirstPath[1]);
-				double duraSec = Double.valueOf(duraDistSecPath[1]);
+				double duraFirst;
+				if(Double.valueOf(duraDistFirstPath[1]) > merOneCookTime){
+					 duraFirst = Double.valueOf(duraDistFirstPath[1]);
+				}else{
+					 duraFirst = Double.valueOf(merOneCookTime);
+				}
+				
+				double duraSec;
+				if(Double.valueOf(duraDistFirstPath[1]) > merTwoCookTime){
+					 duraSec = Double.valueOf(duraDistSecPath[1]);
+				}else{
+					 duraSec = Double.valueOf(merTwoCookTime);
+				}
+				
 				double duraLast = Double.valueOf(duraDistLastPath[1]);
 	
 				distTwoMerRoutePath = String.valueOf(distFirst+distSec+distLast);
 				duraTwoMerRoutePath = String.valueOf(duraFirst+duraSec+duraLast); //TODO ยังไม่รวมเวลาทำอาหาร
+				
+				
 				
 				routePathListClone.get(i).setDistance(distTwoMerRoutePath);
 				routePathListClone.get(i).setDuration(duraTwoMerRoutePath);
@@ -552,6 +582,7 @@ public class TwoMessThreeMercService {
 				
 				//Cal First Path 
 				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merThreeId , "bike");
+				int merThreeCookTime = merchantDao.findMerCookTime(merThreeId);
 				System.out.println("bikePathDao : " +bikePathDao);
 				System.out.println("firstPath : " +firstPath);
 				if(firstPath != null){
@@ -565,6 +596,7 @@ public class TwoMessThreeMercService {
 					newBikePath.setBike_path_type("bike");
 					newBikePath.setBike_path_distance(Double.valueOf(duraDistFirstPath[0]));
 					newBikePath.setBike_path_duration(Double.valueOf(duraDistFirstPath[1]));
+					
 					bikePathDao.save(newBikePath);
 				}
 				
@@ -572,7 +604,13 @@ public class TwoMessThreeMercService {
 				Double[] duraDistSecPath = mapMercDistDura.get(merThreeId);
 				
 				double distOneMer = Double.valueOf(duraDistFirstPath[0])+duraDistSecPath[0];
-				double duraOneMer = Double.valueOf(duraDistFirstPath[1])+duraDistSecPath[1];
+				double duraOneMer;
+				if(Double.valueOf(duraDistFirstPath[1]) > merThreeCookTime){
+					 duraOneMer = Double.valueOf(duraDistFirstPath[1])+duraDistSecPath[1];
+				}else{
+					 duraOneMer = Double.valueOf(duraDistFirstPath[1])+merThreeCookTime;
+				}
+				
 				
 				routePathListClone.get(i).setDistance(String.valueOf(distOneMer));
 				routePathListClone.get(i).setDuration(String.valueOf(duraOneMer));

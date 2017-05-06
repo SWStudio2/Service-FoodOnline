@@ -28,7 +28,7 @@ import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.VariableText;
 import com.fooddelivery.util.model.Location;
 
-@RestController
+
 public class OneMessengerOneMerchantService {
 	private static final Logger logger = LoggerFactory.getLogger(OneMessengerOneMerchantService.class);
 	

@@ -152,4 +152,11 @@ public interface MerchantsDao extends CrudRepository<Merchants, Long> {
 		         +") sm ON sm.MER_ID = so.SEQOR_MER_ID "
 		    +"WHERE SEQOR_ORDER_ID = :order_id ", nativeQuery = true )
 	public List<Object[]> findSpecialByOrderId(@Param("order_id") Long order_id);
+	
+	
+	@Query(value = "SELECT MER_COOKTIME "+
+			"FROM merchants "+ 
+			"WHERE mer_id = :merId" 
+			, nativeQuery = true)
+	public Integer findMerCookTime(@Param("merId") int merId);
 }

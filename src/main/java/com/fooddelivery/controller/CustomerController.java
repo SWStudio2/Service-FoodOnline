@@ -22,13 +22,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fooddelivery.Model.BikeStation;
 import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
+import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.NotificationInbox;
 import com.fooddelivery.Model.NotificationInboxDao;
+import com.fooddelivery.Model.Orders;
+import com.fooddelivery.Model.OrdersDao;
+import com.fooddelivery.Model.SequenceOrdersDao;
 
 @RequestMapping(value={"/service/customer"})
 @RestController
@@ -42,12 +47,20 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerDao custDao;
+	
+	@Autowired
+	private OrdersDao ordersDao;
+	
 
 	@Autowired
 	private NotificationInboxDao notiDao;
 	
+	@Autowired
+	private SequenceOrdersDao seqOrderDao;
 	
-
+	@Autowired
+	private FullTimeMessengerDao fulltimeDao;
+	
 	@RequestMapping(value={"/auth"} ,method=RequestMethod.POST)
 	public ResponseEntity<Response<HashMap>> authen(@RequestBody Customer cus){
 //		User user = new User();
@@ -109,15 +122,22 @@ public class CustomerController {
 	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		long order_id = (Long) mapRequest.get("order_id");
+		int order_id = (Integer) mapRequest.get("order_id");
 		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
-		long full_id = (Long) mapRequest.get("full_id");
-		long[] merList = (long[])mapRequest.get("mer_id");
+		int full_id = (Integer) mapRequest.get("full_id");
+		int[] merList = (int[])mapRequest.get("mer_id");
 		
 		String messeage = "";
 		String result = customerDao.verifyConfirmCodeCustomer(order_id, confirm_code);
 		if(result.equals("Y"))
 		{
+			seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id);//SQL B3
+			fulltimeDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERIED_STATUS);//B4
+			
+			Orders currentOrder = ordersDao.getOrderByOrderId(order_id);
+			MessengerController mesController = new MessengerController();
+			BikeStation bikeBack = mesController.calculateNewStation(currentOrder.getOrderAddressLatitude(), currentOrder.getOrderAddressLongtitude());
+			//Mint next step
 			Date currentDateTime = DateTime.getCurrentDateTime();
 			customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
 			
