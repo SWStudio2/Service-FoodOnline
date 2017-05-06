@@ -69,21 +69,36 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 									@Param("mer_id") int mer_id);
 
 	//SQL A3
-	@Query(value="select IF(" +
-			" (select count(seqor_id)" +
-			" from sequence_orders" +
-			" where seqor_order_id = :seqorder" +
-			" and SEQOR_RECEIVE_STATUS = :receive_status" +
-			" ) =  ("+
-			" select count(seqor_id)"+
-			" from sequence_orders" +
-			" where seqor_order_id = :seqorder" +
-			" and seqor_cook_status in (:seqor_cook_status)" +
-			" ),'Y','N') As CHK_RECALL" ,
+	@Query(value="select IF( " +
+			" ( " +
+			" select count(seqor_id) " +
+			" from sequence_orders " +
+			" where seqor_order_id = 622 " +
+			" and SEQOR_RECEIVE_STATUS = 14 " +
+			" ) =  ( " +
+			" select count(seqor_id) "+
+			" from sequence_orders " +
+			" where seqor_order_id = 622 " +
+			" and seqor_cook_status in (12,13)" +
+			" ),'YYY','NNN') As CHK_RECALL" ,
 			nativeQuery = true)
-	public String chkReceiveAllMerchantOrder(@Param("seqorder") long order_id,
-											 @Param("receive_status") int receive_status,
-											 @Param("seqor_cook_status") String seqor_cook_status);
+	public String chkReceiveAllMerchantOrder();
+	
+	//SQL test1
+	@Query(value=" select count(seqor_id) " +
+			" from sequence_orders " +
+			" where seqor_order_id = :seqorder " +
+			" and SEQOR_RECEIVE_STATUS = :receivestatus ",
+			nativeQuery = true)
+	public int chkReceiveAllMerchantOrderPart1(@Param("seqorder") int order_id,@Param("receivestatus") int receivestatus);	
+	
+	//SQL test2
+	@Query(value=" select count(seqor_id) "+
+			" from sequence_orders " +
+			" where seqor_cook_status in (12,13) " +
+			" and seqor_order_id = :seqorder " ,
+			nativeQuery = true)
+	public int chkReceiveAllMerchantOrderPart2(@Param("seqorder") int order_id);		
 
 	//SQL A4
 	@Modifying

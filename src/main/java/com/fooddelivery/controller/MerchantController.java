@@ -163,14 +163,17 @@ public class MerchantController {
                 
                 //ordersDao.updateReceiveStatus(VariableText.MERCHANT_RECEIVED_STATUS, order_id, mer_id);
                 String resultPerMess = ordersDao.chkReceiveAllMerchantForMessenger(order_id, full_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
-                logger.info("resultPerMess {}",resultPerMess);
                 if(resultPerMess.equals("Y"))
                 {
                     fullDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERING_STATUS);
                 }
-                String resultAllMerchant = ordersDao.chkReceiveAllMerchantOrder(order_id, VariableText.MERCHANT_RECEIVED_STATUS, COOKSTATUS);
-                logger.info("resultAllMerchant {}",resultAllMerchant);
-                if(resultAllMerchant.equals("Y"))
+                //String resultAllMerchant = "N";
+                //resultAllMerchant = (String)ordersDao.chkReceiveAllMerchantOrder();
+
+           
+              
+                if(ordersDao.chkReceiveAllMerchantOrderPart1(order_id, VariableText.MERCHANT_RECEIVED_STATUS) == 
+                	ordersDao.chkReceiveAllMerchantOrderPart2(order_id))
                 {
                     ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
                     int cus_id = custDao.getCustomerIdByOrderId(order_id);
@@ -185,7 +188,6 @@ public class MerchantController {
                     noti.setNoti_created_date(new Date());
                     notiDao.save(noti);
                 }
-                
             }
             else
             {
