@@ -14,6 +14,7 @@ import com.fooddelivery.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.http.MediaType;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ public class TwoMessThreeMercService {
 	private BikePathDao bikePathDao;
 	
 	@Autowired
-	private FullTimeMessengerDao fullTimeMessDao;
+	private FullTimeMessengerDao fullMessDao;
 	
 	@Autowired
 	private StationDao stationDao;
@@ -51,12 +52,15 @@ public class TwoMessThreeMercService {
 		System.out.println("MerIDArray " +merIdArray);
 		System.out.println("cus_Latitude " +cus_Latitude);
 		System.out.println("cus_Longtitude " +cus_Longtitude);
-		return twoMessThreeMercService2(merIdArray, cus_Latitude, cus_Longtitude);
+		return twoMessThreeMercService(merIdArray, cus_Latitude, cus_Longtitude,this.fullMessDao,
+										this.stationDao,this.merchantDao,this.bikePathDao);
 	}
 	 
-	//not a service
-	public GroupPathDetail twoMessThreeMercService(List<Integer> merIdArray, String cus_Latitude, String cus_Longtitude) throws InterruptedException
+	
+	public GroupPathDetail twoMessThreeMercService(List<Integer> merIdArray, String cus_Latitude, String cus_Longtitude , 
+								FullTimeMessengerDao fullMessDao,StationDao staDao,MerchantsDao merchDao,BikePathDao bikePathDao) throws InterruptedException
 	{
+		System.out.println("!!!!!! Into case YUIIIIIIIII");
 		//create Dao for query
 		MerchantsQuery merDao = new MerchantsQuery();
 		
@@ -113,187 +117,7 @@ public class TwoMessThreeMercService {
 		ArrayList<GroupPathDetail> groupPathList = new ArrayList<GroupPathDetail>();
 		
 		//get amount fulltime each station
-		stationList = getStationFreeMess();
-		
-		
-		
-		//Loop resultSet and station for set value to GroupPathDetail
-		for(int i = 0;i<resultSet.length;i++) {
-			
-			String tmpValue = resultSet[i].toString();
-			tmpValue = tmpValue.replace("[", "");
-			tmpValue = tmpValue.replace("]", "");
-			
-			//{"0","1","2"}
-			String[] result =  tmpValue.split(",");
-			int indexMer0 = Integer.valueOf(result[0].trim());
-			int indexMer1 = Integer.valueOf(result[1].trim());
-			int indexMer2 = Integer.valueOf(result[2].trim());
-			
-			Merchants merc0 = merList[indexMer0];
-			Merchants merc1 = merList[indexMer1];
-			Merchants merc2 = merList[indexMer2];
-			
-			//set Merchants List size 2
-			ArrayList<Merchants> mercList1 = new ArrayList<Merchants>();
-			mercList1.add(merc0);
-			mercList1.add(merc1);
-			
-			//set Merchants List size 1
-			ArrayList<Merchants> mercList2 = new ArrayList<Merchants>();
-			mercList2.add(merc2);
-		
-		
-			for(int j=0;j<stationList.size();j++){
-				
-				//set RoutePathDetail of 2 Merchant
-				RoutePathDetail routePath1 = new RoutePathDetail();
-				routePath1.setMerList(mercList1);
-				routePath1.setStation(stationList.get(j));
-				routePath1.setLatitudeDelivery(cus_Latitude);
-				routePath1.setLongtitudeDelivery(cus_Longtitude);
-				
-				//set RoutePathDetail of 1 Merchant
-				RoutePathDetail routePath2 = new RoutePathDetail();
-				routePath2.setMerList(mercList2);
-				routePath2.setStation(stationList.get(j));
-				routePath2.setLatitudeDelivery(cus_Latitude);
-				routePath2.setLongtitudeDelivery(cus_Longtitude);
-				
-				//set 2 RoutePathDetail into GroupPathDetail
-				GroupPathDetail groupPath = new GroupPathDetail();
-				groupPath.addRoutePathDetail(routePath1);
-				groupPath.addRoutePathDetail(routePath2);
-				
-				//add groupPath into GroupPathList
-				groupPathList.add(groupPath);
-			}
-
- 		}
-		
-		// set total distance and total duration of each GroupPath
-		GroupPathDetail BestGroupPath = null;
-		
-		if(groupPathList != null && groupPathList.size() != 0){
-			//Loop routePathList of each GroupPath
-			for(int i=0;i<groupPathList.size();i++){
-//				if(i==6){
-				List<RoutePathDetail> routePathList = null;
-				if(groupPathList.get(i) != null && groupPathList.get(i).getAllRoutePath() != null){
-						
-						routePathList = groupPathList.get(i).getAllRoutePath();
-						//cal duration and distance
-						System.out.println("GroupPath : "+ i);
-						routePathList = calDuraAndDist(routePathList);
-						
-
-						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
-						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
-						logger.info("=========================================================================");
-
-						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
-						System.out.println("GroupPath : "+i+" Distance : "+routePathList.get(1).getDistance()+" Duration : "+routePathList.get(1).getDuration());
-						System.out.println("=========================================================================");
-
-						
-						//cal total distance and duration of this GroupPath
-						double totalDist = Double.valueOf(routePathList.get(0).getDistance()) + Double.valueOf(routePathList.get(1).getDistance());
-						double duraMessOne = Double.valueOf(routePathList.get(0).getDuration());
-						double duraMessTwo	= Double.valueOf(routePathList.get(1).getDuration());
-						double totalDura = 0;
-						
-						if(duraMessOne > duraMessTwo){
-							totalDura = duraMessOne;
-						}else{
-							totalDura = duraMessTwo;
-						}
-						
-						//set total distance and duration in GroupPath
-						groupPathList.get(i).setTotalDistance(String.valueOf(totalDist));
-						
-						groupPathList.get(i).setTotalDuration(String.valueOf(totalDura));
-						
-//						logger.info("groupPathList : "+i+" "+String.valueOf(totalDist)+","+String.valueOf(totalDura));
-				}
-//				}
-				//TimeUnit.SECONDS.sleep(2);
-				
-			}
-			
-			//get Best Case
-			BestGroupPath = getBestGroupPath(groupPathList);
-			
-			//sort duration of each groupPath
-//			Collections.sort(groupPathList);
-			
-//			checkFreeFT(groupPathList.get(0));
-		}
-		
-		//return best node's time estimate
-		return BestGroupPath;
-	}
-	
-	
-	
-	public GroupPathDetail twoMessThreeMercService2(List<Integer> merIdArray, String cus_Latitude, String cus_Longtitude) throws InterruptedException
-	{
-		//create Dao for query
-		MerchantsQuery merDao = new MerchantsQuery();
-		
-		//get station from database
-		StationQuery stationQue = new StationQuery();
-		Station[] staList = stationQue.getStationAvailable();
-		
-		//get Merchant List from merID from Database 
-		String merIdAdjust = "";
-		for(int i = 0;i<merIdArray.size();i++)
-		{
-			if (i != 0) {
-				merIdAdjust += ",";
-			}
-			merIdAdjust += merIdArray.get(i);
-			
-		}
-		System.out.println("merIdAdjust" + merIdAdjust);
-		//===================== For Test ===========================
-//		List<Integer> merId = new ArrayList<Integer>();
-//		merId.add(1);
-//		merId.add(2);
-//		merId.add(3);
-//		merIdAdjust = "1,2,3";
-		
-		Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
-		HomeController home = new HomeController();
-		
-		//clear hashmap for new customer
-		mapMercDistDura.clear();
-		for(int i=0;i<merList.length;i++){
-			String[] distDuraStr = home.getDistanceDuration(merList[i].getMerLatitude(), merList[i].getMerLongtitude(), cus_Latitude, cus_Longtitude);
-			Double[] distDuraD = new Double[2];
-			Double distD = Double.valueOf(distDuraStr[0]);
-			Double duraD = Double.valueOf(distDuraStr[1]);
-			distDuraD[0] = distD;
-			distDuraD[1] = duraD;
-			mapMercDistDura.put(merList[i].getMerID(), distDuraD);
-			System.out.println("Merchant to customer[Google]"+distD +" "+duraD + " " + mapMercDistDura.size());
-		}
-		
-		
-		//create copy of merId
-		ArrayList<Integer> indexPos = new ArrayList<Integer>();
-		for(int i = 0;i<merIdArray.size();i++)
-		{
-			indexPos.add(i);
-		}
-		
-		//[0,1,2] ==> [[0,1,2],[1,0,2],[0,2,1],...]
-		Object[] resultSet = (Object[])Utils.listPermutations(indexPos).toArray();
-		
-		//[[a,b,c],[b,c,a],[a,c,b],...] ==> [ "a,b,c", "b,c,a", "a,c,b"]
-		ArrayList<GroupPathDetail> groupPathList = new ArrayList<GroupPathDetail>();
-		
-		//get amount fulltime each station
-		stationList = getStationFreeMess();
+		stationList = getStationFreeMess(fullMessDao,staDao);
 		
 		System.out.println("StaionList size : "+stationList.size());
 		
@@ -386,7 +210,7 @@ public class TwoMessThreeMercService {
 						routePathList = groupPathList.get(i).getAllRoutePath();
 						//cal duration and distance
 						System.out.println("GroupPath : "+ i);
-						routePathList = calDuraAndDist(routePathList);
+						routePathList = calDuraAndDist(routePathList,merchDao,bikePathDao);
 						
 
 						logger.info("GroupPath : "+i+" Distance : "+routePathList.get(0).getDistance()+" Duration : "+routePathList.get(0).getDuration());
@@ -456,7 +280,7 @@ public class TwoMessThreeMercService {
 	 * @param routePathList
 	 * @return
 	 */
-	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList) throws InterruptedException {
+	public List<RoutePathDetail> calDuraAndDist(List<RoutePathDetail> routePathList , MerchantsDao merDao , BikePathDao bikePathDao) throws InterruptedException {
 		HomeController home = new HomeController();
 		List<RoutePathDetail> routePathListClone = routePathList;
 		
@@ -481,8 +305,8 @@ public class TwoMessThreeMercService {
 				String merTwoLng = routePathListClone.get(i).getMerList().get(1).getMerLongtitude();
 				
 				//query cooking time
-				int merOneCookTime = merchantDao.findMerCookTime(merOneId);
-				int merTwoCookTime = merchantDao.findMerCookTime(merTwoId);
+				int merOneCookTime = merDao.findMerCookTime(merOneId);
+				int merTwoCookTime = merDao.findMerCookTime(merTwoId);
 				
 				//For set distance and duration of three path
 				Double[] duraDistFirstPath = new Double[2];
@@ -582,7 +406,7 @@ public class TwoMessThreeMercService {
 				
 				//Cal First Path 
 				BikePath firstPath = bikePathDao.findBikePathFromId(staId, merThreeId , "bike");
-				int merThreeCookTime = merchantDao.findMerCookTime(merThreeId);
+				int merThreeCookTime = merDao.findMerCookTime(merThreeId);
 				System.out.println("bikePathDao : " +bikePathDao);
 				System.out.println("firstPath : " +firstPath);
 				if(firstPath != null){
@@ -652,11 +476,11 @@ public class TwoMessThreeMercService {
 		return bestDuraGroupPath;
 	}
 	
-	public List<Station> getStationFreeMess(){
+	public List<Station> getStationFreeMess(FullTimeMessengerDao fullMessDao,StationDao staDao){
 		List<Station> stationList = new ArrayList<Station>();
 		
 		//query amount of free FullTime Messenger each station 
-		List<Object[]> freeFTAmtList = fullTimeMessDao.getNumberOfMessengerInStation();
+		List<Object[]> freeFTAmtList = fullMessDao.getNumberOfMessengerInStation();
 		BigInteger minFreeFT = new BigInteger("1");
 		
 		if(freeFTAmtList != null){
@@ -665,7 +489,7 @@ public class TwoMessThreeMercService {
 				Integer i1 =  bigIntAmt.intValue();
 				if(i1 >= 1){
 //					System.out.println("count_fulltime Integer : "+i1);
-					Station sta = stationDao.findByID(i1);
+					Station sta = staDao.findByID(i1);
 					stationList.add(sta);
 					amtFTMap.put(sta.getStationId(), i1);
 				}
