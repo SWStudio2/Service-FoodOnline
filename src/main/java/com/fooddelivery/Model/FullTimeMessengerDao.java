@@ -1,5 +1,6 @@
 package com.fooddelivery.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -50,6 +51,11 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 			, nativeQuery = true)
 	public FullTimeMessenger getFullTimeByFullId(@Param("fullId") long fullId);
 
-
+	@Query(value = "select f.FULL_ID from fulltime_messenger f"
+			+ "inner join bike_station b "
+			+ "on f.full_bike_station_now = b.bike_station_id "
+			+ "WHERE full_status_id IN ( 9, 10 ) and b.bike_station_id = :stationId"
+			, nativeQuery = true)
+	public ArrayList<Integer> getFulltimeMessengerFreeByStationID(@Param("stationId") long stationId);
 
 }

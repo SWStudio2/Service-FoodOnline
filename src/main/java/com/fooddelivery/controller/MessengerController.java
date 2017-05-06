@@ -411,7 +411,7 @@ public class MessengerController {
 							locationCustomer, timeAndDistanceDetail, merchants, stations,
 							listStation, hashMerCookingTime, fullTimeMessengerInStation);
 					//1 mess to many merchant
-					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+					//routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -421,10 +421,10 @@ public class MessengerController {
 			{
 				try {
 					//Mike
-					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+					//routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 					//YUI
-					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
+					//TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
+					//bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude);
 					//MINT
 					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);

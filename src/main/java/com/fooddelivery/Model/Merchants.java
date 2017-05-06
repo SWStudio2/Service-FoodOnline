@@ -59,8 +59,8 @@ public class Merchants {
 	private Integer cookingTime;
 	
 	//--------------RELATION----------------
-	@OneToOne(mappedBy="customers")
-	private Orders orders;
+	/*@OneToOne(mappedBy="customers")
+	private Orders orders;*/
 
 	public int getCookingTime() {
 		return cookingTime;

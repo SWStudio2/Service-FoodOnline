@@ -50,11 +50,11 @@ public class UtilsQuery {
 				sqlBuffer.append("(\n ");
 				sqlBuffer.append("select count(seqor_id)  \n ");
 				sqlBuffer.append("from sequence_orders\n ");
-				sqlBuffer.append("where seqor_order_id = "+ orderID+"\n ");
+				sqlBuffer.append("where seqor_order_id = "+ orderID +"\n ");
 				sqlBuffer.append(") = (\n ");
 				sqlBuffer.append("select count(seqor_id) \n ");
 				sqlBuffer.append("from sequence_orders\n ");
-				sqlBuffer.append("where seqor_order_id = "+ orderID+"\n ");
+				sqlBuffer.append("where seqor_order_id = "+ orderID +"\n ");
 				sqlBuffer.append("and seqor_cook_status in (" + statusConfirm + ")\n ");
 				sqlBuffer.append("),'Y','N') As CHK_RECALL\n ");
 				System.out.println(sql);
