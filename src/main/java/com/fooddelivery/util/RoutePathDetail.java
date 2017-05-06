@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import com.fooddelivery.controller.HomeController;
 import com.fooddelivery.Model.Merchants; 
@@ -61,8 +62,9 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 	public void setFtID(int ftID) {
 		this.ftID = ftID;
 	}
-	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode,TimeAndDistanceDetail[] timeDistance) throws InterruptedException
+	public static RoutePathDetail getBestNodeDetail(ArrayList<RoutePathDetail> arrNode,TimeAndDistanceDetail[] timeDistance,HashMap<Integer, Double> hashCooking) throws InterruptedException
 	{
+		System.out.println("getBestNodeDetail ********************************");
 		RoutePathDetail tmpNode;
 		HomeController home = new HomeController();
 		final double durationAgree = 5;
@@ -86,17 +88,30 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 					tmpDistance = new BigDecimal(tmpTimeDistance.getDistance());
 				}
 			}
-			//String[] arrDetail = home.getDistanceDuration(tmpNode.station.getStationLantitude(), tmpNode.station.getStationLongtitude(), firstMerchant.getMerLatitude(), firstMerchant.getMerLongtitude());
-			//BigDecimal tmpDuration = new BigDecimal(arrDetail[0]);
-			//BigDecimal tmpDistance = new BigDecimal(arrDetail[1]);
-			if(firstMerchant.getCookingTime() < tmpDuration.doubleValue())
+			if(hashCooking == null)
 			{
-				sumDuration = tmpDuration.doubleValue() + sumDuration;
+				if(firstMerchant.getCookingTime() < tmpDuration.doubleValue())
+				{
+					sumDuration = tmpDuration.doubleValue() + sumDuration;
+				}
+				else
+				{
+					sumDuration = firstMerchant.getCookingTime();
+				}				
 			}
-			else
+			else//Recalculation
 			{
-				sumDuration = firstMerchant.getCookingTime();
+				double cooktime = hashCooking.get(firstMerchant.getMerID());
+				if(cooktime < tmpDuration.doubleValue())
+				{
+					sumDuration = tmpDuration.doubleValue() + sumDuration;
+				}
+				else
+				{
+					sumDuration = cooktime;
+				}				
 			}
+
 			sumDistance = tmpDistance.doubleValue() + sumDistance;
 			if(tmpNode.merList.size() > 1)
 			{
@@ -104,11 +119,6 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 				{
 					Merchants merStart = tmpNode.merList.get(j-1);
 					Merchants merEnd = tmpNode.merList.get(j);
-
-					//arrDetail = (String[])home.getDistanceDuration(merStart.getMerLatitude(), merStart.getMerLongtitude(), merEnd.getMerLatitude(), merEnd.getMerLongtitude());
-					//Thread.sleep(600);
-					//tmpDuration = new BigDecimal(arrDetail[0]);
-					//tmpDistance = new BigDecimal(arrDetail[1]);
 					
 					for(int m = 0;m<timeDistance.length;m++)
 					{
@@ -122,10 +132,22 @@ public class RoutePathDetail implements Comparator<RoutePathDetail>{
 					}					
 
 					sumDuration = tmpDuration.doubleValue() + sumDuration;
-					if(sumDuration < merEnd.getCookingTime())
+					if(hashCooking == null)
 					{
-						sumDuration = merEnd.getCookingTime();
+						if(sumDuration < merEnd.getCookingTime())
+						{
+							sumDuration = merEnd.getCookingTime();
+						}						
 					}
+					else
+					{
+						double cooktime = hashCooking.get(merEnd.getMerID());
+						if(sumDuration < cooktime)
+						{
+							sumDuration = cooktime;
+						}						
+					}
+
 					sumDistance = tmpDistance.doubleValue() + sumDistance;
 				}
 			}
