@@ -117,7 +117,7 @@ public class CustomerController {
 
 	}
 	
-	@RequestMapping(value="/service/orders/confirmcode/customer" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/confirmcode" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
@@ -125,26 +125,29 @@ public class CustomerController {
 		int order_id = (Integer) mapRequest.get("order_id");
 		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
 		int full_id = (Integer) mapRequest.get("full_id");
-		int[] merList = (int[])mapRequest.get("mer_id");
+		List<Integer> merList = (List<Integer>)mapRequest.get("mer_id");
 		
 		String messeage = "";
 		String result = customerDao.verifyConfirmCodeCustomer(order_id, confirm_code);
 		if(result.equals("Y"))
 		{
-			seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id);//SQL B3
+			//seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id);//SQL B3
 			fulltimeDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERIED_STATUS);//B4
 			
 			Orders currentOrder = ordersDao.getOrderByOrderId(order_id);
 			MessengerController mesController = new MessengerController();
 			BikeStation bikeBack = mesController.calculateNewStation(currentOrder.getOrderAddressLatitude(), currentOrder.getOrderAddressLongtitude());
 			//Mint next step
-			Date currentDateTime = DateTime.getCurrentDateTime();
-			customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
-			
+			//Date currentDateTime = DateTime.getCurrentDateTime();
+			//customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
 		  int cus_id = custDao.getCustomerIdByOrderId(order_id);
-		  
+		  messeage = "Pass";
 		  //Wait query update fulltime , order
 			
+		}
+		else
+		{
+			messeage = "verify Confirm Code Customer incorrenct";
 		}
 		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
 
