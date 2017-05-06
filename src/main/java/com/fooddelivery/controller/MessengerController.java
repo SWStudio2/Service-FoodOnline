@@ -127,7 +127,7 @@ public class MessengerController {
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 				bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 						locationCustomer, timeAndDistanceDetail, merchants, stations, listStation, null, null, 
-						fullTimeMessengerDao);
+						null);
 				//bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation, null, null);		
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -208,7 +208,7 @@ public class MessengerController {
 		if(list.size() == 1)
 		{
 			chooseTime = threeMessValue;
-			chooseTime = oneMessValue;//Use this step temporary
+			//chooseTime = oneMessValue;//Use this step temporary
 		}
 		else if(list.size() == 2)
 		{

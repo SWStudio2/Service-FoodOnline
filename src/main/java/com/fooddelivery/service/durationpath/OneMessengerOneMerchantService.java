@@ -301,41 +301,45 @@ public class OneMessengerOneMerchantService {
 		 */
 		//FullTime Available
 		//fullTimeMessengerInStation = fullTimeMessengerDao.getNumberOfMessengerInStation();
-		HashMap<String, Integer> newFullTimeAvailableHash = new HashMap<String, Integer>();
-		if (fullTimeMessengerInStation != null) {
-			HashMap<String, String[]> numberFullTimeAvailableInStationHash = convertNumberMessengerInStationListToHashMap(
-					fullTimeMessengerInStation);
-			HashMap<String, String[]> numberFullTimeAvailableInStationHashLeft = numberFullTimeAvailableInStationHash;
-			for (int i=0; i<resultRoutePathDetail.size(); i++) {
-				RoutePathDetail routePathDetail = resultRoutePathDetail.get(i);
-				String[] numberAvailable = numberFullTimeAvailableInStationHashLeft.get(
-						String.valueOf(routePathDetail.getStation().getStationId()));
-				/*if (Integer.valueOf(numberFullTimeAvailableInStationHashLeft.get(
-						String.valueOf(routePathDetail.getMerList().get(0).getMerID()))[1])
-						!= 0) {*/
-				if (Integer.valueOf(numberAvailable[1]) != 0) {
-					int k = 0;
-					if (newFullTimeAvailableHash.get(String.valueOf(routePathDetail.getStation().getStationId())) != null) {
-						k = newFullTimeAvailableHash.get(String.valueOf(
-								routePathDetail.getStation().getStationId()));
-					}
-					int ftID = fullTimeDao.getFulltimeMessengerFreeByStationID(Long.valueOf(
-							routePathDetail.getStation().getStationId())).get(k);
-					newFullTimeAvailableHash.put(String.valueOf(routePathDetail.getStation().getStationId()), k+1);
-					routePathDetail.setFtID(ftID);
-					resultRoutePathDetail.remove(i);
-					resultRoutePathDetail.add(i,routePathDetail);
-					String[] merchantAndNumberAvailableMessenger = numberFullTimeAvailableInStationHashLeft.get(
+		if (fullTimeDao != null) 
+		{
+			
+			HashMap<String, Integer> newFullTimeAvailableHash = new HashMap<String, Integer>();
+			if (fullTimeMessengerInStation != null) {
+				HashMap<String, String[]> numberFullTimeAvailableInStationHash = convertNumberMessengerInStationListToHashMap(
+						fullTimeMessengerInStation);
+				HashMap<String, String[]> numberFullTimeAvailableInStationHashLeft = numberFullTimeAvailableInStationHash;
+				for (int i=0; i<resultRoutePathDetail.size(); i++) {
+					RoutePathDetail routePathDetail = resultRoutePathDetail.get(i);
+					String[] numberAvailable = numberFullTimeAvailableInStationHashLeft.get(
 							String.valueOf(routePathDetail.getStation().getStationId()));
-					int numberAvailableMessenger = Integer.valueOf(merchantAndNumberAvailableMessenger[1]);
-					numberAvailableMessenger = numberAvailableMessenger - 1;
-					merchantAndNumberAvailableMessenger[1] = String.valueOf(numberAvailableMessenger);
-					numberFullTimeAvailableInStationHashLeft.put(
-							String.valueOf(routePathDetail.getStation().getStationId()), 
-							merchantAndNumberAvailableMessenger);
-				}
-				else {
-					resultRoutePathDetail.remove(i);
+					/*if (Integer.valueOf(numberFullTimeAvailableInStationHashLeft.get(
+							String.valueOf(routePathDetail.getMerList().get(0).getMerID()))[1])
+							!= 0) {*/
+					if (Integer.valueOf(numberAvailable[1]) != 0) {
+						int k = 0;
+						if (newFullTimeAvailableHash.get(String.valueOf(routePathDetail.getStation().getStationId())) != null) {
+							k = newFullTimeAvailableHash.get(String.valueOf(
+									routePathDetail.getStation().getStationId()));
+						}
+						int ftID = fullTimeDao.getFulltimeMessengerFreeByStationID(Long.valueOf(
+								routePathDetail.getStation().getStationId())).get(k);
+						newFullTimeAvailableHash.put(String.valueOf(routePathDetail.getStation().getStationId()), k+1);
+						routePathDetail.setFtID(ftID);
+						resultRoutePathDetail.remove(i);
+						resultRoutePathDetail.add(i,routePathDetail);
+						String[] merchantAndNumberAvailableMessenger = numberFullTimeAvailableInStationHashLeft.get(
+								String.valueOf(routePathDetail.getStation().getStationId()));
+						int numberAvailableMessenger = Integer.valueOf(merchantAndNumberAvailableMessenger[1]);
+						numberAvailableMessenger = numberAvailableMessenger - 1;
+						merchantAndNumberAvailableMessenger[1] = String.valueOf(numberAvailableMessenger);
+						numberFullTimeAvailableInStationHashLeft.put(
+								String.valueOf(routePathDetail.getStation().getStationId()), 
+								merchantAndNumberAvailableMessenger);
+					}
+					else {
+						resultRoutePathDetail.remove(i);
+					}
 				}
 			}
 		}
