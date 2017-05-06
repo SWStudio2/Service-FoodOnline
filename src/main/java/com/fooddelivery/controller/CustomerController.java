@@ -31,6 +31,7 @@ import com.fooddelivery.Model.Customer;
 import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.DeliveryRate;
 import com.fooddelivery.Model.DeliveryRateDao;
+import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.NotificationInbox;
@@ -126,9 +127,9 @@ public class CustomerController {
 	
 	@RequestMapping(value="/confirmcode" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
+	public ResponseEntity<Response<BikeStation>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+		BikeStation bikeBack = new BikeStation();
 		int order_id = (Integer) mapRequest.get("order_id");
 		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
 		int full_id = (Integer) mapRequest.get("full_id");
@@ -143,20 +144,38 @@ public class CustomerController {
 			
 			Orders currentOrder = ordersDao.getOrderByOrderId(order_id);
 			//MessengerController mesController = new MessengerController();
-			BikeStation bikeBack = calculateNewStation(currentOrder.getOrderAddressLatitude(), currentOrder.getOrderAddressLongtitude());
+			bikeBack = calculateNewStation(currentOrder.getOrderAddressLatitude(), currentOrder.getOrderAddressLongtitude());
 			//Mint next step
+			/*assign new station — fulltime_messenger
+			 * bike station now stationId
+			 * and clear full_order_id ให้เป้น ""-blank or null
+			 */
+			FullTimeMessenger fullTimeMess = fulltimeDao.getFullTimeByFullId(full_id);
+			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
+			fullTimeMess.setFullOrderId("");
+			fulltimeDao.save(fullTimeMess);
+			
+			//check customer get all seq_order
+			if (seqOrderDao.checkDeliveriedAllMenu(Integer.valueOf(order_id)) == "Y") {
+				currentOrder.setOrderReceiveDatetime(DateTime.getCurrentDateTime());
+				currentOrder.setOrderStatus(VariableText.ORDER_RECEIVED_STATUS);
+				ordersDao.save(currentOrder);
+			}
+			
 			//Date currentDateTime = DateTime.getCurrentDateTime();
 			//customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
-		  int cus_id = custDao.getCustomerIdByOrderId(order_id);
-		  messeage = "Pass";
-		  //Wait query update fulltime , order
+			int cus_id = custDao.getCustomerIdByOrderId(order_id);
+			messeage = "Pass";
+			//Wait query update fulltime , order
 			
+			
+			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, bikeBack));
 		}
 		else
 		{
 			messeage = "verify Confirm Code Customer incorrenct";
+			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, null));
 		}
-		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
 
 	}		
 	
