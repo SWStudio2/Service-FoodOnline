@@ -5,8 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fooddelivery.Model.BikeStation; 
@@ -19,38 +26,60 @@ import com.fooddelivery.util.GroupPathDetail;
 import com.fooddelivery.util.NodeDetailVer2;
 import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.VariableText;
+import com.fooddelivery.util.model.Location;
 
 @RestController
 public class OneMessengerOneMerchantService {
+	private static final Logger logger = LoggerFactory.getLogger(OneMessengerOneMerchantService.class);
 	
 	@Autowired
-	FullTimeMessengerDao fullTimeMessengerDao;
+	private FullTimeMessengerDao fullTimeDao;
 	
-	int[] merchantsId;
-	String latitudeCustomer;
-	String longtitudeCustomer;
-	TimeAndDistanceDetail[] timeAndDistanceDetail;
-	List<Merchants> merchants;
-	List<Station> stations;
+	//private String latitudeCustomer;
+	//private String longtitudeCustomer;
+	private Location locationCustomer;
+	private TimeAndDistanceDetail[] timeAndDistanceDetail;
+	private List<Merchants> merchants;
+	private List<Station> stations;
+	private List<BikeStation> bikeStations;
+	private HashMap<Integer, Double> hashMerCookingTime;
+	private List<Object[]> fullTimeMessengerInStation;
 	
-	public OneMessengerOneMerchantService
-	(
-			int[] merchantsId,
-			String latitudeCustomer,
-			String longtitudeCustomer,
+	@RequestMapping(value="/service/OneMessengerOneMerchantService", method=RequestMethod.POST ,consumes = MediaType.APPLICATION_JSON_VALUE)
+	public GroupPathDetail oneMessengerOneMerchantService(
+			Location locationCustomer,
 			TimeAndDistanceDetail[] timeAndDistanceDetail,
 			List<Merchants> merchants,
-			List<Station> stations
-	) {
-		this.merchantsId = merchantsId;
-		this.latitudeCustomer = latitudeCustomer;
-		this.longtitudeCustomer = longtitudeCustomer;
+			List<Station> stations,
+			List<BikeStation> bikeStations,
+			HashMap<Integer, Double> hashMerCookingTime,
+			List<Object[]> fullTimeMessengerInStation
+	) throws InterruptedException {	
+		this.locationCustomer = locationCustomer;
 		this.timeAndDistanceDetail = timeAndDistanceDetail;
 		this.merchants = merchants;
 		this.stations = stations;
+		this.bikeStations = bikeStations;
+		this.hashMerCookingTime = hashMerCookingTime;
+		this.fullTimeMessengerInStation = fullTimeMessengerInStation;
+		
+		return oneMessengerForOneMerchants(bikeStations, hashMerCookingTime, fullTimeMessengerInStation);
 	}
 	
-	public List<NodeDetailVer2> oneMessengerForOneMerchants(
+	public OneMessengerOneMerchantService
+	(
+			/*Location locationCustomer,
+			TimeAndDistanceDetail[] timeAndDistanceDetail,
+			List<Merchants> merchants,
+			List<Station> stations*/
+	) {
+		/*this.locationCustomer = locationCustomer;
+		this.timeAndDistanceDetail = timeAndDistanceDetail;
+		this.merchants = merchants;
+		this.stations = stations;*/
+	}
+	
+	/*public List<NodeDetailVer2> oneMessengerForOneMerchants(
 			List<BikeStation> stationList,
 			List<Merchants> merchantsList,
 			HashMap<Integer, Double> hashMerCookingTime) {
@@ -77,7 +106,7 @@ public class OneMessengerOneMerchantService {
 							detailArray[1]};
 					/*stationToMerchantsDetail.put(bikeStation.getBikeStationId() + "-" + merchants.getMerID(),
 							detail);*/
-					stationToMerchantsDetail.add(detail);
+/*					stationToMerchantsDetail.add(detail);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -151,11 +180,12 @@ public class OneMessengerOneMerchantService {
 		result = getBestResult(resultAll, merchantsHash);
 
 		return result;
-	}
+	}*/
 	
 	public GroupPathDetail oneMessengerForOneMerchants(
 			List<BikeStation> stations,
-			HashMap<Integer, Double> hashMerCookingTime) {
+			HashMap<Integer, Double> hashMerCookingTime,
+			List<Object[]> fullTimeMessengerInStation) {
 		GroupPathDetail result = new GroupPathDetail();
 		HomeController homeController = new HomeController();
 		HashMap<String, Merchants> merchantsHash = convertMerchantsListToHashMap(this.merchants);
@@ -205,8 +235,8 @@ public class OneMessengerOneMerchantService {
 				String[] detailArray = (String[]) homeController.getDistanceDuration(
 						merchants.getMerLatitude(), 
 						merchants.getMerLongtitude(), 
-						latitudeCustomer, 
-						longtitudeCustomer);
+						locationCustomer.getLatitude(), //latitudeCustomer, 
+						locationCustomer.getLongtitude()); //longtitudeCustomer);
 				String[] detail = {String.valueOf(merchants.getMerID()),
 						detailArray[0], detailArray[1]};
 				merchantsToCustomerDetail.put(String.valueOf(merchants.getMerID()), detail);
@@ -248,18 +278,14 @@ public class OneMessengerOneMerchantService {
 			Double distance = distancePath1 + distancePath2;
 			
 			RoutePathDetail routPathDetail = new RoutePathDetail();
-			boolean fulltimeAdded = false;
-			/*while(!fulltimeAdded) {
-				
-			}*/
 			if (stationsHash.get(stationId) != null) {
 				routPathDetail.setStation(stationsHash.get(stationId));
-				routPathDetail.setLatitudeDelivery(latitudeCustomer);
-				routPathDetail.setLongtitudeDelivery(longtitudeCustomer);
+				routPathDetail.setLatitudeDelivery(locationCustomer.getLatitude());//latitudeCustomer);
+				routPathDetail.setLongtitudeDelivery(locationCustomer.getLongtitude());//longtitudeCustomer);
 				routPathDetail.setDuration(String.valueOf(duration));
 				routPathDetail.setDistance(String.valueOf(distance));
 				//*****************ADD FtID********************************
-				
+				//after sort
 				ArrayList<Merchants> mercList = new ArrayList<Merchants>();
 				mercList.add(merchant);
 				routPathDetail.setMerList(mercList);
@@ -268,6 +294,49 @@ public class OneMessengerOneMerchantService {
 		}
 		
 		List<RoutePathDetail> resultRoutePathDetail = sortResultRoutePathDetail(arrRoutePathDetail);
+		/*
+		 * add mess id
+		 */
+		//FullTime Available
+		//fullTimeMessengerInStation = fullTimeMessengerDao.getNumberOfMessengerInStation();
+		if (fullTimeMessengerInStation != null) {
+			HashMap<String, String[]> numberFullTimeAvailableInStationHash = convertNumberMessengerInStationListToHashMap(
+					fullTimeMessengerInStation);
+			HashMap<String, String[]> numberFullTimeAvailableInStationHashLeft = numberFullTimeAvailableInStationHash;
+			for (int i=0; i<resultRoutePathDetail.size(); i++) {
+				RoutePathDetail routePathDetail = resultRoutePathDetail.get(i);
+				String[] numberAvailable = numberFullTimeAvailableInStationHashLeft.get(
+						String.valueOf(routePathDetail.getStation().getStationId()));
+				/*if (Integer.valueOf(numberFullTimeAvailableInStationHashLeft.get(
+						String.valueOf(routePathDetail.getMerList().get(0).getMerID()))[1])
+						!= 0) {*/
+				if (Integer.valueOf(numberAvailable[1]) != 0) {
+					System.out.println(">>" + routePathDetail.getStation().getStationId());
+					System.out.println("**" + fullTimeDao.getAllStation());
+					int ftID = fullTimeDao.getFulltimeMessengerFreeByStationID(Long.valueOf(
+							routePathDetail.getStation().getStationId())).get(0);
+					routePathDetail.setFtID(ftID);
+					resultRoutePathDetail.remove(i);
+					resultRoutePathDetail.add(i,routePathDetail);
+					String[] merchantAndNumberAvailableMessenger = numberFullTimeAvailableInStationHashLeft.get(
+							String.valueOf(routePathDetail.getStation().getStationId()));
+					int numberAvailableMessenger = Integer.valueOf(merchantAndNumberAvailableMessenger[1]);
+					numberAvailableMessenger = numberAvailableMessenger - 1;
+					merchantAndNumberAvailableMessenger[1] = String.valueOf(numberAvailableMessenger);
+					numberFullTimeAvailableInStationHashLeft.put(
+							String.valueOf(routePathDetail.getStation().getStationId()), 
+							merchantAndNumberAvailableMessenger);
+				}
+				else {
+					resultRoutePathDetail.remove(i);
+				}
+			}
+		}
+		for (int i=0; i<resultRoutePathDetail.size(); i++) {
+			System.out.println("Merchant: " + resultRoutePathDetail.get(i).getMerList().get(0).getMerName()
+					+ " | Messenger Id: " + resultRoutePathDetail.get(i).getFtID());
+		}
+		
 		result = getBestResultRoutePathDetail(result, resultRoutePathDetail, merchantsHash);
 		ArrayList<RoutePathDetail> bestResultRoute = result.getAllRoutePath();
 		String totalDistance = bestResultRoute.get(bestResultRoute.size()-1).getDistance();
@@ -340,6 +409,16 @@ public class OneMessengerOneMerchantService {
 			}
 		});
 		return routePathDetail;
+	}
+	
+	private HashMap<String, String[]> convertNumberMessengerInStationListToHashMap(List<Object[]> numberMessengerInStation) {
+		HashMap<String, String[]> result = new HashMap<String, String[]>();
+		for (int i=0; i<numberMessengerInStation.size(); i++) {
+			String[] intArray = new String[]{numberMessengerInStation.get(i)[0] + "",
+					numberMessengerInStation.get(i)[1] + ""};
+			result.put(String.valueOf(numberMessengerInStation.get(i)[0]), intArray);
+		}
+		return result;
 	}
 	
 	private List<NodeDetailVer2> getBestResult(List<NodeDetailVer2> nodeDetailVer2, HashMap<String, Merchants> merchantsHash) {
