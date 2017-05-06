@@ -28,7 +28,7 @@ import com.fooddelivery.util.RoutePathDetail;
 import com.fooddelivery.util.VariableText;
 import com.fooddelivery.util.model.Location;
 
-
+@RestController
 public class OneMessengerOneMerchantService {
 	private static final Logger logger = LoggerFactory.getLogger(OneMessengerOneMerchantService.class);
 	
@@ -53,7 +53,8 @@ public class OneMessengerOneMerchantService {
 			List<Station> stations,
 			List<BikeStation> bikeStations,
 			HashMap<Integer, Double> hashMerCookingTime,
-			List<Object[]> fullTimeMessengerInStation
+			List<Object[]> fullTimeMessengerInStation,
+			FullTimeMessengerDao fullTimeDao
 	) throws InterruptedException {	
 		this.locationCustomer = locationCustomer;
 		this.timeAndDistanceDetail = timeAndDistanceDetail;
@@ -62,6 +63,7 @@ public class OneMessengerOneMerchantService {
 		this.bikeStations = bikeStations;
 		this.hashMerCookingTime = hashMerCookingTime;
 		this.fullTimeMessengerInStation = fullTimeMessengerInStation;
+		this.fullTimeDao = fullTimeDao;
 		
 		return oneMessengerForOneMerchants(bikeStations, hashMerCookingTime, fullTimeMessengerInStation);
 	}
@@ -299,6 +301,7 @@ public class OneMessengerOneMerchantService {
 		 */
 		//FullTime Available
 		//fullTimeMessengerInStation = fullTimeMessengerDao.getNumberOfMessengerInStation();
+		HashMap<String, Integer> newFullTimeAvailableHash = new HashMap<String, Integer>();
 		if (fullTimeMessengerInStation != null) {
 			HashMap<String, String[]> numberFullTimeAvailableInStationHash = convertNumberMessengerInStationListToHashMap(
 					fullTimeMessengerInStation);
@@ -311,10 +314,14 @@ public class OneMessengerOneMerchantService {
 						String.valueOf(routePathDetail.getMerList().get(0).getMerID()))[1])
 						!= 0) {*/
 				if (Integer.valueOf(numberAvailable[1]) != 0) {
-					System.out.println(">>" + routePathDetail.getStation().getStationId());
-					System.out.println("**" + fullTimeDao.getAllStation());
+					int k = 0;
+					if (newFullTimeAvailableHash.get(String.valueOf(routePathDetail.getStation().getStationId())) != null) {
+						k = newFullTimeAvailableHash.get(String.valueOf(
+								routePathDetail.getStation().getStationId()));
+					}
 					int ftID = fullTimeDao.getFulltimeMessengerFreeByStationID(Long.valueOf(
-							routePathDetail.getStation().getStationId())).get(0);
+							routePathDetail.getStation().getStationId())).get(k);
+					newFullTimeAvailableHash.put(String.valueOf(routePathDetail.getStation().getStationId()), k+1);
 					routePathDetail.setFtID(ftID);
 					resultRoutePathDetail.remove(i);
 					resultRoutePathDetail.add(i,routePathDetail);
@@ -338,6 +345,12 @@ public class OneMessengerOneMerchantService {
 		}
 		
 		result = getBestResultRoutePathDetail(result, resultRoutePathDetail, merchantsHash);
+		System.out.println("--------");
+		for (int i=0; i<result.getAllRoutePath().size(); i++) {
+			RoutePathDetail route = result.getAllRoutePath().get(i);
+			System.out.println("Merchant: " + route.getMerList().get(0).getMerName()
+					+ " | Messenger Id: " + route.getFtID());
+		}
 		ArrayList<RoutePathDetail> bestResultRoute = result.getAllRoutePath();
 		String totalDistance = bestResultRoute.get(bestResultRoute.size()-1).getDistance();
 		String totalDuration = bestResultRoute.get(bestResultRoute.size()-1).getDuration();

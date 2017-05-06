@@ -203,6 +203,6 @@ public class MerchantController {
         }
         return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
         
-    }	}		
+    }	
 	
 }

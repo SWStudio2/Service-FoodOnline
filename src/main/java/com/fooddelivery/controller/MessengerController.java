@@ -117,7 +117,8 @@ public class MessengerController {
 				List<Station> stations = getStationAvailable();
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 				bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
-						locationCustomer, timeAndDistanceDetail, merchants, stations, listStation, null, null);
+						locationCustomer, timeAndDistanceDetail, merchants, stations, listStation, null, null, 
+						fullTimeMessengerDao);
 				//bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation, null, null);		
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -132,7 +133,7 @@ public class MessengerController {
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 				bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 						locationCustomer, timeAndDistanceDetail, merchants, stations, 
-						listStation, null, null);
+						listStation, null, null, fullTimeMessengerDao);
 				//bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(listStation, null, null);
 				//P'YUI
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
@@ -155,7 +156,7 @@ public class MessengerController {
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 				bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 						locationCustomer, timeAndDistanceDetail, merchants, stations,
-						listStation, null, null);
+						listStation, null, null, fullTimeMessengerDao);
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -387,7 +388,7 @@ public class MessengerController {
 					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 					bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 							locationCustomer, timeAndDistanceDetail, merchants, stations,
-							listStation, hashMerCookingTime, fullTimeMessengerInStation);
+							listStation, hashMerCookingTime, fullTimeMessengerInStation, fullTimeMessengerDao);
 					/*bestTimeOneMessOneMerchantService = oneMess.oneMessengerForOneMerchants(
 							listStation, hashMerCookingTime, fullTimeMessengerInStation);*/
 				} catch (InterruptedException e) {
@@ -407,9 +408,8 @@ public class MessengerController {
 					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 					bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 							locationCustomer, timeAndDistanceDetail, merchants, stations,
-							listStation, hashMerCookingTime, fullTimeMessengerInStation);
+							listStation, hashMerCookingTime, fullTimeMessengerInStation, fullTimeMessengerDao);
 					//1 mess to many merchant
-					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -430,7 +430,7 @@ public class MessengerController {
 					OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 					bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 							locationCustomer, timeAndDistanceDetail, merchants, stations,
-							listStation, hashMerCookingTime, fullTimeMessengerInStation);
+							listStation, hashMerCookingTime, fullTimeMessengerInStation, fullTimeMessengerDao);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -606,35 +606,35 @@ public class MessengerController {
 				for (int i=0; i<bestTimeOneMessOneMerchantService.getAllRoutePath().size(); i++) {
 					RoutePathDetail tmpPath = bestTimeOneMessOneMerchantService.getAllRoutePath().get(i);
 					if(tmpPath.getMerList().size() == 1) {
-						Station tmpStation = tmpPath.getStation();
-						ArrayList<Integer> arrFullId = fullQuery.getFulltimeMessengerFreeByStationID(
-								tmpStation.getStationId());
-						if(arrFullId.size() > 0) {
-							int idMessenger = arrFullId.get(0);
-							int runningNo = 1;
-							Merchants tmpMerchant = tmpPath.getMerList().get(0);
-							for(int j = 0;j<seqOrderAndMerchant.size();j++) {
-								HashMap<String, Object> tmpSeqOrderMerchant = seqOrderAndMerchant.get(j);
-								int seqOrderMerID = (Integer)tmpSeqOrderMerchant.get("SEQOR_MER_ID");
-								int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
-								if(tmpMerchant.getMerID() == seqOrderMerID) {
-									logger.info("1mess. idMessenger" + idMessenger);
-									query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
-									fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
-									runningNo++;
-									break;
-								}
+						int idMessenger = tmpPath.getFtID();
+						int runningNo = 1;
+						Merchants tmpMerchant = tmpPath.getMerList().get(0);
+						for(int j = 0;j<seqOrderAndMerchant.size();j++) {
+							HashMap<String, Object> tmpSeqOrderMerchant = seqOrderAndMerchant.get(j);
+							int seqOrderMerID = (Integer)tmpSeqOrderMerchant.get("SEQOR_MER_ID");
+							int seqOrderID = (Integer)tmpSeqOrderMerchant.get("SEQOR_ID");
+							if(tmpMerchant.getMerID() == seqOrderMerID) {
+								logger.info("1mess. idMessenger" + idMessenger);
+								query.updateSequenceOrder(seqOrderID, idMessenger, runningNo);
+								fullQuery.updateFulltimeMessengerStatus(orderId, idMessenger);
+								runningNo++;
+								break;
 							}
 						}
-						int estimateTime = 99;
 						BigDecimal value = new BigDecimal(bestTimeOneMessOneMerchantService.getTotalDuration());
-						estimateTime = value.intValue();
+						int estimateTime = value.intValue();
 						Date currentDateTime = DateTime.getCurrentDateTime();
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(currentDateTime);
 						cal.add(Calendar.MINUTE, estimateTime);
 						currentDateTime = cal.getTime();
-						query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
+						
+						Orders order = ordersDao.getOrderByOrderId(orderId);
+						order.setOrderStatus(VariableText.ORDER_COOKING_STATUS);
+						order.setOrderEstimateTime(estimateTime);
+						order.setOrderEstimateDatetime(currentDateTime);
+						ordersDao.save(order);
+						
 						logger.info("esimate " + estimateTime);
 						msg = "updateSequenceRoutePath successfully";
 					}
