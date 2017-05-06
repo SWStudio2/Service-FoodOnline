@@ -36,10 +36,10 @@ public interface CustomerDao extends CrudRepository<Customer, Long> {
 	
 	 //SQL B1
 	 @Query(value="select IF("+
-			 "(Select ORDER_ID from orders where ORDER_ID = :order_id"+
-			 "and ORDER_CONFIRM_CODE = :confirmcode ),'Y','N') As CHK_CONFIRM" , 
+			 " (Select ORDER_ID from orders where ORDER_ID = :order_id"+
+			 " and ORDER_CONFIRM_CODE = :confirmcode ),'Y','N') As CHK_CONFIRM" , 
 	nativeQuery = true)
-	 public String verifyConfirmCodeCustomer(@Param("order_id") long order_id,
+	 public String verifyConfirmCodeCustomer(@Param("order_id") int order_id,
 			 @Param("confirmcode") String confirm_code);
 	 
 	 //SQL A2

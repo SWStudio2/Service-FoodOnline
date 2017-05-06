@@ -30,12 +30,13 @@ public interface FullTimeMessengerDao extends CrudRepository<FullTimeMessenger, 
 			, nativeQuery = true)
 	public List<FullTimeMessenger> findAll();
 
+	//SQL B4
 	@Modifying
 	@Query(value="UPDATE fulltime_messenger" +
 			" SET FULL_STATUS_ID = :status_id"
 			+ " WHERE FULL_ID = :full_id",
 			nativeQuery = true)
-	public void updateFullTimeStatus(@Param("full_id") long full_id,
+	public void updateFullTimeStatus(@Param("full_id") int full_id,
 									 @Param("status_id") int status_id);
 
 	@Query(value = "select FULL_BIKE_STATION_NOW, count(full_id) as count_fulltime "
