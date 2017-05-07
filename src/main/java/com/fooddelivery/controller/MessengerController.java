@@ -2,8 +2,10 @@ package com.fooddelivery.controller;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
-
 
 import com.fooddelivery.Model.BikePathDao;
 import com.fooddelivery.Model.BikeStation;
@@ -69,7 +71,7 @@ public class MessengerController {
 	@Autowired
 	private FullTimeMessengerDao fullTimeMessengerDao;
 	
-	@Autowired 
+	@Autowired
 	private StationDao staDao;
 	
 	@Autowired
@@ -116,7 +118,7 @@ public class MessengerController {
 
 		//String bestTimeOneMessOneService = "";
 		GroupPathDetail bestTimeOneMessOneMerchantService = new GroupPathDetail();
-		GroupPathDetail bestTimeTwoMessTwoService = new GroupPathDetail();
+		GroupPathDetail bestTimeTwoMessThreeMerService = new GroupPathDetail();
 		RoutePathDetail routePathOneMessThreeService = new RoutePathDetail();
 
 		if(list.size() == 1)
@@ -156,19 +158,30 @@ public class MessengerController {
 			try {
 				//Mike
 				routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude,null);
+
 				//YUI
+				//prepare default cooking time (pull from DB)
+				HashMap<Integer, Double> hashMerCookingTime = new HashMap<Integer, Double>();
+				for(int i = 0;i<merIDList.length;i++)
+				{
+					int cookingTime = merchantsDao.findMerCookTime(merIDList[i]);
+					hashMerCookingTime.put(merIDList[i], cookingTime*1.0);
+				}
 				TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
-				bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude, fullMessDao
-					      ,staDao,merchantsDao,bikePathDao);
+				bestTimeTwoMessThreeMerService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude,	fullMessDao
+						,staDao,merchantsDao,bikePathDao,hashMerCookingTime);
+				
 				//MINT
 				TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 				List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
 				List<Station> stations = getStationAvailable();
+
 				OneMessengerOneMerchantService oneMess = new OneMessengerOneMerchantService();
 				bestTimeOneMessOneMerchantService = oneMess.oneMessengerOneMerchantService(
 						locationCustomer, timeAndDistanceDetail, merchants, stations,
 						listStation, null, null, fullTimeMessengerDao);
 				//routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -183,9 +196,9 @@ public class MessengerController {
 		if (routePathOneMessThreeService.getDuration() != null && !routePathOneMessThreeService.getDuration().equals("")){
 			oneMessValue = Double.parseDouble(routePathOneMessThreeService.getDuration());
 		}
-
-		if (bestTimeTwoMessTwoService.getTotalDuration() != null && !bestTimeTwoMessTwoService.equals("")){
-			twoMessValue = Double.parseDouble(bestTimeTwoMessTwoService.getTotalDuration());
+		
+		if (bestTimeTwoMessThreeMerService.getTotalDuration() != null && !bestTimeTwoMessThreeMerService.equals("")){
+			twoMessValue = Double.parseDouble(bestTimeTwoMessThreeMerService.getTotalDuration());
 		}
 
 		if (bestTimeOneMessOneMerchantService.getTotalDuration() != null && !bestTimeOneMessOneMerchantService.equals("")){
@@ -423,6 +436,7 @@ public class MessengerController {
 							locationCustomer, timeAndDistanceDetail, merchants, stations,
 							listStation, hashMerCookingTime, fullTimeMessengerInStation, fullTimeMessengerDao);
 					//1 mess to many merchant
+					//routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -433,10 +447,12 @@ public class MessengerController {
 				try {
 					//Mike
 					routePathOneMessThreeService = this.searchFuncOneMessenger(list, cus_Latitude, cus_Longtitude,hashMerCookingTime);
+
 					//YUI
 					TwoMessThreeMercService twoMessService = new TwoMessThreeMercService();
 					bestTimeTwoMessTwoService = twoMessService.twoMessThreeMercService(list, cus_Latitude, cus_Longtitude, fullMessDao
-						      ,staDao,merchantsDao,bikePathDao);
+						      ,staDao,merchantsDao,bikePathDao,hashMerCookingTime);
+
 					//MINT
 					TimeAndDistanceDetail[] timeAndDistanceDetail = getBikePathByMerchants(merIDList);
 					List<Merchants> merchants = getMerchantsByMerchantsId(merIDList);
@@ -487,7 +503,7 @@ public class MessengerController {
 			}
 			else if(list.size() == 3)
 			{
-				chooseWay = "1Messenger";
+				chooseWay = "3Messenger";//*****
 				chooseTime = oneMessValue;
 				diffValue = chooseTime - twoMessValue;
 				if(diffValue > 10)

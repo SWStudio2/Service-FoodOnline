@@ -37,4 +37,8 @@ public interface BikePathDao extends CrudRepository<BikePath, Long> {
 	  		, nativeQuery = true)
 	public BikePath findBikePathFromId(@Param("sID") int sourceId,@Param("dID") int destId , @Param("type") String pathType );
 	
+	@Query(value = "SELECT * FROM bike_path WHERE bike_path_source_id in :sID "
+			+ "AND bike_path_destination_id in :dID AND bike_path_type = :type"
+	  		, nativeQuery = true)
+	public BikePath[] findBikePathFromIdArray(@Param("sID") int[] sourceIdArray,@Param("dID") int[] destIdArray , @Param("type") String pathType );
 }
