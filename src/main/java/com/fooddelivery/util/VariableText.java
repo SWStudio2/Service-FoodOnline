@@ -27,4 +27,9 @@ public class VariableText {
 	public static String NOTIFICATION_MSG_TYPE_REQUEST = "Request";
 	public static String NOTIFICATION_MSG_DETAIL_CREATE_ORDER = "ท่านมีออร์เดอรใหม่ 1 รายการ หมายเลขออร์เดอร์ ";
 
+	public static String REGISTER_SUCCESS = "%s ลงทะเบียนสำเร็จ";
+	public static String REGISTER_UNSUCCESS = "%s มีข้อมูลในระบบอยู่แล้ว";
+
+	public static String Y_FLAG = "Y";
+	public static String N_FLAG = "N";
 }

@@ -40,7 +40,7 @@ import com.fooddelivery.Model.Orders;
 import com.fooddelivery.Model.OrdersDao;
 import com.fooddelivery.Model.SequenceOrdersDao;
 
-@RequestMapping(value={"/service/customer"})
+//@RequestMapping(value={"/service/customer"})
 @RestController
 public class CustomerController {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
@@ -52,24 +52,25 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerDao custDao;
-	
+
 	@Autowired
 	private OrdersDao ordersDao;
-	
+
 
 	@Autowired
 	private NotificationInboxDao notiDao;
-	
+
 	@Autowired
 	private SequenceOrdersDao seqOrderDao;
-	
+
 	@Autowired
 	private FullTimeMessengerDao fulltimeDao;
-	
+
 	@Autowired
 	private BikeStationDao bikeStationDao;
-	
-	@RequestMapping(value={"/auth"} ,method=RequestMethod.POST)
+
+
+	@RequestMapping(value={"/service/customer/auth"} ,method=RequestMethod.POST)
 	public ResponseEntity<Response<HashMap>> authen(@RequestBody Customer cus){
 //		User user = new User();
 //		user.setId(1);
@@ -124,8 +125,8 @@ public class CustomerController {
 
 
 	}
-	
-	@RequestMapping(value="/confirmcode" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+
+	@RequestMapping(value="/service/orders/confirmcode/customer" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Response<BikeStation>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
@@ -134,14 +135,14 @@ public class CustomerController {
 		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
 		int full_id = (Integer) mapRequest.get("full_id");
 		List<Integer> merList = (List<Integer>)mapRequest.get("mer_id");
-		
+
 		String messeage = "";
 		String result = customerDao.verifyConfirmCodeCustomer(order_id, confirm_code);
 		if(result.equals("Y"))
 		{
 			//seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id);//SQL B3
 			fulltimeDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERIED_STATUS);//B4
-			
+
 			Orders currentOrder = ordersDao.getOrderByOrderId(order_id);
 			//MessengerController mesController = new MessengerController();
 			bikeBack = calculateNewStation(currentOrder.getOrderAddressLatitude(), currentOrder.getOrderAddressLongtitude());
@@ -154,21 +155,21 @@ public class CustomerController {
 			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
 			fullTimeMess.setFullOrderId("");
 			fulltimeDao.save(fullTimeMess);
-			
+
 			//check customer get all seq_order
 			if (seqOrderDao.checkDeliveriedAllMenu(Integer.valueOf(order_id)) == "Y") {
 				currentOrder.setOrderReceiveDatetime(DateTime.getCurrentDateTime());
 				currentOrder.setOrderStatus(VariableText.ORDER_RECEIVED_STATUS);
 				ordersDao.save(currentOrder);
 			}
-			
+
 			//Date currentDateTime = DateTime.getCurrentDateTime();
 			//customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
 			int cus_id = custDao.getCustomerIdByOrderId(order_id);
 			messeage = "Pass";
 			//Wait query update fulltime , order
-			
-			
+
+
 			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, bikeBack));
 		}
 		else
@@ -177,8 +178,8 @@ public class CustomerController {
 			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, null));
 		}
 
-	}		
-	
+	}
+
 	//************คำนวณหาจุดจอดใหม่***********************
 	/*
 	 * ให้เอาที่อยู่ลูกค้าสุดท้าย มาคิดหาระยะทางกับจุดจอดทั้งหมด
@@ -217,8 +218,8 @@ public class CustomerController {
 				fullTimeMessengerInStation);
 		for (Map.Entry entry : numberFullTimeAvailableInStationHash.entrySet()) {
 			String[] values = (String[])entry.getValue();
-		    for (int i=0; i<values.length; i++)
-		    	System.out.println(">" + entry.getKey() + " value: " + values[i]);
+			for (int i=0; i<values.length; i++)
+				System.out.println(">" + entry.getKey() + " value: " + values[i]);
 		}
 		for(int i=0; i<bikeStationList.size(); i++) {
 			BikeStation bikeStation = bikeStationList.get(i);
@@ -290,7 +291,7 @@ public class CustomerController {
 				result));*/
 		return result;
 	}
-	
+
 	private HashMap<String, String[]> convertNumberMessengerInStationListToHashMap(List<Object[]> numberMessengerInStation) {
 		HashMap<String, String[]> result = new HashMap<String, String[]>();
 		for (int i=0; i<numberMessengerInStation.size(); i++) {
@@ -326,5 +327,41 @@ public class CustomerController {
 			}
 		});
 		return bikeStationDistance;
+	}
+
+	@RequestMapping(value={"/service/customer/regis"} ,method=RequestMethod.POST)
+	public ResponseEntity<Response<HashMap>> regis(@RequestBody Customer cus){
+		List<Customer> customer = null;
+		HashMap<String,String> resultList = new HashMap<String, String>();
+
+		try {
+			logger.info("Check point 0");
+			String cusName =  cus.getCusUserName();
+			int count = customerDao.isCusEmailExist(cus.getCusUserName());
+			logger.info("Count {}",count);
+
+			if(count == 0){
+				logger.info("Pass");
+				Date currentDateTime = DateTime.getCurrentDateTime();
+				cus.setCusCreatedDate(currentDateTime);
+				customerDao.save(cus);
+				resultList.put("msg",String.format(VariableText.REGISTER_SUCCESS, cusName));
+				resultList.put("isPass",VariableText.Y_FLAG);
+			}else{
+				logger.info("Fail");
+				resultList.put("msg",String.format(VariableText.REGISTER_UNSUCCESS, cusName));
+				resultList.put("isPass",VariableText.N_FLAG);
+			}
+			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
+					"Call register successfully", resultList));
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			logger.info(ex.getMessage());
+			logger.info("Check point 2");
+			return null;
+		}
+
+
 	}
 }

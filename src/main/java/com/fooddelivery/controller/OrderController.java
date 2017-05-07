@@ -139,6 +139,7 @@ public class OrderController {
 					orderDetail.setOrderDetailAmount(order.getOrderDetailAmount());
 					orderDetail.setOrderRemark(order.getRemark());
 					orderDetail.setMenuId(order.getMenuId());
+					orderDetail.setOrderDetailStatus(VariableText.Y_FLAG);
 					orderDetail.setMerId(merchant.getMerId());
 					orderDetailDao.save(orderDetail);
 
@@ -480,7 +481,7 @@ public class OrderController {
 			if(isCurrentOrder.equalsIgnoreCase("Y")){
 				orderList = ordersDao.findLastOrderCusId(cusId);
 			}else{
-				orderList = ordersDao.findByOrderCusId(cusId);
+				orderList = ordersDao.findByOrderCusId(cusId, VariableText.ORDER_RECEIVED_STATUS);
 			}
 
 			System.out.println("Size of orders : "+orderList.size());
@@ -640,7 +641,7 @@ public class OrderController {
 				}
 				return ResponseEntity.ok(new Response<List<Orders>>(HttpStatus.OK.value(), "Query order sucessfully", orderList));
 			}else{
-				List<Orders> orderList = ordersDao.getHistoryOrderByCusId(cusId);
+				List<Orders> orderList = ordersDao.findByOrderCusId(cusId, VariableText.ORDER_RECEIVED_STATUS);
 				return ResponseEntity.ok(new Response<List<Orders>>(HttpStatus.OK.value(), "Query order sucessfully", orderList));
 			}
 		}catch(Exception e){

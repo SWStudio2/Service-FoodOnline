@@ -40,8 +40,9 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 							@Param("order_status") String order_status);
 
 
-	@Query(value="select * from orders o where o.order_cus_id = :order_cus_id" , nativeQuery = true)
-	public List<Orders> findByOrderCusId(@Param("order_cus_id") Long order_cus_id);
+	@Query(value="select * from orders where order_cus_id = :order_cus_id " +
+			"and order_status = :order_status order by order_id desc limit 5" , nativeQuery = true)
+	public List<Orders> findByOrderCusId(@Param("order_cus_id") long order_cus_id, @Param("order_status") int order_status);
 
 	@Query(value="select * from orders o where o.order_cus_id = :order_cus_id order by order_id desc limit 1" , nativeQuery = true)
 	public List<Orders> findLastOrderCusId(@Param("order_cus_id") Long order_cus_id);
@@ -140,9 +141,5 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			, nativeQuery = true)
 	public List<Orders> getCurrentOrderByCusId(@Param("cusId") long cusId);
 
-	@Query(value = "select * from orders "
-			+ "where order_cus_id = :cusId order by order_id desc"
-			, nativeQuery = true)
-	public List<Orders> getHistoryOrderByCusId(@Param("cusId") long cusId);
-
+	 
 }

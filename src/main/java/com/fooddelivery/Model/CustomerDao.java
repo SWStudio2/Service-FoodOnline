@@ -55,5 +55,10 @@ public interface CustomerDao extends CrudRepository<Customer, Long> {
 	 @Query(value="select order_cus_id from orders where order_id = :order_id", 
 	nativeQuery = true)
 	 public int getCustomerIdByOrderId(@Param("order_id") long order_id);
-	 
+
+	@Query(value = "select count(cus_id) "
+			+ "from customer "
+			+ "where cus_username = :username"
+			, nativeQuery = true)
+	public int isCusEmailExist(@Param("username") String username);
 }
