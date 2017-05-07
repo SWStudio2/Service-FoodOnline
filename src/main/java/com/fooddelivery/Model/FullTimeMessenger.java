@@ -49,7 +49,7 @@ public class FullTimeMessenger {
 	private String full_recommend_longtitude;
 
 	@Column(name = "full_order_id")
-	private String full_order_id;
+	private int full_order_id;
 
 	@Column(name = "full_bike_station_now")
 	private String full_bike_station_now;
@@ -186,11 +186,11 @@ public class FullTimeMessenger {
 	}
 
 
-	public String getFullOrderId() {
+	public int getFullOrderId() {
 		return full_order_id;
 	}
 
-	public void setFullOrderId(String fullOrderId) {
+	public void setFullOrderId(int fullOrderId) {
 		this.full_order_id = fullOrderId;
 	}
 

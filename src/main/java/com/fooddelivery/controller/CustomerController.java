@@ -153,11 +153,11 @@ public class CustomerController {
 			 */
 			FullTimeMessenger fullTimeMess = fulltimeDao.getFullTimeByFullId(full_id);
 			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
-			fullTimeMess.setFullOrderId("");
+			fullTimeMess.setFullOrderId(0);
 			fulltimeDao.save(fullTimeMess);
 
 			//check customer get all seq_order
-			if (seqOrderDao.checkDeliveriedAllMenu(Integer.valueOf(order_id)) == "Y") {
+			if (seqOrderDao.checkDeliveriedAllMenu(Integer.valueOf(order_id)).equals("Y")) {
 				currentOrder.setOrderReceiveDatetime(DateTime.getCurrentDateTime());
 				currentOrder.setOrderStatus(VariableText.ORDER_RECEIVED_STATUS);
 				ordersDao.save(currentOrder);
