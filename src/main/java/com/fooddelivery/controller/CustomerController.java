@@ -153,7 +153,7 @@ public class CustomerController {
 			 */
 			FullTimeMessenger fullTimeMess = fulltimeDao.getFullTimeByFullId(full_id);
 			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
-			fullTimeMess.setFullOrderId(0);
+			fullTimeMess.setFullOrderId(null);
 			fulltimeDao.save(fullTimeMess);
 
 			//check customer get all seq_order
