@@ -15,6 +15,7 @@ import com.fooddelivery.Model.FullTimeMessengerQuery;
 import com.fooddelivery.Model.Merchants;
 import com.fooddelivery.Model.MerchantsDao;
 import com.fooddelivery.Model.MerchantsQuery;
+import com.fooddelivery.Model.NotificationInbox;
 import com.fooddelivery.Model.NotificationInboxDao;
 import com.fooddelivery.Model.OrderDetail;
 import com.fooddelivery.Model.Orders;
@@ -539,6 +540,16 @@ public class MessengerController {
 					query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
 					logger.info("esimate " + estimateTime);
 					msg = "updateSequenceRoutePath successfully";
+					
+                    NotificationInbox noti = new NotificationInbox();
+                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+                    noti.setNoti_ref_id(idMessenger);//
+                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+                    noti.setNoti_read_flag(0);
+                    noti.setNoti_type("Messenger");
+                    noti.setNoti_order_id(orderId);
+                    noti.setNoti_created_date(new Date());
+                    notiDao.save(noti);					
 				}
 
 			}
@@ -570,6 +581,15 @@ public class MessengerController {
 									break;
 								}
 							}
+		                    NotificationInbox noti = new NotificationInbox();
+		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+		                    noti.setNoti_ref_id(idMessenger);//
+		                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+		                    noti.setNoti_read_flag(0);
+		                    noti.setNoti_type("Messenger");
+		                    noti.setNoti_order_id(orderId);
+		                    noti.setNoti_created_date(new Date());
+		                    notiDao.save(noti);							
 						}
 
 					}
@@ -599,6 +619,15 @@ public class MessengerController {
 									}
 								}
 							}
+		                    NotificationInbox noti = new NotificationInbox();
+		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+		                    noti.setNoti_ref_id(idMessenger);//
+		                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+		                    noti.setNoti_read_flag(0);
+		                    noti.setNoti_type("Messenger");
+		                    noti.setNoti_order_id(orderId);
+		                    noti.setNoti_created_date(new Date());
+		                    notiDao.save(noti);							
 						}
 					}
 				}
@@ -650,6 +679,16 @@ public class MessengerController {
 						
 						logger.info("esimate " + estimateTime);
 						msg = "updateSequenceRoutePath successfully";
+						
+	                    NotificationInbox noti = new NotificationInbox();
+	                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+	                    noti.setNoti_ref_id(idMessenger);//
+	                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+	                    noti.setNoti_read_flag(0);
+	                    noti.setNoti_type("Messenger");
+	                    noti.setNoti_order_id(orderId);
+	                    noti.setNoti_created_date(new Date());
+	                    notiDao.save(noti);						
 					}
 				}
 			}

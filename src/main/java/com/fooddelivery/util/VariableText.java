@@ -24,7 +24,7 @@ public class VariableText {
 	
 	public static String NOTIFICATION_TYPE_MERCHANT = "merchant";
 	public static String NOTIFICATION_MSG_TYPE_ACKNOWLEDGE = "acknowledge";
-	
+	public static String NOTIFICATION_MSG_TYPE_REQUEST = "Request";
 	public static String NOTIFICATION_MSG_DETAIL_CREATE_ORDER = "ท่านมีออร์เดอรใหม่ 1 รายการ หมายเลขออร์เดอร์ ";
 
 }
