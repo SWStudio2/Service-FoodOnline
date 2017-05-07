@@ -65,7 +65,7 @@ public class MerchantController {
 	private CustomerDao custDao;
 
 	
-	final static String COOKSTATUS = "12,13";
+	final static int COOKSTATUS = 12;
 	@RequestMapping(value="/service/merchant/getall" , method = RequestMethod.POST)
 	@ResponseBody
 	public List<Merchants> getMerchants(@RequestParam(value = "mername" , required = false) Optional<String> mername){
@@ -173,9 +173,10 @@ public class MerchantController {
            
               
                 if(ordersDao.chkReceiveAllMerchantOrderPart1(order_id, VariableText.MERCHANT_RECEIVED_STATUS) == 
-                	ordersDao.chkReceiveAllMerchantOrderPart2(order_id))
+                	ordersDao.chkReceiveAllMerchantOrderPart2(order_id,COOKSTATUS))
                 {
-                    ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
+                    logger.info("UPDATE ORDER STATUS ORDER_DELIVERING_STATUS = 3");
+                	ordersDao.updateOrderStatus(VariableText.ORDER_DELIVERING_STATUS, order_id);
                     int cus_id = custDao.getCustomerIdByOrderId(order_id);
                     com.fooddelivery.Model.Orders tmpOrder = ordersDao.getOrderByOrderId(order_id);
                     NotificationInbox noti = new NotificationInbox();

@@ -96,10 +96,10 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 	//SQL test2
 	@Query(value=" select count(seqor_id) "+
 			" from sequence_orders " +
-			" where seqor_cook_status in (12,13) " +
+			" where seqor_cook_status = :seqorcookstatus " +
 			" and seqor_order_id = :seqorder " ,
 			nativeQuery = true)
-	public int chkReceiveAllMerchantOrderPart2(@Param("seqorder") int order_id);		
+	public int chkReceiveAllMerchantOrderPart2(@Param("seqorder") int order_id,@Param("seqorcookstatus") int seqorcookstatus);		
 
 	//SQL A4
 	@Modifying
@@ -123,13 +123,13 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			" from sequence_orders"+
 			" where seqor_order_id = :seqorder "+
 			" and seqor_mess_id = :fulltimeid "+
-			" and seqor_cook_status in (:seqorcookstatus )"+
+			" and seqor_cook_status = :seqorcookstatus "+
 			" ),'Y','N') As CHK_RECALL" ,
 			nativeQuery = true)
 	public String chkReceiveAllMerchantForMessenger(@Param("seqorder") int seqorder,
 													@Param("fulltimeid") int fulltimeid,
 													@Param("receivestatus") int receivestatus,
-													@Param("seqorcookstatus") String seqorcookstatus);
+													@Param("seqorcookstatus") int seqorcookstatus);
 
 	@Query(value = "select * from orders "
 			+ "where order_id = :orderId"
