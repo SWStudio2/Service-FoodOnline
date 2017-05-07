@@ -553,7 +553,7 @@ public class MessengerController {
 					cal.setTime(currentDateTime);
 					cal.add(Calendar.MINUTE, estimateTime);
 					currentDateTime = cal.getTime();
-					query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
+					query.updateEstimateTimeToOrder(orderId, estimateTime);
 					logger.info("esimate " + estimateTime);
 					msg = "updateSequenceRoutePath successfully";
 					
@@ -655,7 +655,7 @@ public class MessengerController {
 				cal.setTime(currentDateTime);
 				cal.add(Calendar.MINUTE, estimateTime);
 				currentDateTime = cal.getTime();
-				query.updateEstimateTimeToOrder(orderId, estimateTime,currentDateTime);
+				query.updateEstimateTimeToOrder(orderId, estimateTime);
 				logger.info("esimate " + estimateTime);
 				msg = "updateSequenceRoutePath successfully";
 			}

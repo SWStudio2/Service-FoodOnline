@@ -299,7 +299,7 @@ public class UtilsQuery {
 		  return resultText;
 	}
 	
-	public static String updateEstimateTimeToOrder(int orderId,int estimateTime,Date dateTime)
+	public static String updateEstimateTimeToOrder(int orderId,int estimateTime)
 	{
 		  Connection connect = null;
 			Statement s = null;
@@ -326,7 +326,7 @@ public class UtilsQuery {
 				sqlBuffer.append("UPDATE orders     \n ");
 				sqlBuffer.append("  SET ORDER_STATUS  = "+ WAILMEAL + ",  \n ");
 				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + ",   \n ");
-				sqlBuffer.append("  ORDER_ESTIMATE_DATETIME =  " +dateTime + "   \n ");
+				sqlBuffer.append("  ORDER_ESTIMATE_DATETIME =  NOW()   \n ");
 				sqlBuffer.append("  WHERE ORDER_ID = "+ orderId+"  \n ");
 				
 				sql = sqlBuffer.toString();	
