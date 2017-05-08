@@ -42,18 +42,19 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	@Query(value = "select * from sequence_orders where SEQOR_ORDER_ID = :order_id and SEQOR_MER_ID = :mer_id"
 			, nativeQuery = true)
 	public List<SequenceOrders> getSequenceOrderForUpdateStatus(@Param("order_id") int order_id,@Param("mer_id") int mer_id);
-	
+
 	//SQL B1
 	@Modifying
 	@Query(value="UPDATE sequence_orders SET" +
-			" SEQOR_DELIVERY_DATETIME = NOW(),"
+			" SEQOR_DELIVERY_DATETIME = :currentDateTime,"
 			+ "  SEQOR_RECEIVE_STATUS = :receive_status"
 			+ " where SEQOR_ORDER_ID = :order_id"
 			+ " and SEQOR_MESS_ID = :messId" ,
 			nativeQuery = true)
 	public void updateReceiveStatusSeqOrder(@Param("receive_status") int receive_status,@Param("order_id") int order_id,
-									@Param("messId") int messId);	
-	
+											@Param("messId") int messId, @Param("currentDateTime") String currentDateTime);
+
+	/
 	//SQL B5
 	@Query(value = "select IF( "
 			+ "( select count(seqor_id) "

@@ -120,7 +120,7 @@ public class OrderController {
 			//confirm code
 			String confirmOrderCode = generateOrderConfirmCode();
 			orders.setOrderConfirmCode(confirmOrderCode);
-			ordersDao.save(orders);
+			orders = ordersDao.save(orders);
 
 			//logger.info("id: " + orders.getOrderId());
 
@@ -446,12 +446,13 @@ public class OrderController {
 
 	}
 
-	@RequestMapping(value="/service/orders/noti/accept/{notiId}" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/service/orders/noti/accept/{notiId}" , method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiid") int noti_id)
+	public ResponseEntity<Response<String>> acceptNoti(@PathVariable("notiId") int noti_id)
 	{
 
 		String messeage = "";
+		logger.info("noti_id {} ",noti_id);
 		try {
 
 			notiDao.updateNotiReadFlagByNotiId(noti_id);
@@ -648,6 +649,31 @@ public class OrderController {
 			logger.info(e.getMessage());
 			return null;
 		}
+	}
+
+	@RequestMapping(value="/service/orders/verifycurrent/{cusId}" , method = RequestMethod.GET)
+	public ResponseEntity<Response<Map<String, Object>>> haveCurrentOrder(@PathVariable("cusId") int cusId)
+	{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String messeage = "";
+		try {
+			logger.info("cusId {}", cusId);
+			String status = VariableText.ORDER_WAITING_RESPONSE_STATUS+","+VariableText.ORDER_COOKING_STATUS+","+VariableText.ORDER_DELIVERING_STATUS;
+			logger.info("status {}", status);
+			int count = ordersDao.isCurrentOrderIsExist(cusId);
+			if (count > 0) {
+				dataMap.put("result",VariableText.Y_FLAG);
+			}else{
+				dataMap.put("result",VariableText.N_FLAG);
+			}
+
+		}
+		catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+		return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(), "Check current order successfully", dataMap));
+
 	}
 
 }

@@ -141,5 +141,10 @@ public interface OrdersDao extends CrudRepository<Orders, Long> {
 			, nativeQuery = true)
 	public List<Orders> getCurrentOrderByCusId(@Param("cusId") long cusId);
 
-	 
+
+	@Query(value = "select count(*) from orders "
+			+ "where order_cus_id = :cusId and order_status in (1,2,3)"
+			, nativeQuery = true)
+	public int isCurrentOrderIsExist(@Param("cusId") long cusId);
+
 }

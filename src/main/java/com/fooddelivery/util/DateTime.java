@@ -33,21 +33,13 @@ public class DateTime {
 		date = dateFormat.parse(dateTimeString.toString());
 		return date;
 	}
-	
-	/*public static void main(String[] args) throws ParseException {
-		System.out.println("TEST");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		System.out.println(dateFormat.format(getDateTime(dateFormat.format(getCurrentDateTime()))));
-		
-		
-		Date currentDateTime = DateTime.getCurrentDateTime();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(currentDateTime);
-		cal.add(Calendar.MINUTE, 34);
-		currentDateTime = cal.getTime();
-		System.out.println("newTime: " + dateFormat.parse(String.valueOf(currentDateTime)));
-		
-	}*/
+	public static String getCurrrentDateTimeString() {
+		String dateTimeStr = "";
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		dateTimeStr = dateFormat.format(getCurrentDateTime());
+
+		return dateTimeStr;
+	}
 
 	
 }

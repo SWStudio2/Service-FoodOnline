@@ -321,12 +321,12 @@ public class UtilsQuery {
 				s = connect.createStatement();
 							
 				String sql = "";
-				
-				StringBuffer sqlBuffer = new StringBuffer();  
+
+				StringBuffer sqlBuffer = new StringBuffer();
 				sqlBuffer.append("UPDATE orders     \n ");
 				sqlBuffer.append("  SET ORDER_STATUS  = "+ WAILMEAL + ",  \n ");
-				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + ",   \n ");
-				sqlBuffer.append("  ORDER_ESTIMATE_DATETIME =  NOW()   \n ");
+				sqlBuffer.append("  ORDER_ESTIMATE_TIME =  " +estimateTime + "   \n ");
+				sqlBuffer.append("  ORDER_ESTIMATE_DATETIME =  "+ DateTime.getCurrrentDateTimeString() +" \n ");
 				sqlBuffer.append("  WHERE ORDER_ID = "+ orderId+"  \n ");
 				
 				sql = sqlBuffer.toString();	

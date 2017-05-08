@@ -10,26 +10,27 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "notification_inbox")
 public class NotificationInbox {
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "noti_id")
 	private int noti_id;
-	
+
 	@NotNull
 	@Column(name = "noti_ref_id")
 	private int noti_ref_id;
-	
+
 	@NotNull
 	@Column(name = "noti_order_id")
-	private int noti_order_id;	
-	
+	private int noti_order_id;
+
 	@NotNull
 	@Column(name = "noti_type")
 	private String noti_type;
@@ -44,14 +45,15 @@ public class NotificationInbox {
 
 	@Column(name = "noti_read_flag")
 	private int noti_read_flag;
-	
-	@NotNull
-	@Column(name = "noti_created_date")
-	private Date noti_created_date;	
 
-	
+	@NotNull
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = "noti_created_date")
+	private Date noti_created_date;
+
+
 	public NotificationInbox() {}
-	
+
 	public NotificationInbox(
 			int noti_id,
 			int noti_ref_id,
@@ -135,5 +137,5 @@ public class NotificationInbox {
 	}
 
 
-	
+
 }

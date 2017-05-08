@@ -717,9 +717,8 @@ public class MessengerController {
 	  return ResponseEntity.ok(new Response<String>(HttpStatus.OK.value(),msg, "Success"));
 
 	 }
-	  
 	@RequestMapping(value={"service/fulltime/auth"} ,method=RequestMethod.POST)
-	public ResponseEntity<Response<HashMap>> authen(@RequestBody FullTimeMessenger full){
+	public ResponseEntity<Response<FullTimeMessenger>> authen(@RequestBody FullTimeMessenger full){
 		List<FullTimeMessenger> fullMess = null;
 		HashMap<String,String> resultList = new HashMap<String, String>();
 
@@ -732,24 +731,17 @@ public class MessengerController {
 
 			if(fullMess.size() != 0){
 				FullTimeMessenger fullMess1 = fullMess.get(0);
-				resultList.put("full_id", String.valueOf(fullMess1.getFullId()));
-				resultList.put("full_name", fullMess1.getFullName());
-				resultList.put("full_contact_number", fullMess1.getFullContactNumber());
-				resultList.put("full_email", fullMess1.getFullEmail());
-				resultList.put("full_status_id", String.valueOf(fullMess1.getFullStatusId()));
-				resultList.put("full_recommend_lattitude", fullMess1.getFullRecommendLattitude());
-				resultList.put("full_recommend_longtitude", fullMess1.getFullRecommendLongtitude());
+				fullMess1.setFullEmail("");
+				fullMess1.setFullPassword("");
 
+				return ResponseEntity.ok(new Response<FullTimeMessenger>(HttpStatus.OK.value(),
+						"Login successfully", fullMess1));
 
-				logger.info(""+resultList);
 			}else{
 				logger.info("Check point 1");
 				return null;
 			}
 
-
-			return ResponseEntity.ok(new Response<HashMap>(HttpStatus.OK.value(),
-					"Login successfully", resultList));
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -758,7 +750,7 @@ public class MessengerController {
 			return null;
 		}
 	}
-	
+
 	private TimeAndDistanceDetail[] getBikePathByMerchants(int[] merchantsId) {
 		TimeAndDistanceDetail[] result = null;
 		try {
