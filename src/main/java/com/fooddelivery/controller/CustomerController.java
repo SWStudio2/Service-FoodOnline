@@ -152,11 +152,10 @@ public class CustomerController {
 			 * bike station now stationId
 			 * and clear full_order_id ให้เป้น ""-blank or null
 			 */
-			Integer a = null;
 
 			FullTimeMessenger fullTimeMess = fulltimeDao.getFullTimeByFullId(full_id);
 			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
-			fullTimeMess.setFullOrderId(null);
+			fullTimeMess.setFullOrderId(0);
 			fulltimeDao.save(fullTimeMess);
 
 			//check customer get all seq_order
