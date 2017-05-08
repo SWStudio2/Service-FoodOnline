@@ -3,6 +3,8 @@ package com.fooddelivery.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import java.util.Date;
 import java.util.List;
@@ -55,7 +57,8 @@ public class FullTimeMessenger {
 	private String full_bike_station_now;
 
 	//--------------RELATION----------------
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	 @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "full_order_id", referencedColumnName="order_id", insertable = false, updatable = false)
 	@Fetch(FetchMode.SELECT)
 	private Orders order;

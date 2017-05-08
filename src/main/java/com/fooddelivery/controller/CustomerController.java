@@ -128,8 +128,9 @@ public class CustomerController {
 
 	@RequestMapping(value="/service/orders/confirmcode/customer" , method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Response<BikeStation>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
+	public ResponseEntity<Response<Map<String, Object>>> verifyConfirmCustomer(@RequestBody Map<String, Object> mapRequest)
 	{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 		BikeStation bikeBack = new BikeStation();
 		int order_id = (Integer) mapRequest.get("order_id");
 		String confirm_code = (String) mapRequest.get("seqor_confirm_code");
@@ -151,6 +152,8 @@ public class CustomerController {
 			 * bike station now stationId
 			 * and clear full_order_id ให้เป้น ""-blank or null
 			 */
+			Integer a = null;
+
 			FullTimeMessenger fullTimeMess = fulltimeDao.getFullTimeByFullId(full_id);
 			fullTimeMess.setFull_bike_station_now(String.valueOf(bikeBack.getBikeStationId()));
 			fullTimeMess.setFullOrderId(null);
@@ -166,16 +169,20 @@ public class CustomerController {
 			//Date currentDateTime = DateTime.getCurrentDateTime();
 			//customerDao.updateReceiveStatusCustomer(currentDateTime.toString(), VariableText.ORDER_RECEIVED_STATUS, order_id);
 			int cus_id = custDao.getCustomerIdByOrderId(order_id);
-			messeage = "Pass";
+			messeage = "Call order confirm code successfully";
 			//Wait query update fulltime , order
-
-
-			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, bikeBack));
+			dataMap.put("bikeStation", bikeBack);
+			dataMap.put("isPass", "Y");
+			dataMap.put("order_id", order_id);
+			dataMap.put("order_status", currentOrder.getStatusConfig());
+			return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
 		}
 		else
 		{
 			messeage = "verify Confirm Code Customer incorrenct";
-			return ResponseEntity.ok(new Response<BikeStation>(HttpStatus.OK.value(), messeage, null));
+			dataMap.put("isPass", "N");
+			dataMap.put("order_id", order_id);
+			return ResponseEntity.ok(new Response<Map<String, Object>>(HttpStatus.OK.value(),messeage, dataMap));
 		}
 
 	}
