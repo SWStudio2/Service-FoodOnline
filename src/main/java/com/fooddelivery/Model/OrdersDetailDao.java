@@ -38,7 +38,12 @@ public interface OrdersDetailDao extends CrudRepository<OrderDetail, Long> {
 
 
 	@Query(value="select distinct "
-			+"o.*,"
+			+"o.ORDER_ID, o.ORDER_CUS_ID, o.ORDER_ADDRESS, o.ORDER_ADDRESS_LATITUDE, "
+			+ "o.ORDER_ADDRESS_LONGTITUDE, o.ORDER_CREATED_DATETIME, "
+			+ "o.ORDER_RECEIVE_DATETIME, o.ORDER_DELIVERY_RATE, o.ORDER_TOTAL_PRICE, "
+			+ "o.ORDER_DISTANCE, o.ORDER_STATUS, o.ORDER_FOOD_PRICE, o.ORDER_DELIVERY_PRICE, "
+			+ "o.ORDER_CONFIRM_CODE, o.ORDER_ESTIMATE_TIME, o.ORDER_ESTIMATE_DATETIME,"
+			+ "o.ORDER_PAYMENT_TYPE,"
 			+"m.menu_id,"
 			+"m.menu_name,"
 			+"m.menu_price,"

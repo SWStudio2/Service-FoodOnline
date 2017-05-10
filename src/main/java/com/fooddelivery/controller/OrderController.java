@@ -473,7 +473,7 @@ public class OrderController {
 	public ResponseEntity<Response<List<CustOrder>>> getOrderDetail(@RequestBody Map<String, String> json){
 		Long cusId = Long.valueOf(json.get("cusId"));
 		String isCurrentOrder = json.get("isCurrentOrder");
-
+		
 		try {
 			//final output
 			List<CustOrder> custOrderList = new ArrayList<CustOrder>();
@@ -517,13 +517,14 @@ public class OrderController {
 						result.setOrder_confirm_code((String) objectArray[13]);
 						result.setOrder_estimate_time((Integer) objectArray[14]);
 						result.setOrder_estimate_datetime((Date) objectArray[15]);
-						result.setMenu_id((Integer) objectArray[16]);
-						result.setMenu_name((String) objectArray[17]);
-						result.setMenu_price((Float) objectArray[18]);
-						result.setOrder_detail_amount((Integer) objectArray[19]);
-						result.setOrder_remark((String) objectArray[20]);
-						result.setOption_total_price((Double) objectArray[21]);
-						result.setMenu_total_price((Double) objectArray[22]);
+						result.setPayment_type((String) objectArray[16]);
+						result.setMenu_id((Integer) objectArray[17]);
+						result.setMenu_name((String) objectArray[18]);
+						result.setMenu_price((Float) objectArray[19]);
+						result.setOrder_detail_amount((Integer) objectArray[20]);
+						result.setOrder_remark((String) objectArray[21]);
+						result.setOption_total_price((Double) objectArray[22]);
+						result.setMenu_total_price((Double) objectArray[23]);
 						orderHeadAndDetList.add(result);
 					}
 				}
@@ -606,7 +607,7 @@ public class OrderController {
 
 				custOrderList.add(custOrder);
 			}
-
+			logger.info("Get Order Success.");
 			return ResponseEntity.ok(new Response<List<CustOrder>>(HttpStatus.OK.value(),"Query order sucessfully", custOrderList));
 		}catch (Exception e) {
 			logger.info(e.getMessage());
@@ -640,6 +641,7 @@ public class OrderController {
 					}
 					orderList.get(0).setSequenceOrders(mappedSeqOrdersList);
 				}
+				
 				return ResponseEntity.ok(new Response<List<Orders>>(HttpStatus.OK.value(), "Query order sucessfully", orderList));
 			}else{
 				List<Orders> orderList = ordersDao.findByOrderCusId(cusId, VariableText.ORDER_RECEIVED_STATUS);

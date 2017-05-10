@@ -60,8 +60,16 @@ public class OrderHeaderAndDetail {
 	
 	private List<MerchantOrder> merchantOrderList;
 	
+	private String payment_type;
 	
-	
+
+	public String getPayment_type() {
+		return payment_type;
+	}
+
+	public void setPayment_type(String payment_type) {
+		this.payment_type = payment_type;
+	}
 
 	public Integer getMenu_id() {
 		return menu_id;

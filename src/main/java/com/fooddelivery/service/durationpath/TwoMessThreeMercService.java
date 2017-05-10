@@ -50,9 +50,9 @@ public class TwoMessThreeMercService {
 		ArrayList<Integer> merIdArray = (ArrayList<Integer>) mapRequest.get("merIdArray");
 		String cus_Latitude = (String) mapRequest.get("lat");
 		String cus_Longtitude = (String) mapRequest.get("lng");
-		System.out.println("MerIDArray " +merIdArray);
-		System.out.println("cus_Latitude " +cus_Latitude);
-		System.out.println("cus_Longtitude " +cus_Longtitude);
+//		System.out.println("MerIDArray " +merIdArray);
+//		System.out.println("cus_Latitude " +cus_Latitude);
+//		System.out.println("cus_Longtitude " +cus_Longtitude);
 		return twoMessThreeMercService(merIdArray, cus_Latitude, cus_Longtitude,this.fullMessDao,
 										this.stationDao,this.merchantDao,this.bikePathDao,hashMerCookingTime);
 	}
@@ -87,13 +87,7 @@ public class TwoMessThreeMercService {
 				merIdArray2[i] = merIdArray.get(i);
 				
 			}
-			System.out.println("merIdAdjust" + merIdAdjust);
-			//===================== For Test ===========================
-//			List<Integer> merId = new ArrayList<Integer>();
-//			merId.add(1);
-//			merId.add(2);
-//			merId.add(3);
-//			merIdAdjust = "1,2,3";
+//			System.out.println("merIdAdjust" + merIdAdjust);
 			
 			Merchants[] merList = merDao.queryMerChantByID(merIdAdjust);
 			HomeController home = new HomeController();
@@ -137,7 +131,7 @@ public class TwoMessThreeMercService {
 				String pathString = bikePath.getBike_path_source_id() + "_"
 									+ bikePath.getBike_path_destination_id() + "_"
 									+ bikePath.getBike_path_type();
-				System.out.println(pathString);
+//				System.out.println(pathString);
 				bikePathHashMap.put(pathString, bikePath);
 			}
 			
@@ -146,7 +140,7 @@ public class TwoMessThreeMercService {
 				String pathString = bikePath.getBike_path_source_id() + "_"
 									+ bikePath.getBike_path_destination_id() + "_"
 									+ bikePath.getBike_path_type();
-				System.out.println(pathString);
+//				System.out.println(pathString);
 				bikePathHashMap.put(pathString, bikePath);
 			}
 			System.out.println("bikePathHashMap size="+bikePathHashMap.size());
@@ -190,7 +184,7 @@ public class TwoMessThreeMercService {
 						
 						
 						for(int m=0;m<stationList.size();m++){
-							System.out.println("stationEx : [" +k +"] stationEn : [" +m +"]");
+//							System.out.println("stationEx : [" +k +"] stationEn : [" +m +"]");
 							int currAmtFT = amtFTMap.get(stationList.get(m).getStationId());
 							RoutePathDetail routePath2 = new RoutePathDetail();
 							if(k == m &&  currAmtFT >= 2 ){
@@ -199,12 +193,12 @@ public class TwoMessThreeMercService {
 								routePath2.setStation(stationList.get(m));
 								routePath2.setLatitudeDelivery(cus_Latitude);
 								routePath2.setLongtitudeDelivery(cus_Longtitude);
-								System.out.println("Add Path");
+//								System.out.println("Add Path");
 							}else if(k == m && currAmtFT < 2){
-								System.out.println("Ignore");
+//								System.out.println("Ignore");
 								continue;
 							}else{
-								System.out.println("Add Path");
+//								System.out.println("Add Path");
 								//set RoutePathDetail of 1 Merchant
 								routePath2.setMerList(mercList2);
 								routePath2.setStation(stationList.get(m));
