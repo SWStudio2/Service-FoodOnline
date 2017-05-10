@@ -141,7 +141,8 @@ public class CustomerController {
 		String result = customerDao.verifyConfirmCodeCustomer(order_id, confirm_code);
 		if(result.equals("Y"))
 		{
-			seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id);//SQL B3
+			seqOrderDao.updateReceiveStatusSeqOrder(VariableText.MESSENGER_DELIVERIED_STATUS, order_id, full_id,
+					DateTime.getCurrrentDateTimeString());//SQL B3
 			fulltimeDao.updateFullTimeStatus(full_id, VariableText.MESSENGER_DELIVERIED_STATUS);//B4
 
 			Orders currentOrder = ordersDao.getOrderByOrderId(order_id);
