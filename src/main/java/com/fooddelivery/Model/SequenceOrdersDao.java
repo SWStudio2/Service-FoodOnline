@@ -54,7 +54,7 @@ public interface SequenceOrdersDao extends CrudRepository<SequenceOrders, Long> 
 	public void updateReceiveStatusSeqOrder(@Param("receive_status") int receive_status,@Param("order_id") int order_id,
 											@Param("messId") int messId, @Param("currentDateTime") String currentDateTime);
 
-	/
+	
 	//SQL B5
 	@Query(value = "select IF( "
 			+ "( select count(seqor_id) "

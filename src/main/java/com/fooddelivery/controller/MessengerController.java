@@ -11,6 +11,7 @@ import com.fooddelivery.Model.BikePathDao;
 import com.fooddelivery.Model.BikeStation;
 import com.fooddelivery.Model.BikeStationDao;
 import com.fooddelivery.Model.Customer;
+import com.fooddelivery.Model.CustomerDao;
 import com.fooddelivery.Model.FullTimeMessenger;
 import com.fooddelivery.Model.FullTimeMessengerDao;
 import com.fooddelivery.Model.FullTimeMessengerQuery;
@@ -77,6 +78,8 @@ public class MessengerController {
 	@Autowired
 	private BikePathDao bikePathDao;
 
+	@Autowired
+	private CustomerDao custDao;
 
 	@RequestMapping(value="/service/getestimatedtime", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response<Map<String, Object>>> getEstimatedTime(
@@ -558,16 +561,26 @@ public class MessengerController {
 					msg = "updateSequenceRoutePath successfully";
 					
                     NotificationInbox noti = new NotificationInbox();
-                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + " กรุณากดยืนยันเพื่อเริ่มงาน");
                     noti.setNoti_ref_id(idMessenger);//
                     noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
                     noti.setNoti_read_flag(0);
                     noti.setNoti_type("Messenger");
                     noti.setNoti_order_id(orderId);
                     noti.setNoti_created_date(new Date());
-                    notiDao.save(noti);					
+                    notiDao.save(noti);
+                    	                    
 				}
-
+				//Send noti to customer
+                NotificationInbox notiToCustomer = new NotificationInbox();
+                notiToCustomer.setNoti_message_detail("ออร์เดอร์รหัส " + orderId + " ร้านค้ากำลังทำอาหาร");
+                notiToCustomer.setNoti_ref_id(custDao.getCustomerIdByOrderId(orderId));//
+                notiToCustomer.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+                notiToCustomer.setNoti_read_flag(0);
+                notiToCustomer.setNoti_type("Customer");
+                notiToCustomer.setNoti_order_id(orderId);
+                notiToCustomer.setNoti_created_date(new Date());
+                notiDao.save(notiToCustomer);		
 			}
 			else if(chooseWay.equals("2Messenger"))
 			{
@@ -598,14 +611,14 @@ public class MessengerController {
 								}
 							}
 		                    NotificationInbox noti = new NotificationInbox();
-		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + " กรุณากดยืนยันเพื่อเริ่มงาน");
 		                    noti.setNoti_ref_id(idMessenger);//
 		                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
 		                    noti.setNoti_read_flag(0);
 		                    noti.setNoti_type("Messenger");
 		                    noti.setNoti_order_id(orderId);
 		                    noti.setNoti_created_date(new Date());
-		                    notiDao.save(noti);							
+		                    notiDao.save(noti);			                    
 						}
 
 					}
@@ -636,17 +649,29 @@ public class MessengerController {
 								}
 							}
 		                    NotificationInbox noti = new NotificationInbox();
-		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + "กรุณากดยืนยันเพื่อเริ่มงาน");
+		                    noti.setNoti_message_detail("คุณได้รับมอบหมายงานออร์เดอร์รหัส " + orderId + " กรุณากดยืนยันเพื่อเริ่มงาน");
 		                    noti.setNoti_ref_id(idMessenger);//
 		                    noti.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
 		                    noti.setNoti_read_flag(0);
 		                    noti.setNoti_type("Messenger");
 		                    noti.setNoti_order_id(orderId);
 		                    noti.setNoti_created_date(new Date());
-		                    notiDao.save(noti);							
+		                    notiDao.save(noti);		                   		                    
 						}
 					}
 				}
+				
+				//Send noti to customer
+                NotificationInbox notiToCustomer = new NotificationInbox();
+                notiToCustomer.setNoti_message_detail("ออร์เดอร์รหัส " + orderId + " ร้านค้ากำลังทำอาหาร");
+                notiToCustomer.setNoti_ref_id(custDao.getCustomerIdByOrderId(orderId));//
+                notiToCustomer.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+                notiToCustomer.setNoti_read_flag(0);
+                notiToCustomer.setNoti_type("Customer");
+                notiToCustomer.setNoti_order_id(orderId);
+                notiToCustomer.setNoti_created_date(new Date());
+                notiDao.save(notiToCustomer);
+                
 				int estimateTime = 99;
 				BigDecimal value = new BigDecimal(bestTimeTwoMessTwoService.getTotalDuration());
 				estimateTime = value.intValue();
@@ -707,6 +732,16 @@ public class MessengerController {
 	                    notiDao.save(noti);						
 					}
 				}
+				//Send noti to customer
+                NotificationInbox notiToCustomer = new NotificationInbox();
+                notiToCustomer.setNoti_message_detail("ออร์เดอร์รหัส " + orderId + " ร้านค้ากำลังทำอาหาร");
+                notiToCustomer.setNoti_ref_id(custDao.getCustomerIdByOrderId(orderId));//
+                notiToCustomer.setNoti_message_type(VariableText.NOTIFICATION_MSG_TYPE_REQUEST);
+                notiToCustomer.setNoti_read_flag(0);
+                notiToCustomer.setNoti_type("Customer");
+                notiToCustomer.setNoti_order_id(orderId);
+                notiToCustomer.setNoti_created_date(new Date());
+                notiDao.save(notiToCustomer);					
 			}
 
 	  }
